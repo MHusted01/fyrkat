@@ -26,13 +26,23 @@ conflict with this section, this section is right. Check it against Git and GitH
   conversations resolved, 0 approvals, admins enforced, linear history, no force pushes or
   deletion, squash only. A failing PR was blocked and its merge refused.
 - **Not yet shown:** a direct push to `main` being rejected. The owner runs that test.
-- **Spike plan:** revised and committed as a **draft**. It is not approved, and no
-  experiment may start. An adversarial review left open findings, listed under its
-  Amendments section, and they need owner decisions.
-- **Open review findings needing owner approval** (gated paths): the sensitive-paths script
-  and its coverage, the ADR-status hook bypass, push-hook gaps, and repository settings such
-  as strict checks and SHA-pinning enforcement.
-- **M0 is not complete.** Remaining: owner decisions above, direct-push proof, PR 1 merged.
+- **Review fixes (owner-authorized, on PR 1):** the push hook now parses `git push` forms and
+  no longer trips on commit messages. The ADR hook applies each edit and compares status
+  lines, and also covers `edits[]` payloads and shell writes. The sensitive-paths script handles
+  non-ASCII names, `xtask/`, `.cargo/` and every `Cargo.toml` and `Cargo.lock`, and CI runs the
+  base branch's copy of it where one exists. Both have regression tests in `cargo xtask check`.
+  GitHub now has strict required checks, SHA pinning enforced, Actions limited to GitHub-owned
+  actions, Dependabot alerts and security updates, and approval for all external contributors.
+- **Spike plan:** Draft 2, **not approved**, and no experiment may start. It adds an assurance
+  matrix, kernel change Classes 0 to 3, fixed outcome precedence, a consequences table, an
+  A5-arm and A5-x86 split, and committed method files for C1 and C2. The owner reviews it
+  before approving. Its Amendments section lists what changed and why.
+- **Known limits, not fixable here:** the sensitive-paths check is a notice, because the workflow
+  file comes from the PR. With one maintainer GitHub cannot require a second approver. A
+  base-controlled `pull_request_target` check is a follow-up for after PR 1 merges, because it
+  needs the workflow to exist on `main` first.
+- **M0 is not complete.** Remaining: the owner's review of the spike plan, the direct-push test,
+  and merging PR 1.
 
 ## Gate 2 decision
 
@@ -200,7 +210,7 @@ copy.
 - **Adversarial review of this setup:** not started. Use the `reviewer` agent after CI is running.
 - **Independence:** AI review is not independent human review. There is no second maintainer, so
   security-sensitive changes have no independent human reviewer.
-- **`researcher` agent:** it has Bash for PDF extraction, so it is not strictly read-only.
+- **`researcher` and `reviewer` agents:** both have Bash, so neither is read-only by enforcement. See `.claude/agents/`.
 - **Hooks:** they guard against mistakes and are not a security boundary.
 
 ## Decisions that still need owner approval
