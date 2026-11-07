@@ -86,6 +86,6 @@ those documents.
 
 ## Reconsideration criteria
 
-The hypothesis is falsifiable. The [spike plan](../research/sel4-spike-plan.md) defines the
-pre-registered falsification rules, the kernel modification policy, and the criteria that
+The hypothesis is falsifiable. The [spike plan](../research/sel4-spike-plan.md), which is a
+draft until the owner approves it, defines the falsification rules, the kernel modification policy, and the criteria that
 reopen this decision if the hypothesis survives.

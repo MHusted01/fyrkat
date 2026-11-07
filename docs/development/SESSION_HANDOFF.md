@@ -28,15 +28,21 @@ conflict with this section, this section is right. Check it against Git and GitH
 - **Not yet shown:** a direct push to `main` being rejected. The owner runs that test.
 - **Review fixes (owner-authorized, on PR 1):** the push hook now parses `git push` forms and
   no longer trips on commit messages. The ADR hook applies each edit and compares status
-  lines, and also covers `edits[]` payloads and shell writes. The sensitive-paths script handles
+  lines, normalises paths, and covers `edits[]` payloads and common shell-write patterns. It is
+  a mistake guard, not a boundary, and can block a harmless copy of an ADR. The sensitive-paths script handles
   non-ASCII names, `xtask/`, `.cargo/` and every `Cargo.toml` and `Cargo.lock`, and CI runs the
   base branch's copy of it where one exists. Both have regression tests in `cargo xtask check`.
   GitHub now has strict required checks, SHA pinning enforced, Actions limited to GitHub-owned
   actions, Dependabot alerts and security updates, and approval for all external contributors.
-- **Spike plan:** Draft 2, **not approved**, and no experiment may start. It adds an assurance
+- **Spike plan:** Draft 2, **not approved**, and no experiment may start. It has an assurance
   matrix, kernel change Classes 0 to 3, fixed outcome precedence, a consequences table, an
-  A5-arm and A5-x86 split, and committed method files for C1 and C2. The owner reviews it
-  before approving. Its Amendments section lists what changed and why.
+  A5-arm and A5-x86 split, and rules requiring the C1 and C2 method files (not yet written) to
+  be committed before any run. Two adversarial reviews fed it. **Decisions for the owner:** (1)
+  an in-kernel SMMU driver is Class 3 by the text, because seL4's SMMUv2 support hooks existing
+  VSpace finalisation, so K4 is unavailable unless the owner says otherwise in writing; (2)
+  x86-64 is not assessed by A2, so ADR 0002 must record x86-64 assurance as not assessed; (3)
+  kernel patches stay out of the repository because of GPL-2.0. The seL4 pin was a tag object,
+  and the commit is `62e345c240a15671484530b4e6e069ce266c28d7`.
 - **Known limits, not fixable here:** the sensitive-paths check is a notice, because the workflow
   file comes from the PR. With one maintainer GitHub cannot require a second approver. A
   base-controlled `pull_request_target` check is a follow-up for after PR 1 merges, because it
