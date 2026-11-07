@@ -10,12 +10,17 @@ kernel foundation is undecided ([ADR 0004](docs/adr/0004-kernel-foundation.md) i
 Never describe seL4, AArch64, UEFI or any other choice as decided unless the ADR says it is
 Accepted. Read [docs/adr/README.md](docs/adr/README.md) for the ADR process.
 
-## Resuming work
+## Session lifecycle
 
-When resuming an unfinished milestone, read
-[docs/development/SESSION_HANDOFF.md](docs/development/SESSION_HANDOFF.md) first. It is a
-snapshot that may be out of date. Check it against Git and the ADRs, and raise any conflict
-with the owner.
+- **Start:** run `/fyrkat-resume`, or read
+  [docs/development/SESSION_HANDOFF.md](docs/development/SESSION_HANDOFF.md) first. The handoff is
+  a snapshot that may be out of date. Check it against Git and the ADRs, raise any conflict with
+  the owner, and continue only work that is already authorized.
+- **During:** stop at each approval gate. Record an approval where it can be found: an ADR, the
+  spike plan's Amendments, or the acceptance record.
+- **End, or before context runs out:** run `/handoff`. It updates the handoff file from verified
+  facts and never commits, pushes, merges or changes branches. The owner decides about committing.
+- **Authority:** the handoff records approvals and grants none. ADRs and Git win over it.
 
 ## Rules
 
