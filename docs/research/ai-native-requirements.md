@@ -9,7 +9,7 @@
 
 ## What the repository says today
 
-[Documented] The term "AI-native" appears in no ADR, architecture document, roadmap entry or
+[Measured: a search of the repository] The term "AI-native" appears in no ADR, architecture document, roadmap entry or
 standard. The nearest statements are:
 
 - Roadmap, "Later work": "Local AI inference, and permission-controlled agents." Unscheduled.
@@ -19,10 +19,12 @@ standard. The nearest statements are:
   indirection" is open.
 - Roadmap research items R1 (GPU strategy and driver-VM cost), R3 (heterogeneous cores) and R5
   (speculative side channels, "running mutually distrusting code").
-- [Threat model](../architecture/threat-model.md): a compromised contributor or agent is an
-  adversary, and "Authority outlives its grant" requires use-after-revoke tests.
+- [Threat model](../architecture/threat-model.md): a compromised service or driver is an adversary,
+  and "Authority outlives its grant" requires use-after-revoke tests. Its "compromised contributor or
+  agent" adversary is about the development process and not about run-time agents.
 
-So the term is the owner's stated goal and has no definition in the project yet.
+So the term is a goal the owner stated in conversation on 2026-11-07, which the repository does not
+record elsewhere, and it has no definition in the project yet.
 
 ## A proposed working definition
 
@@ -48,8 +50,8 @@ experiment already measures it. [Inferred: the mapping is mine and the owner sho
 | ID | Requirement | Measurable form | In S1? |
 |---|---|---|---|
 | AR1 | **Agent confinement.** A compromised agent cannot touch anything outside its capabilities | 1,000 injected faults (wild writes, illegal capability use, kill) leave unrelated components' memory checksums unchanged, with no kernel fault | **Yes.** P1, P2, P4 through B3 and B4 |
-| AR2 | **Delegation by attenuation.** An agent can pass on strictly fewer rights, and the receiver cannot amplify | Mint, copy and mutate chains to depth 1,000. Every amplification and forged-badge attempt is refused with no effect | **Yes.** P2 through B2 and B4 |
-| AR3 | **Complete, prompt revocation, including one grant among many.** After revoke returns nothing derived is usable, and revoking one grant leaves its siblings working | Use after revoke observed 0 times. Interrupt delay at most 1 ms in the 100,000-capability tree. Revoking 1 of 1,000 sibling grants leaves 999 usable | **Yes.** P3 through B2. The sibling case is B2's own "revoke one grant among many" Conditional. The results file records it, and the plan needs no change |
+| AR2 | **Delegation by attenuation.** An agent can pass on strictly fewer rights, and the receiver cannot amplify | Mint, copy and mutate chains to depth 1,000. Every amplification and forged-badge attempt is refused with no effect | **Partly.** B4 tests single amplification and forgery attempts, and B2 exercises derivation depth. No test runs amplification attempts through a 1,000-deep chain, so the chain form is a proposed addition |
+| AR3 | **Complete, prompt revocation, including one grant among many.** After revoke returns nothing derived is usable, and revoking one grant leaves its siblings working | Use after revoke observed 0 times. Interrupt delay at most 1 ms in the 100,000-capability tree. Revoking 1 of 1,000 sibling grants leaves 999 usable | **Mostly.** P3 through B2 covers use after revoke and the 1 ms bound. The sibling case is related to B2's "revoke one grant among many" Conditional, but B2 does not measure it today, so it is a proposed addition (P4 in the decision package) |
 | AR4 | **DMA and accelerator confinement.** A device reaches only memory granted to its holder, and revocation stops device access before the memory is reused | The four P5 tests pass | **Yes**, as the precondition for any accelerator. A5-arm |
 | AR5 | **Revocable shared memory.** N agents map one read-only model region without N copies, and revoking removes it from all of them | Physical memory for N mappings is one copy plus page tables. A write attempt faults. After revoke, access faults in N of N mappers, and reused memory shows no old data | **Deferred** to M3. Partly seen in B1, B3 and C2's file-backed workload F2 |
 | AR6 | **Bounded resources.** An agent's memory, capability slots and CPU use are budgeted and accounted | An agent that allocates to its budget leaves unrelated components' latency and memory unchanged | **Deferred.** Memory is visible through untyped accounting in B1. CPU budgets need MCS, which is U on AArch64 |
@@ -59,12 +61,14 @@ experiment already measures it. [Inferred: the mapping is mine and the owner sho
 
 ## What S1 should do with this
 
-1. **Nothing new to run.** AR1 to AR4 are already measured by experiments the plan defines.
+1. **Almost nothing new to run.** AR1, AR4 and most of AR2 and AR3 are already measured by
+   experiments the plan defines. The two additions below are proposals and need the owner's approval.
 2. **Report through the lens.** When Stage D weighs the results, it can read B2 as AR3 and A5-arm as
    AR4. That needs no plan change.
-3. **Record one extra number in B2's results file:** whether revoking a single grant among many
-   leaves its siblings usable. The plan already requires B2 to list gaps that need user-level
-   indirection, so this fits the existing text.
+3. **Proposed addition to B2 (item P4 of the decision package):** after revoking one of 1,000
+   sibling grants, count the survivors. If it shows a gap, it selects B2's existing Conditional
+   clause, which lists the gap and forces an A2 rerun, so it is a real cost and not free reporting.
+   A second proposed addition is a B4 amplification attempt through a deep chain.
 4. **Defer AR5 to AR9.** They need designs that S1 does not produce. AR5 is cheap and is the first
    to add, once M3 has processes and a pager.
 

@@ -15,13 +15,14 @@ only through a page summariser, so quotes are unverified. "Re-checked" means I c
 
 ## The short answer
 
-1. **[Documented, re-checked]** The pinned seL4 tree has an SMMUv2 driver (`src/drivers/smmu/` holds
+1. **[Measured, re-checked]** The pinned seL4 tree has an SMMUv2 driver (`src/drivers/smmu/` holds
    `config.cmake` and `smmuv2.c`) and no SMMUv3 file anywhere.
-2. **[Documented, read by the agent]** Every working seL4 or hypervisor SMMUv3 design found puts the
-   logic in the kernel or hypervisor. No published user-level SMMUv3 management on seL4 was found.
-3. **[Documented, read by the agent]** Systems that handle revoke-while-mapped do it with a
-   kernel-held pin or a kernel-owned mapping. seL4 has no such hook, and the spike policy forbids
-   adding one.
+2. **[Inferred]** Every working seL4 or hypervisor SMMUv3 design found puts the logic in the kernel or
+   hypervisor. No published user-level SMMUv3 management on seL4 was found. This is a generalisation
+   over the sources below and a negative search result, so it may be wrong.
+3. **[Inferred]** Systems that handle revoke-while-mapped appear to do it with a kernel-held pin or a
+   kernel-owned mapping. The Fuchsia evidence is a summary only. seL4 has no such hook, and the spike
+   policy forbids adding one.
 4. **[Inferred]** So revoke-while-mapped is the hard P5 test under K3, and the least-explored one.
 
 ## Existing approaches
@@ -34,16 +35,16 @@ only through a page summariser, so quotes are unverified. "Re-checked" means I c
 | seL4 17.0.0 SMMUv2 | `finaliseCap` for the VSpace capability calls `smmu_cb_delete_vspace`. TLB invalidation paths call the SMMU invalidations | Pinned source. Read, partly re-checked | In-kernel. A Class 3 hook by the plan |
 | Horizon Robotics SMMUv3 for seL4 (Summit 2023) | In-kernel SMMUv3 driver with new `seL4_ARMSID` and `seL4_ARMCB` capabilities and a field added to the PUD capability. Verified on an FVP model only. No code found | `sel4.systems/Summit/2023/slides/day2-12-mao.pdf`. Read | In-kernel. Revoke-while-mapped and driver-kill not described. The slides say "without new kernel object and cap" and then add both |
 | sDDF, LionsOS, Microkit | IOMMU support is future work in the Summit 2024 and 2025 slides. The LionsOS paper says the whole region "must be mapped to the device by the IOMMU" | arXiv 2501.06234 §4.1.3, Summit slides. Read | Static mappings only. The four tests are unaddressed |
-| Fuchsia BTI, PMT, quarantine | A pinned memory token keeps pages alive. Releasing it without unpin quarantines the pages until `zx_bti_release_quarantine` | `fuchsia.dev` reference pages. **Summary only** | Kernel-enforced. Revoke while pinned is impossible by design |
-| Genode (release 23.11) | The platform driver manages Intel DMA-remapping tables in user space, one domain per session, charged to the session quota | Release notes. **Summary only** | Intel only. Client death and invalidation are not described |
+| Fuchsia BTI, PMT, quarantine | A pinned memory token keeps pages alive. Releasing it without unpin quarantines the pages until `zx_bti_release_quarantine` | `fuchsia.dev` reference pages (`bus_transaction_initiator`, `zx_bti_pin`, `zx_pmt_unpin`, `zx_bti_release_quarantine`). **Summary only** | Kernel-enforced. Revoke while pinned is impossible by design |
+| Genode (release 23.11) | The platform driver manages Intel DMA-remapping tables in user space, one domain per session, charged to the session quota | `genode.org/documentation/release-notes/23.11`. **Summary only** | Intel only. Client death and invalidation are not described |
 | NOVA | In-kernel SMMUv3 driver with a documented STE state machine: a 512-bit STE "cannot be configured atomically" | FOSDEM 2026 slides. Read, one source | In-kernel |
-| Linux iommufd and VFIO | After `iommufd_device_detach` the device returns to blocked DMA translation | `docs.kernel.org`. **Summary only** | Nothing on reset-versus-unmap order or in-flight DMA |
+| Linux iommufd and VFIO | After `iommufd_device_detach` the device returns to blocked DMA translation | `docs.kernel.org/userspace-api/iommufd.html` and `docs.kernel.org/driver-api/vfio.html`. **Summary only** | Nothing on reset-versus-unmap order or in-flight DMA |
 | SeKVM / KCore (IEEE S&P 2021) | A verified EL2 hypervisor owns the SMMU and its page tables. The proofs cover the SMMU page-table and hypercall layers | Columbia paper. Read | In the hypervisor. Whether IOTLB invalidation is verified could not be told |
-| Markuze et al. (ASPLOS 2016) | Deferred invalidation leaves a window in which an unmapped, reused buffer is still reachable. Shadow buffers are the fix | Paper. Read | Describes the hazard P5 tests for |
-| seL4 verified-configurations page | States that no verified configuration accounts for address translation for devices | Page. **Summary only** | Confirms DMA confinement carries no proof coverage |
+| Markuze et al. (ASPLOS 2016) and Thunderclap (NDSS 2019, abstract only) | Deferred invalidation leaves a window in which an unmapped, reused buffer is still reachable. Shadow buffers are the fix | `cs.tau.ac.il/~mad/publications/asplos2016-iommu.pdf`. Read. Thunderclap: summary only | Describes the hazard P5 tests for |
+| seL4 verified-configurations page | States that no verified configuration accounts for address translation for devices | `docs.sel4.systems/projects/sel4/verified-configurations.html`. **Summary only** | Suggests DMA confinement carries no proof coverage. Re-read it before relying on it |
 
-**Not investigated:** Hubris, Theseus, Redox, CHERI revocation, Hafnium and pKVM SMMUv3, L4Re
-(search snippets only), PCIe function-level reset in a primary source, and any seL4 mailing-list or
+**Not investigated:** Hubris, Theseus, Redox, CHERI revocation, Hafnium and pKVM SMMUv3, PCIe
+function-level reset in a primary source, L4Re (`Dma_space`, `L4::Iommu::bind`: search snippets only, not read), and any seL4 mailing-list or
 GitHub SMMUv3 thread. The UNSW sDDF IOMMU project page returned 404.
 
 ## What this means for the four P5 tests
@@ -69,13 +70,25 @@ experiment. None is authorized, and each belongs to the A5 design, not to S1 Sta
   fault, and its fault handler (the SMMU server) sets the stream to abort and issues CFGI and SYNC.
 - *Alternatives:* poll frame addresses; a lease with a sweep; making the SMMU server the only holder
   of the DMA untyped.
-- *Benefit:* narrows or closes the window without trusting the revoker.
-- *Risks:* on SMP the revoker can retype before the server runs. It adds a trusted helper, depends
-  on kernel ordering that no proof covers, and the MCS behaviour was not read.
+- *Benefit:* narrows the window when the revoker is not hostile. It does **not** work without
+  trusting the revoker: a root task that holds the helper's or server's TCB, CSpace or priority
+  control can suspend the helper first, so finalisation wakes nobody, and then revoke silently.
+- *Conditions for the one-core prediction:* the helper's priority is strictly above every thread
+  that can retype the untyped or its ancestors, and the helper's TCB and CNode do not come from the
+  untyped being revoked. The agent's review of the kernel path found it sound under these conditions
+  in non-MCS [Inferred]. Order matters: `cteRevoke` finalises the newest object first, so the canary
+  is finalised before or after the frames depending on retype order. Memory is not reused inside the
+  revoke itself, and reuse needs a later retype.
+- *Risks:* **K3 runs on 4 vCPUs, where O1 makes no prediction**, and A5-arm fails on a single
+  observed DMA into reclaimed memory. So O1 may reduce the window and cannot, on its own, make
+  A5-arm pass on K2. It adds a trusted helper, depends on kernel ordering that is outside the proofs
+  for this configuration, and the MCS behaviour was not read.
 - *Experiment:* arm an `edu` DMA for 100 ms, revoke the untyped inside that window, retype at once
-  and write a sentinel. The prediction on 1 vCPU with the server above the revoker in priority is an
-  intact sentinel in 1,000 of 1,000 runs. Any corrupted sentinel falsifies it. On 4 vCPUs the failure
-  rate is measured and no prediction is made.
+  and write a sentinel. **Positive control:** a run with the canary disabled must show corruption
+  within the window, or an intact sentinel means nothing (the DMA may never have landed, for example
+  through the 28-bit address clamp). The prediction on 1 vCPU with the conditions above is an intact
+  sentinel in 1,000 of 1,000 runs. Any corrupted sentinel falsifies it. On 4 vCPUs the failure rate
+  is measured and no prediction is made.
 - *Marks:* [Inferred] on one core, [Speculative] under MCS.
 
 **O2. Fail-closed default with a bounded lease.**
@@ -84,7 +97,9 @@ experiment. None is authorized, and each belongs to the A5 design, not to S1 Sta
   re-validated by a capability check.
 - *Benefit:* the exposure is bounded by T plus the service time, and it is measurable.
 - *Risks:* re-enabling costs performance, and the lease protects nothing against a malicious root
-  task.
+  task. **It cannot pass revoke-while-mapped**: a bounded window still allows DMA into reclaimed
+  memory, which is an A5-arm Fail clause. Streams resting at `Config=0b000` also record no event, and
+  the plan wants a fault "reported". O2 reduces exposure and does not meet the test.
 - *Experiment:* with T = 10 ms, revoke at random offsets and record how long a freed frame stays
   reachable. Falsified if any frame is reachable longer than T plus the measured service time.
 
@@ -110,8 +125,10 @@ experiment. None is authorized, and each belongs to the A5 design, not to S1 Sta
   exercise the code the property rests on" is class D).
 - *Risks:* QEMU completes commands inside the MMIO write, so a missing SYNC may pass, and ordering
   can never be evidenced there.
-- *Experiment:* every mutant must fail at least one P5 test. A mutant that passes marks the test as
-  too weak for that omission, and the result is reported. Falsified if all mutants pass.
+- *Experiment:* every mutant must fail at least one P5 test. **One surviving mutant for a mandatory
+  step is already a finding**, not a partial success: it marks the test as unable to see that step,
+  and the result is reported. The experiment is falsified in its aim if the mutants that QEMU should
+  expose (no CFGI, no TLBI, SMMUEN set before abort) all pass.
 
 ## Evidence summary
 
@@ -128,7 +145,12 @@ experiment. None is authorized, and each belongs to the A5 design, not to S1 Sta
 
 ## Consequence for the spike
 
-A5-arm can pass only through K3, and revoke-while-mapped is the test most likely to decide it. The
+A5-arm can pass only through K3, and revoke-while-mapped is the test most likely to decide it.
+**Open interpretation (the owner's to settle before A5 runs):** the plan makes a required test that "did
+not exercise the code the property rests on" a class D cell. QEMU completes SMMU commands inside the
+MMIO write, so a server that omits `CMD_SYNC` can pass every P5 test [Documented: `smmuv3.c`]. If that
+counts as "did not exercise", the K3 cell for P5 is class D on this host and A2 is a Fail whatever the
+design. The decision package recommends a reading and does not apply it. The
 A5 design gate should therefore settle three things before any code: how the root task's revoke
 power is handled (trusted and constrained, or detected by O1), who owns the DMA pool (O3), and how
 the tests are shown to have power (O4). If K3 cannot meet the tests, A5-arm is a Fail and the

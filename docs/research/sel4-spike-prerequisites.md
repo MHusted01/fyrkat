@@ -1,6 +1,6 @@
 # seL4 spike prerequisites
 
-- **Status:** Draft, prepared 2026-11-07 and revised after an independent review. Nothing in this
+- **Status:** Draft, prepared 2026-11-07 and revised after independent reviews. Nothing in this
   file has been installed, built or run.
 - **Plan:** [spike plan](sel4-spike-plan.md), approved at `46a90fa`. This file adds no criterion and
   changes none.
@@ -19,8 +19,8 @@ query on 2026-11-07. This work installed nothing.
 | Input | Value | Label |
 |---|---|---|
 | seL4 | `17.0.0`, commit `62e345c240a15671484530b4e6e069ce266c28d7` ("Release 17.0.0", 2026-10-30). The tag object is `ab504cd497d239ed7341472b7f67b56f4c42dbe1` | Measured |
-| rust-sel4 (proposed) | `f631577eb7def6fe6fb57fcaf7b8fd61bf144fcc` ("nix: Update Verus", 2026-11-05), tip of `main`. `VERSION` says `6.0.0-dev`. Unsigned on GitHub. It is 59 commits after the release below | Measured |
-| rust-sel4 (alternative) | Tag `v6.0.0`, commit `c819c27b076130cba9821c4555f23773e4b0bffd` (2026-10-30). Its `rust-toolchain.toml` pins `nightly-2026-08-21` | Measured, Documented |
+| rust-sel4 (candidate: tip of `main`) | `f631577eb7def6fe6fb57fcaf7b8fd61bf144fcc` ("nix: Update Verus", 2026-11-05), tip of `main`. `VERSION` says `6.0.0-dev`. Unsigned on GitHub. It is 59 commits after the release below | Measured |
+| rust-sel4 (candidate: release, recommended in the [decision package](s1-decision-package.md)) | Tag `v6.0.0`, commit `c819c27b076130cba9821c4555f23773e4b0bffd` (2026-10-30). Its `rust-toolchain.toml` pins `nightly-2026-08-21` | Measured, Documented |
 | rust-sel4 toolchain at the proposed commit | `nightly-2026-10-28`, the nightly the plan names | Documented: upstream `rust-toolchain.toml` |
 | rust-sel4 compatibility | "seL4 version 17.0.0" and "seL4 Microkit version 2.4.0", described as "at least" these versions | Documented: upstream README at the proposed commit |
 | Root-task demo | `seL4/rust-root-task-demo` `c13bdae64a860dfe1d3064717f4096e63bb7dff2` ("Update everything", 2026-11-04). It depends on rust-sel4 `tag = "v6.0.0"` and pins `nightly-2026-08-21`. It is a reference for the **release**, not for the proposed commit | Documented, Measured |
@@ -37,10 +37,12 @@ the owner can review it. The two candidates trade off as follows:
 | Demo | None matches | The root-task demo matches |
 | A4 | The loader compared is the unreleased one | The released loader |
 
-This file proposes `f631577`, because the plan names its nightly. The owner decides (see
-[decisions](#decisions-for-the-owner)). If the choice later fails to build, switching is recorded as
-an approach in the A1 results. Whether that counts toward the plan's three-approach Blocked rule is
-the owner's call.
+This file first proposed `f631577` because the plan names its nightly. The
+[decision package](s1-decision-package.md) now recommends `v6.0.0` instead, with the evidence: it is a
+release compatible with seL4 17.0.0, it has a known-good recipe, and both versions have the same git
+footprint. That needs an Amendment to a pinned input. If the chosen version later fails to build,
+switching is recorded as an approach in the A1 results. Whether that counts toward the plan's
+three-approach Blocked rule is the owner's call.
 
 **Note on the plan's K0.** At the pinned seL4 commit `configs/` holds `AARCH64_verified.cmake` and
 many board files such as `AARCH64_bcm2711_verified.cmake` and `AARCH64_bcm2712_verified.cmake`, and
@@ -54,7 +56,7 @@ choice is not made here.
 | QEMU `qemu-system-aarch64` and `qemu-system-x86_64` | A3, A4, A5, Stage B and C | 11.1.3 | Present, Homebrew | No |
 | EDK2 firmware `edk2-aarch64-code.fd`, `edk2-x86_64-code.fd` | A4 | Version not recorded | Present, in Homebrew's QEMU share | No. Record the version at A4 |
 | CMake | seL4 build | seL4 asks for 3.16.0 or later [Documented: `CMakeLists.txt`] | 4.4.5 present. Whether seL4 17.0.0 configures under CMake 4 is **not tested** | No |
-| Ninja, `dtc` | seL4 build | Homebrew cannot pin a version. See decision 7 | 1.13.2 and 1.8.1 present | No |
+| Ninja, `dtc` | seL4 build | Frozen with `brew pin` and versions recorded. See decision 7 of the decision package | 1.13.2 and 1.8.1 present | No |
 | `xmllint` | seL4 build [Documented: seL4 host-dependencies page] | System | Present | No |
 | libclang | `bindgen` in the `sel4-sys` crate [Documented: `crates/sel4/sys/Cargo.toml` lists `bindgen` 0.73.2 as a build dependency] | Not decided | `/Library/Developer/CommandLineTools/usr/lib/libclang.dylib` exists. Not tested with `bindgen` | No, if that library is used |
 | Other host packages named on seL4's host-dependencies page for Linux: `protobuf-compiler`, `xxd`, `u-boot-tools`, `ccache` | seL4 build | Not decided | Not checked. The page assumes a Linux host [Documented] | Probably, for any that are missing |
@@ -126,34 +128,16 @@ on macOS without an extra linker is **not tested**.
 
 | Item | State |
 |---|---|
-| C1 and C2 method files | Drafted: [C1](../../spikes/sel4-feasibility/results/C1-method.md), [C2](../../spikes/sel4-feasibility/results/C2-method.md). Need owner review. C1 still lacks the published baseline figure |
-| rust-sel4 pin | Proposed above. Needs the owner's choice |
+| C1 and C2 method files | Drafted: [C1](../../spikes/sel4-feasibility/results/C1-method.md), [C2](../../spikes/sel4-feasibility/results/C2-method.md). Need owner review. The C1 published baseline is fixed in the file |
+| rust-sel4 pin | Two candidates above. The decision package recommends `v6.0.0` and the owner chooses |
 | Nightly toolchain, cross GCC, Python environment, `repo`, Linux image | Not installed. Need owner approval |
 | Spike workspace manifest, lock file, toolchain file | Not created. Need owner approval |
 | Owner's authorization to execute | **Not given** |
 
 ## Decisions for the owner
 
-1. **Review the C1 and C2 method files**, in particular the interpretations they list under
-   "Interpretations to confirm". The C1 file cannot be frozen until the published seL4 baseline is
-   cited in it. Edits before the first run are free. After it, they are Amendments.
-2. **Choose the cross-compiler sources.** AArch64 candidates, each unverified against the pinned seL4
-   on macOS: a Homebrew `aarch64-elf-gcc` formula, Arm's `aarch64-none-elf` toolchain, or the
-   compiler inside a digest-pinned Linux container (which makes A1 Conditional at best). x86-64 needs
-   a compiler with an `x86_64-linux-gnu-` prefix, and none is chosen.
-3. **Choose the rust-sel4 version** (`f631577` or `v6.0.0`), and **approve rust-sel4 as a dependency**
-   at that commit with its locked tree, including `bindgen` and libclang. Say whether `cargo deny`
-   runs on the spike workspace.
-4. **Approve the installation list:** the nightly, the Python environment, the cross compilers, the
-   `repo` tool, any missing host packages, and the Debian image download. State where `cargo install`
-   puts tools.
-5. **Approve creating the spike workspace's `Cargo.toml`, `Cargo.lock` and `rust-toolchain.toml`.**
-6. **Confirm that the nightly use is covered by the toolchain policy**, or direct an amendment to
-   `docs/standards/toolchain.md`.
-7. **Decide how Homebrew tools are pinned.** `docs/standards/toolchain.md` exempts only QEMU, EDK2,
-   shellcheck and actionlint from pinning. CMake, Ninja and `dtc` are not exempt, and Homebrew cannot
-   pin them.
-8. **Authorize spike execution**, starting with Stage A, when the above are settled.
+The eight outstanding decisions, with a recommendation and the evidence for each, are in the
+[S1 decision package](s1-decision-package.md). That file replaces the list that stood here.
 
 ## Reproducing the queries
 

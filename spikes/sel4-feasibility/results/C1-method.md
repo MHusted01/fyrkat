@@ -24,7 +24,9 @@ From the plan, unchanged:
 and the owner confirms or changes each before the first run:
 
 1. **Which workload carries the criterion:** W1 (empty message, same core), the smallest round trip.
-   W2 to W6 are reported in full and carry no threshold.
+   This is the reading most favourable to a Pass. The plan also lists 4 KiB same-core work, which is
+   W2. W2 to W6 are reported in full and carry no threshold. Requiring W1 and W2 both is the
+   stricter alternative.
 2. **Which statistic:** the median of the 30 run medians of W1.
 3. **Which kernel:** the 4-vCPU SMP kernel (K2), with W1 pinned to one core. K1 (1 vCPU) is not used
    for the criterion.
@@ -136,7 +138,9 @@ Baselines are context. They never set a threshold.
    and statistics rules.
 2. **Published seL4 figures, fixed here.** Source: the seL4 Foundation performance page,
    `https://sel4.systems/performance.html`, which reports `sel4bench` results as mean (standard
-   deviation) in cycles. Read on 2026-11-07 [Documented]. The page does not state the seL4 version.
+   deviation) in cycles. Read on 2026-11-07 [Documented]. The page says it was generated on
+   2026-11-07 for `sel4bench-manifest` commit `818079b1`. That is the provenance to cite, and it is
+   not a seL4 release number.
    Its AArch64 row is the only one with the same architecture as the guest:
 
    | Board and core | Clock | Kernel build | IPC call | IPC reply | Sum |
@@ -175,7 +179,8 @@ command, and the raw batch data.
 ## Open before the first run
 
 - **A plan wording error.** The plan says "About 850 cycles is about 0.25 µs at 3.4 GHz" as a
-  published figure. The 850 cycles is the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs. The 3.4 GHz
+  published figure. The 850 cycles equals the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs [Inferred: the plan does
+  not name its source]. The 3.4 GHz
   clock belongs to the x86-64 rows. The plan's sentence is context and not a criterion, so this file
   does not rely on it. The owner may want it corrected by an Amendment.
 - The three interpretations under [Criterion](#criterion).
