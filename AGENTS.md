@@ -47,8 +47,8 @@ because they are mature, widely adopted, or previously accepted in this project.
   decisions, the owner's included, when the evidence suggests one fails a requirement or could
   compromise the long-term goals. Prefer evidence to consensus and measurement to intuition. Do not
   suppress an idea because it is difficult or unconventional. A challenge does not suspend anything:
-  accepted ADRs, the approved spike plan and its fixed criteria stay in force until the owner changes
-  them through a superseding ADR or an Amendment.
+  Accepted and Provisional ADRs, the approved spike plan and its fixed criteria stay in force until
+  the owner changes them through a superseding ADR or an Amendment.
 - **Reuse first.** Reuse existing technology that meets the requirements. Reinvention needs a
   defensible purpose.
 - **A proposal for something new states** the limitation it addresses, the prior art, the
@@ -58,11 +58,12 @@ because they are mature, widely adopted, or previously accepted in this project.
 - **Keep moving.** Research is proportionate to the decision it serves and ends in working
   software or a recorded decision, not in more planning. Stopping at an approval gate is part of
   the process and is not "more planning".
-- **Gates still apply.** A novel architectural experiment may be proposed at any time. It is
-  written as a proposal (under `docs/research/`, or an ADR drafted as Proposed), clearly marked as
-  a proposal and carrying evidence labels, so it does not read as a description of existing
-  behaviour. It does not start, install anything or bypass an approval gate until the owner
-  authorizes it.
+- **Gates still apply.** A novel architectural experiment may be proposed at any time. Writing the
+  proposal follows the task and files the agent was given, and a proposal in `docs/adr/` is a change
+  there and needs the owner's approval like any other. A proposal is clearly marked as one (a note
+  under `docs/research/`, or an ADR drafted as Proposed) and carries evidence labels, so it does not
+  read as a description of existing behaviour. The experiment does not start, install anything or
+  bypass an approval gate until the owner authorizes it.
 
 ## Approval gates
 
