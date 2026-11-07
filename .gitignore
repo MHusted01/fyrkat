@@ -4,6 +4,9 @@ target/
 # Pinned developer tools installed by `cargo xtask tools`
 /.tools/
 
+# seL4 checkout and experimental kernel patches for the spike stay out of this repository
+/spikes/sel4-feasibility/sel4/
+
 # Per-developer Claude Code state
 /.claude/settings.local.json
 /CLAUDE.local.md
