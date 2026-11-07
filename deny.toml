@@ -1,0 +1,33 @@
+# cargo-deny policy. Run by `cargo xtask check`. Changing this file is a reviewed change.
+# Docs: https://embarkstudios.github.io/cargo-deny/
+
+[advisories]
+# RustSec advisories are covered here. cargo-audit is deliberately not used as well.
+version = 2
+yanked = "deny"
+ignore = []
+
+[licenses]
+version = 2
+# Short allow list. Each entry is permissive and compatible with MIT OR Apache-2.0.
+# Anything else needs a reviewed change here, with the reason recorded.
+allow = [
+  "MIT",                          # Fyrkat's own licence and the Rust ecosystem default
+  "Apache-2.0",                   # Fyrkat's own licence and the Rust ecosystem default
+  "Apache-2.0 WITH LLVM-exception", # Appears with some compiler-adjacent crates
+  "Unicode-3.0",                  # Data licence of unicode-ident, a near-universal dependency
+]
+confidence-threshold = 0.93
+unused-allowed-license = "allow"
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+highlight = "all"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

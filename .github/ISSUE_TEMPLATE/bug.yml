@@ -1,0 +1,30 @@
+name: Bug report
+description: Something in the repository, tooling or documentation is wrong
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report security vulnerabilities here. Use the private link on the issue chooser.
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: Expected and actual behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands and their output.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Host OS and architecture, Rust toolchain, QEMU version, commit.
+    validations:
+      required: true

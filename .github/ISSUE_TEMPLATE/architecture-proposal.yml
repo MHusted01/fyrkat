@@ -1,0 +1,42 @@
+name: Architecture proposal
+description: Propose a decision that is expensive to reverse or constrains other components
+labels: [architecture]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This opens the discussion. A decision is recorded as an ADR (see docs/adr/README.md).
+        Only the project owner accepts ADRs.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What forces this decision now, and what depends on it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed decision
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and why not
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Label each claim as Measured, Documented, Inferred or Speculative, with sources.
+    validations:
+      required: true
+  - type: textarea
+    id: reconsider
+    attributes:
+      label: What would change the outcome
+      description: Specific, observable conditions.
+    validations:
+      required: true

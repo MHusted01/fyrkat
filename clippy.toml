@@ -1,0 +1,7 @@
+# Tests may unwrap and expect: a failure there is the intended signal.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+
+# Names that are not code, in addition to clippy's defaults.
+doc-valid-idents = ["AArch64", "AArch32", "EDK2", "GateGuard", "OVMF", "AAVMF", "..", ]

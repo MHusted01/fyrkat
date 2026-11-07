@@ -1,0 +1,13 @@
+# Pinned for reproducibility. Changing this file is a reviewed change.
+# See docs/standards/toolchain.md for the update procedure.
+# The target list serves the boot spike only and implies no architecture decision.
+# ADR 0002 and ADR 0003 decide the real targets once accepted.
+[toolchain]
+channel = "1.99.1"
+profile = "minimal"
+components = ["clippy", "rustfmt", "llvm-tools", "rust-src"]
+targets = [
+  "aarch64-unknown-none-softfloat",
+  "aarch64-unknown-uefi",
+  "x86_64-unknown-uefi",
+]

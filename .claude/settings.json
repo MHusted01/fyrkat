@@ -1,0 +1,84 @@
+{
+  "model": "sonnet",
+  "enabledPlugins": {
+    "ecc@ecc": false,
+    "postman@claude-plugins-official": false,
+    "swift-lsp@claude-plugins-official": false,
+    "adhd-study-coach@synced": false,
+    "engineering@synced": false,
+    "design@synced": false,
+    "data@synced": false,
+    "learn-with-coursera@synced": false,
+    "cowork-plugin-management@synced": false
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cargo xtask *)",
+      "Bash(cargo build *)",
+      "Bash(cargo check *)",
+      "Bash(cargo test *)",
+      "Bash(cargo clippy *)",
+      "Bash(cargo fmt *)",
+      "Bash(cargo doc *)",
+      "Bash(cargo metadata *)",
+      "Bash(cargo nextest *)",
+      "Bash(bash .claude/hooks/test-hooks.sh)",
+      "Bash(shellcheck *)",
+      "Bash(actionlint *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git ls-files *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git commit *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)",
+      "Bash(gh api *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(git push --force-with-lease *)",
+      "Bash(git push * main)",
+      "Bash(git push * master)",
+      "Bash(git push *:main)",
+      "Bash(git push *:master)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-main-push.sh"
+          },
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-adr.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-adr.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

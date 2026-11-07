@@ -1,0 +1,32 @@
+name: Research task
+description: A question that needs primary-source evidence before a decision
+labels: [research]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: One question, phrased so that an answer can be checked.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: Which ADR or milestone depends on the answer.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Known sources and constraints
+      description: Primary sources to start from, what is out of scope, and any budget limit.
+    validations:
+      required: false
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: What the written answer must contain. Findings use the evidence labels.
+    validations:
+      required: true
