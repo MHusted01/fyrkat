@@ -148,9 +148,11 @@ such as speculative execution, and information-flow proofs.
 
 **x86-64 is not assessed by A2.** This spike runs no Stage B tests on x86-64, so P1 to P4
 cannot be tested there. ADR 0002 must record x86-64 assurance as **not assessed by this
-spike**, and not as a pass. A5-x86 is the only x86-64 security test. `configs/X64_verified.cmake`
-exists at the pinned commit [Measured], so an x86-64 reference could be added later by the
-owner as a scope change.
+spike**, and not as a pass. This does not remove x86-64 as a required future platform under
+ADR 0002, and it does not imply that x86-64 assurance follows from any AArch64 result.
+A5-x86 is the only x86-64 security test. `configs/X64_verified.cmake` exists at the pinned
+commit [Measured], so an x86-64 reference could be added later by the owner as a scope
+change.
 
 The record states whether each configuration is MCS or non-MCS, because AArch64 MCS proofs
 are not complete.
@@ -273,8 +275,9 @@ SMMUv3. Both options below must be assessed for AArch64.
    and it adds SMMU invalidation to the existing TLB invalidation paths. A driver that makes
    teardown ordering hold needs the same kind of hook. Under the
    [Kernel modification policy](#kernel-modification-policy), a hook into existing
-   finalisation, unmapping or TLB maintenance is **Class 3**, so K4 is not available in
-   this spike unless the owner decides otherwise in writing before approving this plan.
+   finalisation, unmapping or TLB maintenance is **Class 3**, so K4 is **unavailable under
+   this spike's authorization**. It is preserved as a separately gated future architectural
+   option, described under the [Kernel modification policy](#kernel-modification-policy).
 
 A5 is two experiments with separate outcomes.
 
@@ -573,13 +576,21 @@ into the change's record.
 | **2** | A **device-specific capability extension** that is purely additive: new capability or object types and invocations confined to one device, such as SMMUv3 stream-table and context objects. It adds no field to an existing capability type, and it does not hook into the finalisation, deletion, unmapping, retype, revocation, derivation or TLB maintenance of any existing type | **Not disqualifying by itself.** It needs the review below and the owner's written approval **before implementation begins** |
 | **3** | Anything that affects capability authority, ownership, revocation, isolation or a core invariant. That includes any change to the behaviour of existing capability types, CNode operations, derivation, mint, badge, revoke, delete, finalise, untyped retype, endpoints, notifications, the scheduler, the IPC fast path or address-space isolation. It includes any hook into the finalisation, unmapping or TLB maintenance of an existing VSpace, frame or other capability, and any added field in one. It includes any change that alters K0's output, weakens a check or disables a security feature | **Unacceptable in this spike at any size, and never attempted in it.** An experiment that needs one is a Fail. Accepting one would need a new ADR and an amendment of this plan |
 
-**Owner decision needed before approval.** seL4's SMMUv2 support is a Class 3 change by this
-text, because it hooks into VSpace finalisation and TLB maintenance [Measured]. An in-kernel
-SMMUv3 driver that makes teardown ordering hold would need the same. So K4 is **not
-available** in this spike as drafted, A5-arm can pass only through K3, and A5-arm fails if
-K3 cannot meet the P5 tests. If the owner wants K4 to remain possible, the owner must say
-so in writing before approving this plan, and name the specific hooks that are allowed
-as an additional class with a stricter review. This plan does not pre-approve any.
+**Owner decision, 2026-11-07: K4 stays Class 3 and is unavailable.** seL4's SMMUv2 support
+is a Class 3 change by this text, because it hooks into VSpace finalisation and TLB
+maintenance [Measured]. An in-kernel SMMUv3 driver that makes teardown ordering hold would
+need the same. The owner does not pre-approve any modification of VSpace finalisation or
+related capability or security-critical hooks.
+
+**Recorded limitation.** In this spike A5-arm can pass only through K3, the user-level
+design. If K3 cannot meet the P5 tests, A5-arm is Fail and the hypothesis is falsified
+(rule 5). The spike will therefore not show whether an in-kernel IOMMU path would have
+worked. A Fail of K3 does not show that no seL4-based design can confine DMA.
+
+**K4 as a future option.** K4 is preserved as a separately gated future architectural
+option, to be considered only if K3 proves insufficient. It would need a new ADR, a plan
+amendment approved by the owner, and a security review of the exact hooks. Nothing in this
+plan authorizes it.
 
 ### Class 2 review
 
@@ -598,9 +609,14 @@ Before a Class 2 change is implemented, record `results/kernel-change-<n>.md` wi
 owner's approval is recorded in the file. It is a **result** of the experiment, with label
 M, and it counts as a cost in Stage D. It is not an Amendment, and it changes no criterion.
 
-**Patches stay out of this repository.** A kernel patch contains GPL-2.0 code. It is kept in
-the gitignored seL4 checkout. The record states its SHA-256, the files it touches and its
-line counts per file. The owner may decide otherwise.
+**Experimental seL4 patches stay separate from this repository for now.** They are kept in
+the gitignored seL4 checkout. The record states the exact upstream commit, the patch's
+SHA-256, the files it touches and the line counts per file, the configurations it was
+built and run in, the toolchain versions, and the reproduction instructions. seL4 kernel
+code is licensed GPL-2.0, and this plan does not claim that licence categorically prevents
+publishing a patch. If reproducibility needs the patches to be distributed, propose a
+separately licensed repository or another compliant approach to the owner for approval
+first.
 
 ### Size
 
@@ -656,8 +672,9 @@ Each experiment gets `spikes/sel4-feasibility/results/<id>.md`, containing:
 
 - All spike code lives in `spikes/sel4-feasibility/`, as its own Cargo workspace.
 - No crate outside `spikes/` may depend on it. `cargo xtask check` enforces this.
-- seL4 is fetched at the pinned commit into a gitignored directory, so no GPL-licensed
-  kernel code enters this repository.
+- seL4 is fetched at the pinned commit into a gitignored directory, so seL4 kernel code and
+  experimental patches stay out of this repository for now. See the patch rules under the
+  [Kernel modification policy](#kernel-modification-policy).
 - Nothing is promoted to production. Any later implementation is rewritten under a
   reviewed plan, and spike code is deleted once its results are recorded.
 
@@ -740,9 +757,9 @@ Before column was corrected in `7baa6c1`, not in `d0dc042`.
 | Finding | Change |
 |---|---|
 | Kernel policy had no outcome rule, and the IOMMU carve-out conflicted with the ban on capability code | Classes 0 to 3, tested in the order 3, 2, 1. Class 2, a purely additive device-specific capability extension, is not disqualifying but needs review and the owner's approval before implementation. Class 3 covers anything affecting authority, ownership, revocation, isolation or core invariants, and is never attempted. An unclear class is Class 3. Approval is a result, not an amendment |
-| An in-kernel IOMMU driver is Class 3 by that text | Measured: seL4's SMMUv2 support hooks `finaliseCap` for the VSpace capability, adds a field to it, and adds SMMU invalidation to TLB paths. K4 is therefore not available as drafted, and the owner must decide in writing if it should be. "Class 1" was removed from the A5-arm Conditional |
+| An in-kernel IOMMU driver is Class 3 by that text | Measured: seL4's SMMUv2 support hooks `finaliseCap` for the VSpace capability, adds a field to it, and adds SMMU invalidation to TLB paths. The owner decided on 2026-11-07 that K4 stays Class 3 and unavailable, and is preserved as a separately gated future option. "Class 1" was removed from the A5-arm Conditional |
 | A2 outcomes overlapped, and "solely" and "compensating evidence" were undefined | Assurance matrix with properties P1 to P5, configurations, gap classes A to D, named sub-tests, and a cell-to-experiment map. A2 can never be Pass, and always reopens ADR 0004 |
-| The matrix required evidence no experiment produced | x86-64 is not assessed by A2, and ADR 0002 must record that. Cross-core tests need K2 |
+| The matrix required evidence no experiment produced | x86-64 is not assessed by A2, and ADR 0002 must record that. Owner-accepted on 2026-11-07, and this does not remove x86-64 as a required platform. Cross-core tests need K2 |
 | Conditional could relax mandatory requirements | A3 "only 1 vCPU" is now Investigate, not Conditional. Conditional applies only to an experiment's own listed clauses. B2 indirection components become trusted components |
 | Investigate could stand in for Fail | At the end of the spike, Investigate on a P1 to P5 cell or on A5-arm becomes Fail. Fail clauses are positive observations. A "spike bug" needs a fix commit and a reproduction. Stage D needs A2-final and A5-arm to be Pass or Conditional |
 | DMA rule could never fire | A5-arm, which is required, and A5-x86, with explicit criteria and measured feasibility facts. Rule 5 concerns AArch64 only |
@@ -750,7 +767,7 @@ Before column was corrected in `7baa6c1`, not in `d0dc042`.
 | Vague or unfireable criteria | B2 now has a numeric Fail rule. B3 Fail includes kernel faults. C1 and C2 method files come before any run, pilots included, and C1 uses batches and records the counter frequency |
 | The hypothesis says "unmodified" | A surviving label M result restates the hypothesis and reopens ADR 0004 |
 | seL4 pin was a tag object | Now records the commit `62e345c2…` as well |
-| Licensing of patches | Patches stay out of the repository. The owner may decide otherwise |
+| Licensing of patches | The owner decided on 2026-11-07: patches stay separate for now, with upstream commit, hashes, files, configurations, toolchains and reproduction instructions recorded. No claim that GPL-2.0 prevents publishing. Distribution needs a separately licensed repository or another approved compliant approach |
 
 **Loosenings and tightenings in Draft 2, stated in full.**
 

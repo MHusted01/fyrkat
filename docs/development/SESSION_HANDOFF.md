@@ -37,12 +37,16 @@ conflict with this section, this section is right. Check it against Git and GitH
 - **Spike plan:** Draft 2, **not approved**, and no experiment may start. It has an assurance
   matrix, kernel change Classes 0 to 3, fixed outcome precedence, a consequences table, an
   A5-arm and A5-x86 split, and rules requiring the C1 and C2 method files (not yet written) to
-  be committed before any run. Two adversarial reviews fed it. **Decisions for the owner:** (1)
-  an in-kernel SMMU driver is Class 3 by the text, because seL4's SMMUv2 support hooks existing
-  VSpace finalisation, so K4 is unavailable unless the owner says otherwise in writing; (2)
-  x86-64 is not assessed by A2, so ADR 0002 must record x86-64 assurance as not assessed; (3)
-  kernel patches stay out of the repository because of GPL-2.0. The seL4 pin was a tag object,
-  and the commit is `62e345c240a15671484530b4e6e069ce266c28d7`.
+  be committed before any run. Two adversarial reviews fed it. **Owner decisions, 2026-11-07, incorporated into the draft:** (1) K4, an in-kernel IOMMU
+  driver, stays Class 3 and is unavailable. It is a separately gated future option, and a K3
+  failure falsifies the hypothesis without showing that no in-kernel design could work; (2)
+  x86-64 is excluded from A2 and is "not assessed by this spike". It stays a required future
+  platform under ADR 0002, and nothing follows from AArch64 results; (3) experimental seL4
+  patches stay separate from this repository for now, with upstream commits, hashes, files,
+  configurations, toolchains and reproduction instructions recorded. Distribution would need a
+  separately licensed repository or another approved approach. The seL4 pin was a tag object,
+  and the commit is `62e345c240a15671484530b4e6e069ce266c28d7`. **The plan stays Draft until the
+  owner approves an exact commit SHA. Spike execution is not authorized.**
 - **Known limits, not fixable here:** the sensitive-paths check is a notice, because the workflow
   file comes from the PR. With one maintainer GitHub cannot require a second approver. A
   base-controlled `pull_request_target` check is a follow-up for after PR 1 merges, because it

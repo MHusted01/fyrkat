@@ -110,6 +110,11 @@ irreversible commitment may be made until the spike reports.
   DMA isolation is achievable only on x86-64, this ADR reopens. [Documented, Measured]
 - **No generic AArch64 platform exists in seL4**, and issue 1613 requesting one is open.
   [Documented]
+- **x86-64 assurance is not assessed by the seL4 spike.** The draft spike plan assesses no
+  x86-64 configuration for isolation properties P1 to P4, and runs only the A4 boot and an
+  optional A5-x86 DMA test there. This does not remove x86-64 as a required second
+  architecture, and no AArch64 result implies anything about x86-64 assurance. [Documented,
+  spike plan draft]
 
 ## Reconsideration criteria
 
