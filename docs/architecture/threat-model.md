@@ -100,8 +100,8 @@ Speculative execution and timing channels are unresolved, and are the largest ga
 | Malicious dependency | `cargo-deny`, reviewed additions, lockfile | Being set up in M0 |
 | Compromised CI action | Actions pinned by commit SHA, least-privilege permissions | Being set up in M0 |
 | Toolchain drift | Pinned toolchain | Set up |
-| Unreviewed change reaching `main` | Branch protection, PR-only | Pending Gate 2 |
-| Forged commits | Signed commits | Set up locally |
+| Unreviewed change reaching `main` | Branch protection, PR-only | Set up and read back through the API on 2026-11-07. Direct-push rejection is not yet demonstrated. A required check blocked a failing PR |
+| Forged commits | Signed commits | Set up locally. GitHub does not require signatures, and squash merges are re-signed by GitHub |
 | Compromised release | Signing and reproducible builds | Later work |
 | **Single maintainer** | None yet. One compromised account defeats the controls above | **Open risk** |
 | **Prompt injection through researched content** | Downloaded content is data, never instructions; agents have limited authority | Policy only |

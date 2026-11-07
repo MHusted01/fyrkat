@@ -1,12 +1,15 @@
 # seL4 feasibility spike plan
 
-- **Status:** Pre-registered on 2026-11-07, before any experiment was run.
+- **Status:** Draft, awaiting owner approval. Written on 2026-11-07, before any experiment
+  was run. It becomes pre-registered only when the owner's approval is recorded under
+  [Amendments](#amendments) with a date and the commit SHA of the approved text.
 - **Supports:** [ADR 0004](../adr/0004-kernel-foundation.md).
 - **Owner approval required for:** anything listed under [Scope limits](#scope-limits).
 
-Criteria in this document were fixed before results existed. Loosening a criterion after
-seeing a result requires owner approval, and must be recorded under
-[Amendments](#amendments) with the reason.
+No experiment starts until that approval is recorded. Every results file must cite the
+approved commit SHA. Once approved, criteria are fixed. Loosening a criterion after seeing
+a result requires owner approval, and must be recorded under [Amendments](#amendments)
+with the reason.
 
 ## Hypothesis
 
@@ -407,6 +410,7 @@ These require owner approval first:
 - Installing global tools beyond those already approved.
 - Publishing or upstreaming anything.
 - Changing any accepted criterion.
+- Starting any experiment before the owner's approval of this plan is recorded.
 
 ## Amendments
 
@@ -418,15 +422,33 @@ required them.
 | Item | Before | After |
 |---|---|---|
 | A2 | Pass at 90% identical functions, Fail below 70% | Assessment of proof applicability, configuration differences, TCB changes and unverified components |
-| C1 | Pass at 1 µs or less, Fail over 3 µs | 1 µs is a provisional target. Hardware, workload, method and baseline are defined. No automatic Fail |
-| C2 | Pass at 3 times Linux, Fail over 5 times | 3 and 5 times are investigation thresholds until justified. Representative workloads |
-| Kernel patches | 1,550-line hard limit | Investigation trigger, judged by security impact, complexity, proof implications and maintenance |
+| C1 | Pass at 1 µs or less, Conditional up to 3 µs with the cause understood, Fail over 3 µs with no explanation from virtualization | 1 µs is a provisional target. Hardware, workload, method and baseline are defined. Above 1 µs is "Investigate", never an automatic Fail |
+| C2 | Pass at 3 times Linux or less, Conditional 3 to 5 times with a fix identified, Fail over 5 times with no identified fix | 3 and 5 times are investigation thresholds until justified. Representative workloads. No Fail band |
+| Kernel patches | 1,550-line total budget, and exceeding it was an unacceptable modification | Investigation trigger, judged by security impact, complexity, proof implications and maintenance. No stated outcome rule yet, see review finding H1 |
+| A5 Conditional and Fail | In-kernel driver passes "within the patch budget"; Fail when neither option works "within the patch budget" | Refer to the Kernel modification policy. **This is a substantive loosening of the numeric bound, not only a wording change** |
+| Decision rule 5 | DMA isolation cannot be enforced "within the patch budget" | Cannot be enforced "without an unacceptable kernel modification" |
 | Decision rule 6 | C2 fails | A2 finds an unacceptable assurance regression. C1 and C2 never falsify automatically |
+| Reopen table | "A2 fails" reopens the assurance argument | "A2 is Conditional" reopens it, and a C1 or C2 row was added |
+| Reconsideration criterion 3 | A representative workload exceeds the C2 Fail threshold | Stays above 5 times Linux after profiling-driven work |
+| Scope limits | Patch "beyond a Conditional allowance" | Also "or one that passes the investigation trigger", and the start gate was added |
+| Plan status | Pre-registered | Draft, awaiting owner approval, with a start gate |
 
 Added the Blockers and regressions section, which defines the functional blockers and the
-unacceptable assurance regressions up front. Falsifiable criteria are kept: A1, A3, A4, A5,
-B1 to B4 and C3 are unchanged apart from replacing the "patch budget" wording with the
-policy above. The V, U, M and S labels and the changes that are unacceptable at any size
-are unchanged.
+unacceptable assurance regressions up front. A1, A3, A4, B1 to B4 and C3 are unchanged, as
+are the V, U, M and S labels and the changes that are unacceptable at any size.
 
-The owner has not yet reviewed this wording.
+**Open review findings against this wording, not yet resolved.** An adversarial review on
+2026-11-07 found these. They need owner decisions before approval:
+
+- The kernel modification policy has no outcome rule past the trigger, and its IOMMU
+  carve-out can conflict with the ban on capability code. seL4's SMMUv2 support adds
+  capability types, so an SMMUv3 driver modelled on it may need the same.
+- A2's Pass and Conditional criteria overlap, "solely" and "compensating evidence" are
+  undefined, and the required properties and configurations are not listed.
+- Decision rule 5 needs DMA to fail on both architectures, but only AArch64 has a negative
+  test.
+- A2 runs before the patches and TCB additions its Fail list refers to, and one A2 Fail
+  clause has no defined consequence.
+- "Investigate" is not in the Outcomes vocabulary, and criterion 3 adopts 5 times Linux
+  without the justification the C2 text requires.
+- C1 and C2 methods are not required to be committed before the run.

@@ -5,6 +5,35 @@ status note, not a source of truth: decisions live in [ADRs](../adr/README.md), 
 state lives in Git. Check this file against them. It records the owner's approvals below, and
 grants none of its own.
 
+## Current status, 2026-11-07 (supersedes the snapshot below)
+
+The sections below were written before publication and are kept as history. Where they
+conflict with this section, this section is right. Check it against Git and GitHub.
+
+- **Published:** `MHusted01/fyrkat` is public. `main` is the first commit. PR 1 holds the
+  foundation, and the owner merges it.
+- **Name screening:** done on 2026-11-07 against TMview (EUIPO, DKPTO, USPTO) and web search.
+  No software-related FYRKAT conflict. One live US mark, Pi-Design AG 79093756, covers
+  classes 8, 11 and 21. WIPO Madrid and non-EU, non-US offices were not searched. This is
+  not legal clearance.
+- **History review:** done before publication. All commits are signed with one noreply
+  identity. No secrets, no deleted files, no unreachable objects. One third-party address
+  sits in a public mailing-list URL, covered by the owner-approved exception in `AGENTS.md`.
+- **Plugins:** disabled at project level and confirmed in a fresh headless session.
+- **CI on PR 1:** all three required checks passed. `/dev/kvm` was present on the x86-64
+  runner and absent on arm64. Both boot jobs use TCG. The runners have QEMU 8.2.2.
+- **Protection on `main`:** read back through the API: PR required, three named checks,
+  conversations resolved, 0 approvals, admins enforced, linear history, no force pushes or
+  deletion, squash only. A failing PR was blocked and its merge refused.
+- **Not yet shown:** a direct push to `main` being rejected. The owner runs that test.
+- **Spike plan:** revised and committed as a **draft**. It is not approved, and no
+  experiment may start. An adversarial review left open findings, listed under its
+  Amendments section, and they need owner decisions.
+- **Open review findings needing owner approval** (gated paths): the sensitive-paths script
+  and its coverage, the ADR-status hook bypass, push-hook gaps, and repository settings such
+  as strict checks and SHA-pinning enforcement.
+- **M0 is not complete.** Remaining: owner decisions above, direct-push proof, PR 1 merged.
+
 ## Gate 2 decision
 
 **Approved with conditions.** The owner decided this in a separate planning conversation and

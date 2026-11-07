@@ -39,8 +39,9 @@ computing base need an ADR. `cargo-deny` enforces licences, advisories, bans and
 
 - Every change goes through a pull request, with the verification section filled in using
   real command output.
-- Review is independent: the author does not approve their own change. The `reviewer` agent
-  is adversarial review, not a replacement for the owner's decision.
+- Review should be independent: the author does not approve their own change. While there
+  is a single maintainer, the owner merges their own PRs with no required approval, and the
+  `reviewer` agent is adversarial review, not independent human review.
 - Security-sensitive paths (`.github/`, `deny.toml`, `rust-toolchain.toml`, `.claude/`,
   `Cargo.lock`, `docs/adr/`) are listed in the PR job summary and need owner approval.
 - A claim in a PR or document carries an evidence label from the

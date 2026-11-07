@@ -8,8 +8,8 @@ platform to support. This page records only what the project's tooling is tested
 | Host | Status |
 |---|---|
 | macOS on Apple Silicon | The primary development machine. `cargo xtask check` and `cargo xtask boot` (TCG and HVF) have been run here. |
-| Ubuntu 24.04, x86-64 and arm64 | Targeted by the CI workflow. The workflow has not run yet, because the repository has no remote. Path lookup for Debian and Ubuntu firmware is untested. |
-| macOS in CI | A weekly scheduled workflow is written to run `check` and `boot`. It has not run yet. |
+| Ubuntu 24.04, x86-64 and arm64 | Run by CI on 2026-11-07 (PR 1): `cargo xtask check` passed on x86-64, and `cargo xtask boot` passed on both x86-64 and arm64, with both guests under TCG. Firmware lookup worked on Ubuntu 24.04. Debian is untested. The runners have QEMU 8.2.2 from Ubuntu packages, not the 11.1.3 the spike plan pins, so CI results never substitute for spike results. `/dev/kvm` was present on the x86-64 runner and absent on arm64. Treat it as unavailable. |
+| macOS in CI | A weekly scheduled workflow is written to run `check` and `boot`. It has not run yet, because schedules fire only from the default branch. |
 | Windows | Not supported and not tested. |
 | Other Linux distributions, Intel macOS | Not tested. Firmware path lookup includes some of them, but that is not a test. |
 
