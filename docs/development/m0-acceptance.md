@@ -2,7 +2,7 @@
 
 Evidence for the M0 exit criteria in the [roadmap](../roadmap.md), gathered on 2026-11-07.
 It says what was shown, how, and what was not. The owner declares M0 complete, not this
-file.
+file. The [merged state](#merged-state) section records what actually landed on `main`.
 
 ## Exit criteria
 
@@ -59,6 +59,42 @@ From run 42399915258 on PR 1 and later runs: `/dev/kvm` was present on the x86-6
 absent on the arm64 runner. Both boot jobs use TCG. The runners have QEMU 8.2.2 from Ubuntu
 packages, not the 11.1.3 the spike plan pins. Firmware lookup worked on Ubuntu 24.04. Debian
 is untested. [Measured]
+
+## Merged state
+
+PR 1 was squash-merged into `main` on 2026-11-07, with the owner's explicit authorization, after
+all three required checks passed on its final head `3d688f8` and GitHub reported it `CLEAN`.
+
+| Fact | Value |
+|---|---|
+| Merge commit on `main` | `ae054be6c8dfb63886cebf08c8b193afd5595406`, message "chore: M0 foundation (#1)" |
+| Parent | `ee063e6`, the first commit. `main` has two commits, so history is linear |
+| Signature | Verified by GitHub (`valid`) |
+| Tree | Identical to the PR head `3d688f8`: `35f34a5cf137f386ef743526bd3c8161aa369741` [Measured] |
+| PR branch | Deleted on GitHub and locally. Remote refs are `main` and the closed PR heads |
+| Protection on `main` after the merge | Unchanged: strict, the three named checks, admins enforced, 0 approvals, linear history, conversation resolution, no force pushes or deletions. Squash-only merges |
+| CI on the push to `main` | Run 42414422734 on `ae054be` succeeded: `check and boot (ubuntu x86-64)` and `boot (ubuntu arm64)` passed. `security-sensitive paths` was skipped, because it runs only on pull requests |
+
+The recorded plan approval is at commit `46a90fac7ec09865502de1059dc9a213fa3fcd9f`. After the squash
+that commit is no longer on `main`, since the PR commits were collapsed, and it stays reachable
+through the closed PR 1 (`refs/pull/1/head` is `3d688f8`, which descends from it). The
+approved plan text is unchanged in `main`'s `docs/research/sel4-spike-plan.md`, apart from the
+Status line, the start-gate wording, the Scope limits line and the approval entry, as the plan
+records.
+
+## Workflow skills
+
+Two project skills were added to PR 1 before it merged: `/fyrkat-resume` (read-only, at session
+start) and `/handoff` (rewrites the handoff file only, at session end). Both are
+user-invoked. Each was tested in a fresh headless session:
+
+- **`/fyrkat-resume`** ran for 9 turns on Sonnet at about $0.20. The repository's `git status` and
+  HEAD were identical before and after. It listed real discrepancies between the old handoff and
+  Git, named the sources of authorization, and stopped at the gate: it refused to start spike
+  work, because execution is not authorized. [Measured]
+- **`/handoff`** ran in a scratch copy of the repository for 21 turns at about $0.32. It changed only
+  `docs/development/SESSION_HANDOFF.md`, made no commit, and did not change branch or HEAD. It
+  labelled each claim Measured or Documented, and listed what it had not verified. [Measured]
 
 ## Known limits
 
