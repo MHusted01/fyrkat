@@ -10,6 +10,13 @@ kernel foundation is undecided ([ADR 0004](docs/adr/0004-kernel-foundation.md) i
 Never describe seL4, AArch64, UEFI or any other choice as decided unless the ADR says it is
 Accepted. Read [docs/adr/README.md](docs/adr/README.md) for the ADR process.
 
+## Resuming work
+
+When resuming an unfinished milestone, read
+[docs/development/SESSION_HANDOFF.md](docs/development/SESSION_HANDOFF.md) first. It is a
+snapshot that may be out of date. Check it against Git and the ADRs, and raise any conflict
+with the owner.
+
 ## Rules
 
 - Docs describe real behaviour only. Do not document what does not exist.
