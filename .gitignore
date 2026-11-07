@@ -4,8 +4,10 @@ target/
 # Pinned developer tools installed by `cargo xtask tools`
 /.tools/
 
-# seL4 checkout and experimental kernel patches for the spike stay out of this repository
-/spikes/sel4-feasibility/sel4/
+# Spike: fetched trees (seL4 and its patches, tools, images), build output and the Python venv
+/spikes/sel4-feasibility/external/
+/spikes/sel4-feasibility/build/
+/spikes/sel4-feasibility/.venv/
 
 # Per-developer Claude Code state
 /.claude/settings.local.json
