@@ -1,7 +1,7 @@
 # C1 method: IPC latency
 
-- **Status:** Draft for owner review. No run of C1 has happened, pilot or otherwise. Not ready to
-  freeze: see [Open before the first run](#open-before-the-first-run).
+- **Status:** Draft for owner review. No run of C1 has happened, pilot or otherwise. Ready to
+  freeze once the owner confirms the items under [Open before the first run](#open-before-the-first-run).
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C1,
   approved at `46a90fa`.
 - **Effect:** the plan requires this file to be committed before any C1 run. Edits before the first
@@ -134,9 +134,22 @@ Baselines are context. They never set a threshold.
    socket ping-pong (`socketpair`, `SOCK_STREAM`) between two processes, with 1-byte and 4 KiB
    messages. Both processes are pinned to one CPU, then to two. It uses the same warm-up, batch, run
    and statistics rules.
-2. **Published seL4 figures:** see [Open before the first run](#open-before-the-first-run). The
-   plan mentions about 850 cycles, about 0.25 µs at 3.4 GHz, as a published figure, not a Fyrkat
-   measurement. No published figure is copied into a Fyrkat result.
+2. **Published seL4 figures, fixed here.** Source: the seL4 Foundation performance page,
+   `https://sel4.systems/performance.html`, which reports `sel4bench` results as mean (standard
+   deviation) in cycles. Read on 2026-11-07 [Documented]. The page does not state the seL4 version.
+   Its AArch64 row is the only one with the same architecture as the guest:
+
+   | Board and core | Clock | Kernel build | IPC call | IPC reply | Sum |
+   |---|---|---|---|---|---|
+   | Jetson TX1, Cortex-A57 | 1.9 GHz | Non-MCS, `FASTPATH=TRUE`, GCC 14.2.0, `tx1` | 419 (0) | 431 (0) | 850 cycles, about 0.45 µs |
+   | Jetson TX1, Cortex-A57 | 1.9 GHz | MCS, same flags | 434 (0) | 451 (0) | 885 cycles, about 0.47 µs |
+
+   "IPC call" and "IPC reply" are measured separately on the same core, so their sum approximates a
+   round trip and is not itself a published round-trip figure [Inferred]. This is a different core,
+   a different clock, native hardware and a different kernel configuration. Results are compared as
+   times, using the clock the page states, and never converted to cycles on the Apple core, whose
+   clock this project does not control. The published figures are context only. No published
+   figure is copied into a Fyrkat result.
 
 ## Cause analysis if W1 is above 1 µs
 
@@ -161,10 +174,10 @@ command, and the raw batch data.
 
 ## Open before the first run
 
-- **Published baseline not yet fixed.** The plan requires published seL4 round-trip figures with
-  their hardware stated. The figure has not been located yet. Before the first run, the source, the
-  platform, the kernel version and the number are added to this file. The method cannot be frozen
-  without them, and they cannot be chosen after results exist.
+- **A plan wording error.** The plan says "About 850 cycles is about 0.25 µs at 3.4 GHz" as a
+  published figure. The 850 cycles is the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs. The 3.4 GHz
+  clock belongs to the x86-64 rows. The plan's sentence is context and not a criterion, so this file
+  does not rely on it. The owner may want it corrected by an Amendment.
 - The three interpretations under [Criterion](#criterion).
 - The A2 question under [Kernel build](#kernel-build-for-c1-and-c2).
 
