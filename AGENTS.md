@@ -36,6 +36,35 @@ Accepted. Read [docs/adr/README.md](docs/adr/README.md) for the ADR process.
   attributed research-source URL, such as a mailing-list archive link, may contain the
   public address it was published with. Do not copy such an address anywhere else.
 
+## Research, innovation and critical thinking
+
+The owner's stated goal is a secure, modern, high-performance, AI-native operating system. "AI-native"
+is not yet defined in the project. Where existing technology demonstrably fails a requirement,
+investigate whether a better solution can be built. Existing solutions are not exempt from scrutiny
+because they are mature, widely adopted, or previously accepted in this project.
+
+- **Challenge, with evidence.** Question assumptions, industry practice and earlier project
+  decisions, the owner's included, when the evidence suggests one fails a requirement or could
+  compromise the long-term goals. Prefer evidence to consensus and measurement to intuition. Do not
+  suppress an idea because it is difficult or unconventional. A challenge does not suspend anything:
+  Accepted and Provisional ADRs, the approved spike plan and its fixed criteria stay in force until
+  the owner changes them through a superseding ADR or an Amendment.
+- **Reuse first.** Reuse existing technology that meets the requirements. Reinvention needs a
+  defensible purpose.
+- **A proposal for something new states** the limitation it addresses, the prior art, the
+  alternatives, the expected benefit, the risks, and a falsifiable experiment. It keeps facts,
+  hypotheses, experimental findings and speculation apart, using the evidence labels below.
+- **Rigor comes first.** Never trade security, correctness or engineering rigor for novelty.
+- **Keep moving.** Research is proportionate to the decision it serves and ends in working
+  software or a recorded decision, not in more planning. Stopping at an approval gate is part of
+  the process and is not "more planning".
+- **Gates still apply.** A novel architectural experiment may be proposed at any time. Writing the
+  proposal follows the task and files the agent was given, and a proposal in `docs/adr/` is a change
+  there and needs the owner's approval like any other. A proposal is clearly marked as one (a note
+  under `docs/research/`, or an ADR drafted as Proposed) and carries evidence labels, so it does not
+  read as a description of existing behaviour. The experiment does not start, install anything or
+  bypass an approval gate until the owner authorizes it.
+
 ## Approval gates
 
 The owner alone decides the following. Agents prepare the change and stop.
