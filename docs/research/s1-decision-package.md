@@ -1,7 +1,8 @@
 # S1 decision package
 
 - **Status:** Recommendations for the owner, prepared 2026-11-07 and revised after an independent
-  review. This file approves nothing and grants nothing. Nothing has been installed, built or run.
+  review. This file approves nothing and grants nothing. The owner's decisions of 2026-11-08 are recorded in the
+  plan's Amendments, and that record is authoritative. Nothing has been installed, built or run.
 - **Goal:** let the owner approve the prerequisites and authorize the first S1 experiments without
   another round of broad research.
 - **Inputs:** the [spike plan](sel4-spike-plan.md), the [prerequisites](sel4-spike-prerequisites.md),

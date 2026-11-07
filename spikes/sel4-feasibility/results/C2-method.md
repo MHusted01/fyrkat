@@ -1,6 +1,8 @@
 # C2 method: page faults against Linux
 
-- **Status:** Draft for owner review. No run of C2 has happened, pilot or otherwise.
+- **Status:** Approved by the owner on 2026-11-08 (decision 1, choices 1a to 1c), recorded in the
+  plan's Amendments, subject to the independent review recorded there. Frozen when merged to `main`.
+  No run of C2 has happened, pilot or otherwise.
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C2,
   approved at `46a90fa`.
 - **Effect:** the plan requires this file to be committed before any C2 run. Edits before the first
@@ -24,8 +26,8 @@ From the plan, unchanged:
 3 times and 5 times are investigation thresholds, not pass or fail lines. Each workload is reported
 on its own. Workloads are not pooled, and none is dropped after results exist.
 
-**Interpretations to confirm (owner).** The plan leaves these open. The owner confirms or changes
-each before the first run:
+**Interpretations (confirmed by the owner on 2026-11-08).** The plan leaves these open. The owner
+confirmed each:
 
 1. **The headline is cost per page touched**, not cost per fault taken (see
    [Counting and reporting](#counting-and-reporting)).

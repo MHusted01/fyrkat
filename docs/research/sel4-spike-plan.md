@@ -802,3 +802,32 @@ The approval covers the plan and its acceptance criteria only. It does **not** a
 
 The first-draft and Draft 2 entries above are history. Their statements that the owner had
 not yet approved the plan were true when written.
+
+### 2026-11-08: Owner decisions on the S1 decision package
+
+Made before any experiment ran, so no result was seen. The source is the owner's message of
+2026-11-08 in the working session, which answered the checklist in
+[s1-decision-package.md](s1-decision-package.md). The original criteria and pinned-input rows above are
+**not edited**. Where this entry changes a pinned input, this entry governs, and the original row stays
+as history. **No criterion is changed or relaxed by this entry.**
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| Decision 1 | Approved: the C1 and C2 [method files](../../spikes/sel4-feasibility/results/C1-method.md). Choice 1a: W1 **and** W2 both carry the 1 µs criterion. Choice 1b: the timing kernel (release, non-MCS SMP, `KernelArmExportVCNTUser` on) is a **measurement-only configuration outside the A2 matrix**. Stage C numbers are U and carry no assurance claim, and A2-final is still taken on K2. Choice 1c: K0 is `AARCH64_verified.cmake`, with the platform it sets recorded in the A2 results | Fixes interpretations the plan left open. 1b and 1c do not change a criterion |
+| Decision 2 | Approved: AArch64 cross compiler `aarch64-elf-gcc` (Homebrew). `x86_64-elf-gcc` only when A4 reaches x86-64 | Tool choice. Whether GCC 16.x builds seL4 17.0.0 is an A1 finding |
+| Decision 3 | Approved: rust-sel4 `v6.0.0`, its six git origins (rust-sel4, `dafny`, `hashbrown`, `offset-allocator`, `ring`, `rust-embedded-fat`, all under `github.com/coliasgroup` except rust-sel4 itself), `bindgen` 0.73.2 with the system libclang, and a spike-local `cargo deny` policy | Supply-chain approval |
+| **P1** | Approved: the pinned input "rust-sel4" is the tag `v6.0.0`, commit `c819c27b076130cba9821c4555f23773e4b0bffd`, and "Rust for rust-sel4" is `nightly-2026-08-21`. The root-task demo is `c13bdae64a860dfe1d3064717f4096e63bb7dff2` | Replaces the plan's `nightly-2026-10-28` (Pinned inputs table) and fills "commit recorded at the start of A1". A pinned input, not a criterion |
+| **P2** | Approved: the plan's C1 sentence "About 850 cycles is about 0.25 µs at 3.4 GHz" is corrected. The 850 cycles equals the Cortex-A57 call plus reply sum (419 + 431) at 1.9 GHz, about 0.45 µs [Inferred: the plan does not name its source]. The 3.4 GHz clock belongs to the x86-64 rows of the sel4bench performance page [Documented] | The sentence was context, not a criterion. It is not edited above |
+| Decision 4 | Approved: **Tier 1 installation only**: rustup `nightly-2026-08-21` with `rust-src`, `llvm-tools-preview`, `rustc-dev` and target `aarch64-unknown-none`; a Python virtual environment under `spikes/sel4-feasibility/.venv` with `sel4-deps==0.9.0` and requirements pinned with hashes; Homebrew `aarch64-elf-gcc`. Tiers 2 and 3 are **not** approved and are confirmed again at their own gates | Any other missing package stops the work and is asked about |
+| Decision 5 | Approved: creating `spikes/sel4-feasibility/Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml` and `deny.toml`. Any `.cargo/config.toml` or `build.rs` is **not** approved | Gated files, owner-approved |
+| Decision 6 | Approved: the spike nightly rule, added to `docs/standards/toolchain.md` | Policy text |
+| Decision 7 | Approved: freeze with `brew pin`, record versions and resolved paths, and stop on drift | Procedure |
+| Decision 8 | Authorized **conditionally**: A1, A3 and A4 (Sonnet) and the A2a interpretation (Opus), under this plan and the method files, one agent at a time, stopping with a report at the end of this part of Stage A. The A1 approach order and counting proposed in the decision package apply. Conditions: the independent review of the PR 6 head has passed with no unresolved material finding, PR 6 is merged to `main`, only Tier 1 is installed, and each experiment's entry criteria are confirmed before it starts | Execution scope. Nothing starts before the conditions hold |
+| P3 | Deferred until Stage D | The comparator is not authorized |
+| P4 | Declined as currently designed | B2 is unchanged |
+| P5 | Deferred until the A5 design gate | The A5 question (class D, or Investigate) stays open. No loosening |
+| A5 | **Not authorized** | Held for a reviewed design and its own authorization |
+
+**Not authorized by this entry:** A5, the comparator or any custom-kernel prototype, Tier 2 or Tier 3
+installation, any dependency or tool not listed above, a Class 3 kernel change including K4, and
+relaxing any criterion. The first-draft, Draft 2 and earlier entries remain history.

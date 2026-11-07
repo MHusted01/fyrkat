@@ -1,7 +1,8 @@
 # C1 method: IPC latency
 
-- **Status:** Draft for owner review. No run of C1 has happened, pilot or otherwise. Ready to
-  freeze once the owner confirms the items under [Open before the first run](#open-before-the-first-run).
+- **Status:** Approved by the owner on 2026-11-08 (decision 1, choices 1a to 1c), recorded in the
+  plan's Amendments, subject to the independent review recorded there. Frozen when merged to `main`.
+  No run of C1 has happened, pilot or otherwise.
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C1,
   approved at `46a90fa`.
 - **Effect:** the plan requires this file to be committed before any C1 run. Edits before the first
@@ -21,9 +22,9 @@ From the plan, unchanged:
 - **Investigate:** above 1 µs. Record the cause, separating virtualization overhead, hardware
   differences and seL4 behaviour. This is a non-passing outcome, and not a Fail.
 
-**Interpretations to confirm (owner).** The plan leaves these open. This draft chooses as follows,
-and the owner confirms or changes each before the first run. A change that loosens the criterion is
-an Amendment and not an ordinary edit:
+**Interpretations (confirmed by the owner on 2026-11-08).** The plan leaves these open. This file
+chooses as follows, and the owner confirmed each. A later change that loosens the criterion is an
+Amendment and not an ordinary edit:
 
 1. **Which workloads carry the criterion:** W1 (empty message, same core) and W2 (4 KiB in shared
    memory, same core). The plan lists both payload sizes under C1 and says "same-core round trip",
@@ -199,7 +200,7 @@ configuration and its differences from Stage B, the debug-boot placement check, 
 the four spin-loop times per run, the host power, thermal and process output, the QEMU version and
 command, and the raw batch data.
 
-## Open before the first run
+## Notes from drafting
 
 - **A plan wording error.** The plan says "About 850 cycles is about 0.25 µs at 3.4 GHz" as a
   published figure. The 850 cycles equals the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs
