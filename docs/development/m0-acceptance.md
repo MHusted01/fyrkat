@@ -2,7 +2,8 @@
 
 Evidence for the M0 exit criteria in the [roadmap](../roadmap.md), gathered on 2026-11-07.
 It says what was shown, how, and what was not. The owner declares M0 complete, not this
-file. The [merged state](#merged-state) section records what actually landed on `main`.
+file, and did so on 2026-11-07, accepting the limits listed below. The
+[merged state](#merged-state) section records what actually landed on `main`.
 
 ## Exit criteria
 

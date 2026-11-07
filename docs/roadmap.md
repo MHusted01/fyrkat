@@ -35,8 +35,9 @@ Research items R1 to R5 below run alongside these, and block the milestone named
 
 ## M0: Engineering foundation
 
-**Status: in progress.** Repository, CI, standards, agent setup, architecture documents and
-decision records.
+**Status: complete.** The owner declared M0 complete on 2026-11-07, on the evidence in the
+[M0 acceptance record](development/m0-acceptance.md), including its documented limits. Repository,
+CI, standards, agent setup, architecture documents and decision records.
 
 Exit criteria:
 
@@ -53,7 +54,8 @@ Exit criteria:
 ## S1: Kernel foundation spike
 
 **Status: planned.** It is defined by the [spike plan](research/sel4-spike-plan.md), with
-pre-registered pass and fail criteria.
+pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07, and
+**executing the experiments is not yet authorized.**
 
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
