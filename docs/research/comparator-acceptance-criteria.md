@@ -25,7 +25,9 @@ earns measured evidence. It is built only to answer a question the spike has lef
 2. The question cannot be settled by the bill of work, by published figures, or by more seL4
    experiments.
 3. The owner approves the comparator, its scope, its **effort budget** and its **tuning budget** in
-   writing, and sets the **minimum meaningful difference** δ (the draft value is 10%).
+   writing. The **minimum meaningful difference** δ is fixed here at **10%**, before any seL4 result
+   exists, so that it cannot be chosen after seeing one. Changing it is an Amendment with the owner's
+   approval.
 
 A comparator proposed without a named question is not accepted.
 
@@ -62,7 +64,7 @@ A comparator number counts only if every gate holds. A failed gate makes the num
 | Gate | Test | Why |
 |---|---|---|
 | **V1 Isolation is demonstrated by outcome** | The comparator passes the equivalent of B3's cross-client read refusal and of B4's illegal-authority sub-tests: use of an empty or wrong-typed authority, amplified rights, and a forged identity are each refused with no effect. For **each check the design relies on**, a mutant with that check removed fails at least one of these tests | Outcome-based, so it fits designs that check at bind time or by other means, and it shows each check is needed |
-| **V2 Revocation is demonstrated by outcome** | The equivalent of the B2 use-after-revoke test passes. A design that has no revocation reports "no revocation" and cannot claim the revocation row | Speed without revocable authority is not the same product, and this is a stated Fyrkat requirement |
+| **V2 Revocation is demonstrated by outcome** | The equivalent of the B2 use-after-revoke test passes. A design without revocation fails this gate, and its numbers are Void | Speed without revocable authority is not the same product, and this is a stated Fyrkat requirement |
 | **V3 Rust rules** | No `unwrap`, `expect` or `panic!` outside tests, and every `unsafe` has a `// SAFETY:` comment (`unsafe-audit`) | AGENTS.md rules |
 | **V4 Reproducible** | One documented command builds it twice with identical output or a documented cause | The A1 standard |
 | **V5 Same counter and kernel build rules** | Both designs use the counter configuration of the C1 method. The seL4 side uses the build the C1 method fixes | Equal timing source |
@@ -75,7 +77,9 @@ is allowed once, is declared before it starts, and does not replace the first.
 
 For each workload compute the ratio **R = (comparator median of run medians) / (seL4 median of run
 medians)** and a **95% bootstrap confidence interval** for R: 10,000 resamples of the 30 run medians
-of each design, with a fixed seed written in the method. With δ the minimum meaningful difference:
+of each design, drawn independently with replacement, a percentile interval (2.5th and 97.5th
+percentiles), and a fixed seed and generator written in the method before the first run. With δ the
+minimum meaningful difference:
 
 | Outcome | Condition | Consequence |
 |---|---|---|
@@ -86,8 +90,7 @@ of each design, with a fixed seed written in the method. With δ the minimum mea
 | **Equivalent** | The whole interval lies within 1 − δ and 1 + δ | No performance reason to prefer either design for that workload |
 | **Inconclusive** | None of the above | No difference is shown. It is not read as Equivalent |
 
-Using an interval keeps one bad run from deciding the result. More runs narrow the interval and do
-not widen it.
+Using an interval keeps one bad run from deciding the result. The run count is fixed at 30.
 
 ## What a comparator result can and cannot change
 

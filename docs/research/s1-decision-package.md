@@ -10,8 +10,11 @@
   [prior-art note](dma-confinement-prior-art.md), the
   [AI-native requirements](ai-native-requirements.md) and the
   [comparator criteria](comparator-acceptance-criteria.md).
-- **Evidence labels** are as in AGENTS.md. [Measured] means a query run on 2026-11-07. The commands
-  are listed in the prerequisites file.
+- **Evidence labels** are as in AGENTS.md. AGENTS.md defines [Measured] as produced by this project
+  and reproducible from the repository. Several [Measured] labels below are dated snapshots of this
+  Mac or of upstream state, taken on 2026-11-07 with the commands in the prerequisites file. Upstream
+  state can change, so read them as snapshots and not as repository facts. A claim read from source
+  code or a document is [Documented].
 
 ## Answer in one line
 
@@ -26,10 +29,13 @@ falsify the hypothesis.
 
 - **Recommend:** approve both files. They fix everything the plan asks them to fix, and the
   published baseline is now in the C1 file.
-- **Choice 1a, which C1 workload carries the 1 µs criterion.** Recommended: W1, the empty
-  same-core message. **This is the reading most favourable to a Pass.** The plan also lists
-  4 KiB same-core work, and W2 is reported in full beside W1. The alternative is to require both
-  W1 and W2. The plan says only "same-core round trip", which is why W1 is recommended.
+- **Choice 1a, which C1 workloads carry the 1 µs criterion.** Recommended: **W1 and W2 both**, the
+  empty same-core message and the 4 KiB same-core work. The plan lists both payload sizes under C1
+  and says "same-core round trip" [Documented: plan, C1]. Both is the plan's wording at its
+  strictest. W2n is reported beside W2 to separate IPC cost from the fill-and-sum cost. **W1 alone
+  is a looser reading.** Choosing it loosens the criterion, so it needs the owner's approval and an
+  Amendment with the reason, recorded before any result exists (plan, "Loosening a criterion"). It is
+  not an ordinary edit, and this package does not recommend it.
 - **Choice 1b, the timing kernel.** C1 and C2 need a release, non-MCS SMP kernel with
   `KernelArmExportVCNTUser` on, because user access to the counter is off by default [Documented:
   `config.cmake`]. The plan's gap class B requires every required test to have passed on that
@@ -101,7 +107,10 @@ falsify the hypothesis.
 - **`protobuf`:** probably needed for A3 [Inferred]. The `sel4test` apps link `sel4rpc`, which is
   built with nanopb, and nanopb's CMake needs a working `protoc`. `sel4-deps` 0.9.0 requires only the
   Python `protobuf<4`. If A3 stops on it, the work stops and asks. It is not approved in advance.
-- **Not needed:** `repo`, Nix, Docker (unless A1 goes Conditional), `u-boot-tools`.
+- **Not needed:** `repo`, Nix, `u-boot-tools`. Docker is needed only if A1 goes to its Conditional
+  path, and then it needs its own approval.
+- **Any other missing package stops the work and is asked about.** None is pre-approved by this
+  table.
 - **`sel4test` without `repo`:** the `sel4test-manifest` tag `17.0.0` lists each project's revision,
   and its kernel entry is `62e345c240a15671484530b4e6e069ce266c28d7`, the plan's pin [Measured].
   The tag is lightweight, so pin the commit `655b1f2a67de058571b5f653688aa55440745192`. A3 fetches
@@ -110,9 +119,16 @@ falsify the hypothesis.
 
 ### 5. Spike workspace files: approve creating them
 
-- **Recommend:** approve `spikes/sel4-feasibility/Cargo.toml` (its own `[workspace]` root),
-  `Cargo.lock` and `rust-toolchain.toml` (the Tier 1 nightly). The root workspace and its
-  `rust-toolchain.toml` are unchanged.
+- **Recommend:** approve exactly these files under `spikes/sel4-feasibility/`:
+  `Cargo.toml` (its own `[workspace]` root), `Cargo.lock`, `rust-toolchain.toml` (the Tier 1
+  nightly), and `deny.toml`, the spike-local policy that decision 3 needs. The root workspace, its
+  `rust-toolchain.toml` and the root `deny.toml` are unchanged.
+- **Other gated files are not included.** A rust-sel4 workspace may also need a `.cargo/config.toml`
+  or a `build.rs` [Inferred]. AGENTS.md gates both at any depth. If A1 needs one, the work stops and
+  asks, and this approval does not cover it.
+- **Coupling.** Decisions 3, 4, 5 and P1 all assume the same nightly, `nightly-2026-08-21`. They are
+  not independent. If decision 3 changes the rust-sel4 pin, the nightly in decisions 4 and 5 and in
+  P1 changes with it.
 - **Evidence:** AGENTS.md gates these files at any depth [Documented]. The "spike isolation" step of
   `cargo xtask check` enforces that nothing outside `spikes/` depends on them, and it passes today
   [Measured]. The plan requires the spike to be its own workspace [Documented].
@@ -142,10 +158,11 @@ falsify the hypothesis.
      version, which follows macOS updates.
   4. If a recorded version changes between A2-final and Stage C, the work stops and the owner is
      told.
-- **Why not the toolchain standard's exemption:** the standard exempts QEMU, EDK2, shellcheck and
-  actionlint because they do not produce build output. A cross GCC does, and a change in it alters
-  the preprocessed `kernel_all.c` that A2 compares [Inferred]. So the compiler is frozen and
-  recorded, and the standard is not widened to cover it.
+- **Why not the toolchain standard's exemption:** the standard leaves QEMU, EDK2, shellcheck and
+  actionlint unpinned and prints their versions in CI logs [Documented: `toolchain.md`, line 15].
+  It states no reason. The likely one is that they do not produce build output [Inferred]. A cross
+  GCC does, and a change in it alters the preprocessed `kernel_all.c` that A2 compares [Inferred]. So
+  the compiler is frozen and recorded, and the standard is not widened to cover it.
 - **Rejected:** hash-pinning builds from source for the spike. It is disproportionate before A1
   shows whether a native workflow exists at all.
 
@@ -160,41 +177,59 @@ falsify the hypothesis.
   how the P5 tests are shown to have power.
 - **A question the owner must settle before A5 runs** (found by the review). The plan makes a test
   that "did not exercise the code the property rests on" a class D cell, and class D is a Fail that
-  falsifies the hypothesis. QEMU completes SMMU commands inside the MMIO write, so a server that
-  omits `CMD_SYNC` can pass every P5 test [Measured: `smmuv3.c`]. If that counts as "did not
-  exercise", the K3 cell for P5 is class D on this host, whatever the design. **Recommended
-  reading:** a test exercises the code if a mutant that omits the step is *detected where QEMU
-  models its effect*, and a step whose effect QEMU does not model (completion latency) is
-  recorded as an emulator limit that only hardware can close. That reading must be the owner's,
-  and it is stated here so that it is not decided by whoever runs A5.
+  falsifies the hypothesis [Documented: plan, assurance matrix]. QEMU completes SMMU commands inside
+  the MMIO write, so a server that omits `CMD_SYNC` could pass every P5 test [Documented: QEMU
+  `smmuv3.c`, read and not run; the consequence is Inferred]. If that counts as "did not exercise",
+  the K3 cell for P5 is class D on this host, whatever the design. The A5-arm Pass also needs
+  teardown that "provably blocks device access before memory is reused" [Documented: plan, A5].
+  - **Recommended default: no loosening.** Under the plan as written, a mandatory step that this
+    host cannot test leaves A5-arm at **Investigate** [Documented: plan, Outcomes, "something that
+    cannot be tested"]. Investigate on A5-arm becomes Fail at the end of the spike [Documented:
+    plan, "End of spike"]. Only hardware could close it. This default decides nothing before A5.
+  - **The looser reading is Amendment P5**, below. It would treat a step whose effect QEMU does not
+    model as an emulator limit instead of Investigate, so it loosens both the class D wording and
+    the "provably" wording of the A5-arm Pass. It is decided at the A5 design gate, with the design
+    in front of the owner, and never by whoever runs A5.
+- **A1 approaches, in order, fixed now.** The plan records an experiment as Blocked after "three
+  distinct, documented approaches" and treats Blocked as Fail [Documented: plan, Blocked]. So that
+  this is not interpreted after a failure, the recommended order is: (1) Homebrew `aarch64-elf-gcc`
+  with rust-sel4 `v6.0.0`; (2) the Arm cask `gcc-aarch64-embedded`; (3) a digest-pinned container.
+  Approaches 2 and 3 are new installations, so each needs the owner's approval when reached.
+  Switching the rust-sel4 version, or a flag change inside an approach, is recorded in the A1 results
+  and does not count as a new approach and does not reset the count. The owner may change this order
+  before A1 starts.
 - **Order and stop rules:** A1 first. If A1 is Fail or Blocked, stop and report, because that
   falsifies the hypothesis. A2a needs A1's preprocessed kernel. A3 needs A1's build. A4 needs A3's
   boot.
 
 ## Proposed Amendments, for the owner to approve or decline separately
 
+Only P1 and P2 are recommended for approval now.
+
 | ID | Amendment | Effect |
 |---|---|---|
 | P1 | Change the pinned rust-sel4 input to `v6.0.0` with `nightly-2026-08-21` (decision 3). Add it as an Amendment entry, and do not edit the plan inline | Changes a pinned input and no criterion |
-| P2 | Correct the plan's sentence "About 850 cycles is about 0.25 µs at 3.4 GHz". The 850 cycles equals the Cortex-A57 sum at 1.9 GHz, about 0.45 µs [Inferred: the plan's source is not named]. The 3.4 GHz clock belongs to the x86-64 rows [Measured: performance page] | Wording only |
+| P2 | Correct the plan's sentence "About 850 cycles is about 0.25 µs at 3.4 GHz". The 850 cycles equals the Cortex-A57 sum at 1.9 GHz, about 0.45 µs [Inferred: the plan's source is not named]. The 3.4 GHz clock belongs to the x86-64 rows [Documented: performance page]. Add it as an Amendment entry, and do not edit the plan inline | Wording only |
 | P3 | Adopt the [comparator criteria](comparator-acceptance-criteria.md). This adds rules to Stage D, which the plan treats as fixed. Decline it if no comparator is wanted | A Stage D rule. No criterion in A1 to C3 |
-| P4 | Add to B2 the measurement "revoke 1 of 1,000 sibling grants, then count the survivors" (see the [AI-native note](ai-native-requirements.md)) | If it shows a gap, it selects B2's Conditional clause and forces an A2 rerun |
+| P4 | Add to B2 the measurement "revoke 1 of 1,000 sibling grants, then count the survivors" (see the [AI-native note](ai-native-requirements.md)). **Recommended: decline for S1.** As worded the result is set by the test design and not by seL4: revoking a parent leaves 0 survivors, and deleting one copy leaves 999. It would need the grant mechanism and the granter's authority defined first. Adopting it also changes how B2 is judged, which the plan allows only by Amendment before any result (plan, "Later commits ... may not change a criterion"). The note's B4 deep-chain idea is likewise not proposed for S1 | If adopted and it shows a gap, it selects B2's Conditional clause and forces an A2 rerun |
+| P5 | The looser reading of decision 8: a mandatory A5 step whose effect QEMU does not model is recorded as an emulator limit instead of leaving A5-arm at Investigate. **Recommended: decline for now, decide at the A5 design gate** | Loosens the class D wording and the A5-arm "provably" wording, and so needs an Amendment naming both |
 
 ## Approval checklist
 
-Answer each row with "yes" or the change you want. Rows are independent.
+Answer each row with "yes" or the change you want. Rows 3, 4 and 5 and P1 are coupled through the
+nightly (see decision 5). The other rows are independent.
 
 | # | Decision | Recommended answer |
 |---|---|---|
-| 1 | C1 and C2 methods, and choices 1a, 1b (a), 1c | Yes |
+| 1 | C1 and C2 methods, and choices 1a (W1 and W2 both), 1b (a), 1c | Yes |
 | 2 | Cross-compilers | `aarch64-elf-gcc` now, `x86_64-elf-gcc` at A4 |
 | 3 | rust-sel4 `v6.0.0`, six git origins, `bindgen`, spike-local `cargo deny` | Yes, with P1 |
 | 4 | Tier 1 installation now | Yes. Tiers 2 and 3 later |
-| 5 | Workspace files | Yes, for `spikes/sel4-feasibility/` only |
+| 5 | Workspace files: `Cargo.toml`, `Cargo.lock`, `rust-toolchain.toml`, `deny.toml` | Yes, for `spikes/sel4-feasibility/` only. Other gated files stop and ask |
 | 6 | Nightly policy text | Yes |
 | 7 | Freeze, record and stop on drift | Yes |
-| 8 | Authorize A1, A3, A4 (Sonnet) and A2a (Opus). Hold A5 | Yes |
-| P1 to P4 | Amendments | P1 and P2 yes. P3 and P4 at the owner's wish |
+| 8 | Authorize A1, A3, A4 (Sonnet) and A2a (Opus), with the A1 approach order above. Hold A5, and no loosening of class D or the A5-arm Pass | Yes |
+| P1 to P5 | Amendments | P1 and P2 yes. P3 at the owner's wish. P4 and P5 decline for now |
 
 ## What happens after approval
 

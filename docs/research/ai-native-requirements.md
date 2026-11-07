@@ -5,7 +5,8 @@
 - **Purpose:** turn the phrase into measurable architectural requirements, and say which ones S1
   already measures and which belong later.
 - **Scope rule:** S1 stays a kernel-foundation spike. This document proposes **no new S1
-  experiment**.
+  experiment**. It records two candidate additions to existing experiments (B2 and B4) so that the
+  owner can decline them. The decision package recommends declining both for S1 (P4).
 
 ## What the repository says today
 
@@ -65,10 +66,14 @@ experiment already measures it. [Inferred: the mapping is mine and the owner sho
    experiments the plan defines. The two additions below are proposals and need the owner's approval.
 2. **Report through the lens.** When Stage D weighs the results, it can read B2 as AR3 and A5-arm as
    AR4. That needs no plan change.
-3. **Proposed addition to B2 (item P4 of the decision package):** after revoking one of 1,000
-   sibling grants, count the survivors. If it shows a gap, it selects B2's existing Conditional
+3. **Candidate addition to B2 (item P4 of the decision package, recommended for decline):** after
+   revoking one of 1,000 sibling grants, count the survivors. As worded the count is set by how the
+   grants are made and which one is revoked, not by seL4, so it needs the grant mechanism and the
+   granter's authority defined first. It would also change how B2 is judged, which the plan allows
+   only by Amendment before any result. If it showed a gap, it would select B2's existing Conditional
    clause, which lists the gap and forces an A2 rerun, so it is a real cost and not free reporting.
-   A second proposed addition is a B4 amplification attempt through a deep chain.
+   A second candidate is a B4 amplification attempt through a deep chain. It has no item in the
+   decision package and is not proposed for S1.
 4. **Defer AR5 to AR9.** They need designs that S1 does not produce. AR5 is cheap and is the first
    to add, once M3 has processes and a pager.
 

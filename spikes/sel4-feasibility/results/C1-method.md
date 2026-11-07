@@ -23,11 +23,15 @@ From the plan, unchanged:
 **Interpretations to confirm (owner).** The plan leaves these open. This draft chooses as follows,
 and the owner confirms or changes each before the first run:
 
-1. **Which workload carries the criterion:** W1 (empty message, same core), the smallest round trip.
-   This is the reading most favourable to a Pass. The plan also lists 4 KiB same-core work, which is
-   W2. W2 to W6 are reported in full and carry no threshold. Requiring W1 and W2 both is the
-   stricter alternative.
-2. **Which statistic:** the median of the 30 run medians of W1.
+1. **Which workloads carry the criterion:** W1 (empty message, same core) and W2 (4 KiB in shared
+   memory, same core). The plan lists both payload sizes under C1 and says "same-core round trip",
+   so this file takes the plan's wording at its strictest: a Pass needs both at 1 µs or less. W2n is
+   reported beside W2, and the cause analysis uses it to separate IPC cost from the fill-and-sum
+   cost. W1 alone is a **looser** reading. It would loosen the criterion, so it needs the owner's
+   approval and an Amendment with the reason, recorded before any result exists. W3 to W6 are
+   reported in full and carry no threshold.
+2. **Which statistic:** the median of the 30 completed-run medians, for each of W1 and W2. The
+   rules for stopped runs, ties and rounding are under [Measurement](#measurement).
 3. **Which kernel:** the 4-vCPU SMP kernel (K2), with W1 pinned to one core. K1 (1 vCPU) is not used
    for the criterion.
 
@@ -95,8 +99,10 @@ A round trip is one call plus one reply. For W5 and W6 an iteration is the whole
 per-pair figure (iteration time divided by 3). Threads are placed with `seL4_TCB_SetAffinity`
 before timing starts.
 
-**If K2 is unavailable** because A3 found only 1 vCPU works, W3, W4 and W6 are recorded as not run,
-with the A3 cause. W1, W2, W2n and W5 run on K1. No outcome rule is added by this sentence.
+**If K2 is unavailable** because A3 found only 1 vCPU works, this file defines no fallback. The plan
+makes that A3 outcome Investigate, and Stage C needs A2-final, which needs the K2 tests. The owner
+decides what follows. A change to this method is an ordinary edit before the first run and an
+Amendment after it.
 
 ## Measurement
 
@@ -110,9 +116,14 @@ with the A3 cause. W1, W2, W2n and W5 run on K1. No outcome rule is added by thi
   its data is kept and reported.
 - **Resolution rule:** one counter tick must be under 1% of the batch duration, so a batch must last
   at least 100 ticks (about 4.2 µs at 24 MHz). The harness flags any batch under 1,000 ticks as a
-  sign of a broken clock and stops the run. A stopped run is reported in the results file with its
-  data and its cause. Statistics are given with it and without it, and the number of stopped runs is
-  stated. Replacement runs are labelled as replacements.
+  sign of a broken clock and stops the run.
+- **Stopped runs.** A run stopped for a broken clock or a timeout is kept and reported in its own
+  table with its data and its cause. It does not count toward the 30. Each is replaced by a fresh
+  run, labelled as a replacement, up to 10 replacements per workload series. The Pass test and the
+  headline statistics use the 30 completed runs only. Statistics that include the stopped runs are
+  reported beside them as a sensitivity result. If 30 completed runs cannot be had within 10
+  replacements, the outcome is Investigate, with the cause. A run is completed when it finishes all
+  seven workloads.
 - **Runs:** 30 per workload. Every run is a fresh VM boot, so VM-to-VM variation and vCPU
   placement are inside the spread. Workloads run in the fixed order W1, W2, W2n, W3, W4, W5, W6
   inside each run.
@@ -124,9 +135,11 @@ with the A3 cause. W1, W2, W2n and W5 run on K1. No outcome rule is added by thi
   measure.
 - **Reported across runs, per workload:** the median of the 30 run medians (the headline figure),
   the minimum and maximum run median, the interquartile range of the run medians (Q3 minus Q1, linear
-  interpolation), and the median of the 30 run 99th percentiles. Ratios are rounded to two significant
-  figures. Raw batch results are stored.
-- **Pass test:** the W1 headline figure is 1 µs or less.
+  interpolation), and the median of the 30 run 99th percentiles. The median of an even number of
+  values is the mean of the two middle values. Ratios are rounded to two significant figures for
+  display only, and every test uses the unrounded value. Raw batch results are stored.
+- **Pass test:** the W1 headline figure and the W2 headline figure are each 1 µs or less, compared
+  unrounded.
 
 ## Baseline
 
@@ -135,7 +148,7 @@ Baselines are context. They never set a threshold.
 1. **Same-VM Linux:** the pinned Linux guest from the [C2 method](C2-method.md). A Unix-domain
    socket ping-pong (`socketpair`, `SOCK_STREAM`) between two processes, with 1-byte and 4 KiB
    messages. Both processes are pinned to one CPU, then to two. It uses the same warm-up, batch, run
-   and statistics rules.
+   and statistics rules, with 1,000 batches of 10,000 iterations per run in every case.
 2. **Published seL4 figures, fixed here.** Source: the seL4 Foundation performance page,
    `https://sel4.systems/performance.html`, which reports `sel4bench` results as mean (standard
    deviation) in cycles. Read on 2026-11-07 [Documented]. The page says it was generated on
@@ -155,7 +168,7 @@ Baselines are context. They never set a threshold.
    clock this project does not control. The published figures are context only. No published
    figure is copied into a Fyrkat result.
 
-## Cause analysis if W1 is above 1 µs
+## Cause analysis if W1 or W2 is above 1 µs
 
 The results file separates the causes below, with evidence for each, and does not guess:
 
@@ -179,10 +192,10 @@ command, and the raw batch data.
 ## Open before the first run
 
 - **A plan wording error.** The plan says "About 850 cycles is about 0.25 µs at 3.4 GHz" as a
-  published figure. The 850 cycles equals the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs [Inferred: the plan does
-  not name its source]. The 3.4 GHz
-  clock belongs to the x86-64 rows. The plan's sentence is context and not a criterion, so this file
-  does not rely on it. The owner may want it corrected by an Amendment.
+  published figure. The 850 cycles equals the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs
+  [Inferred: the plan does not name its source]. The 3.4 GHz clock belongs to the x86-64 rows
+  [Documented: the performance page]. The plan's sentence is context and not a criterion, so this
+  file does not rely on it. The owner may want it corrected by an Amendment (P2).
 - The three interpretations under [Criterion](#criterion).
 - The A2 question under [Kernel build](#kernel-build-for-c1-and-c2).
 

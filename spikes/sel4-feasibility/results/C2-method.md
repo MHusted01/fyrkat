@@ -30,9 +30,13 @@ each before the first run:
    [Counting and reporting](#counting-and-reporting)).
 2. **Linux keeps its shipped `fault_around_bytes`** for the headline. The one-page setting is a
    sensitivity result.
-3. **The seL4 headline pager retypes one frame inside each fault**, so that its cost includes the
-   zeroing that Linux does inside its fault.
-4. **The statistic** is the median of 30 run medians.
+3. **The seL4 headline pager retypes one frame inside each fault that allocates** (F1, F3 and the
+   allocating part of F4), so that its cost includes the zeroing that Linux does inside its fault
+   for anonymous memory. F2 maps an existing frame. See
+   [Pager action per workload](#pager-action-per-workload-on-sel4).
+4. **The statistic** is the median of 30 completed-run medians, with the rules under
+   [Counting and reporting](#counting-and-reporting).
+5. **The workload order and cleanup** within a boot (below).
 
 ## Setup
 
@@ -40,8 +44,8 @@ each before the first run:
   `-cpu host`, machine `virt` with the GIC version A3 selects, 4 vCPUs, 2 GiB RAM, for both systems.
   Guest RAM is preallocated, with `-object memory-backend-ram,prealloc=on` or the equivalent, so that
   the host's first-touch cost does not fall inside a timed batch. If QEMU 11.1.3 cannot preallocate
-  under HVF on this host, that is reported to the owner before any run. No run proceeds with the
-  first-touch cost uncontrolled.
+  under HVF on this host, that is reported to the owner before any recorded run. No run proceeds with
+  the first-touch cost uncontrolled.
 - **Order:** the two systems run in alternating order (seL4, Linux, seL4, Linux), each run a fresh
   VM boot, so that host drift hits both. Core-type observation and the power, thermal and process
   records follow the [C1 method](C1-method.md#hardware-and-setup).
@@ -55,12 +59,16 @@ each before the first run:
 - **Linux runtime state:**
   - each boot uses QEMU `-snapshot`, so the base image stays unchanged and its hash stays valid;
   - the harness arrives on a second read-only virtio disk with a FAT filesystem made on the host.
-    Whether the guest kernel mounts it is **not tested**. If it cannot, the delivery method changes
-    before the first run;
+    Whether the guest kernel mounts it is **not tested**. A harness pilot, which the plan allows,
+    checks it. If it cannot mount, the owner is told and the delivery method changes by an
+    Amendment, because a pilot has then already run;
   - transparent huge pages are turned off at runtime, by writing `never` to
-    `/sys/kernel/mm/transparent_hugepage/enabled`, and the harness records the file afterwards;
-  - default services only. The harness waits until the one-minute load average is under 0.05 before
-    it starts, and records the value;
+    `/sys/kernel/mm/transparent_hugepage/enabled` and to every
+    `/sys/kernel/mm/transparent_hugepage/hugepages-*/enabled` that exists, and the harness records
+    those files afterwards;
+  - default services only. The harness waits up to 10 minutes for the one-minute load average to
+    fall under 0.05 before it starts, and records the value. If it does not, the run is stopped and
+    reported as a stopped run;
   - before each timed phase it runs `sync` and waits until `Dirty` in `/proc/meminfo` is under 1 MiB,
     so writeback does not run inside a batch;
   - the harness process is pinned to CPU 0 with `sched_setaffinity`.
@@ -77,8 +85,10 @@ each before the first run:
 - **Timing source and resolution:** the virtual counter, as in C1, with the same batch rule: one
   tick under 1% of a batch, so a batch lasts at least 100 ticks (about 4.2 µs at 24 MHz). A fault
   costs far more than 4 ns, so a real batch of 1,024 pages lasts far longer [Inferred]. The harness
-  records the tick count of every batch and stops the run, as in C1, if a batch falls under 1,000
-  ticks.
+  records the tick count of every batch. A batch under 100 ticks fails the 1% rule: the run stops,
+  the owner is told, and the batch size is not changed afterwards. C2 does not use C1's 1,000-tick
+  flag. With Linux fault-around, an F2 batch may need only about one fault per 16 pages, and its
+  length in ticks is not known in advance [Inferred].
 
 ## Workloads
 
@@ -97,18 +107,35 @@ Notes:
   4,096 pages (16 MiB) of the 128 MiB file. The copy-on-write region is a private mapping of the
   next 4,096 pages (16 MiB) of the same file, read once beforehand. The three regions do not overlap.
 - **F4 order:** the list of 16,384 (region, page) pairs is generated in region order, then shuffled
-  with a Fisher–Yates shuffle. The random numbers come from `xorshift64*` with state shifts 12, 25 and
-  27 and multiplier `0x2545F4914F6CDD1D`, seeded with `0x0F1A2B3C4D5E6F70`. Both systems get the same
-  order. F4 has 16 batches of 1,024 pages.
+  with a Fisher–Yates shuffle: for `i` from 15,383 down to 1, take `j = x mod (i + 1)` where `x` is the
+  next output, and swap positions `i` and `j`. The random numbers come from `xorshift64*` with state
+  shifts 12, 25 and 27 and multiplier `0x2545F4914F6CDD1D`, seeded with `0x0F1A2B3C4D5E6F70`. Both
+  systems get the same order. F4 has 16 batches of 1,024 pages.
+- **Order within a boot, and cleanup:** F1, F2, F3, F4, each on a fresh mapping. After each workload,
+  outside timing, the region is unmapped. On seL4 its frames are revoked and retyped back to
+  untyped memory. On Linux the harness calls `munmap`, and the file's pages stay resident.
 - **F1 to F3** have 32 batches each. A fresh mapping is used for each workload and each run, so F2
   does not warm F3.
 - **File:** on Linux it is a regular file on the guest's root filesystem, not tmpfs, because tmpfs
   uses a different fault path. On seL4 it is an in-memory store owned by the pager. The results file
   states this difference. Disk reads never happen in a timed phase.
-- **Frame source on seL4:** the headline retypes one frame per fault inside the timed batch. The seL4
-  kernel zeroes memory on retype, and the Linux kernel zeroes pages inside its fault, so both
-  headlines include zeroing. As a sensitivity result the pager also runs with a retype of 64 frames at
-  a time, inside the timed batch. The cost of the retypes is reported separately.
+
+### Pager action per workload on seL4
+
+The headline pager does the following, and any other action is a separate result:
+
+- **F1:** retype one 4 KiB frame inside the fault. The kernel zeroes it on retype. Map it
+  read-write. Linux zeroes an anonymous page inside its fault as well.
+- **F2:** the store's frame already exists and is resident. Map it read-only. No retype, copy or
+  zeroing. Linux maps a page-cache page without zeroing, so none is expected on either side.
+- **F3:** retype one frame, copy 4 KiB into it from the store's frame, and remap the page read-write.
+  The retype zeroes the frame and the copy then overwrites it. Linux copies without zeroing, so that
+  zeroing is a cost of this pager's design and is reported separately.
+- **F4:** each access follows the action for its region.
+
+Zeroing therefore sits in both headlines for F1 only. As a sensitivity result the pager also runs
+with a retype of 64 frames at a time, inside the timed batch, for F1, F3 and the allocating part of
+F4. The cost of the retypes is reported separately.
 
 ## Counting and reporting
 
@@ -127,15 +154,20 @@ Notes:
 - **Batches:** every batch of every run is kept, including the first, because first-touch cost is
   the measurement. No batch or run is removed as an outlier. A stopped run is reported with its data
   and cause, as in C1.
+- **Stopped runs:** handled as in the [C1 method](C1-method.md#measurement): kept and reported in their
+  own table, replaced by fresh labelled runs up to 10 per workload, system and setting, and left out
+  of the headline statistics, with a sensitivity result that includes them. If 30 completed runs
+  cannot be had, the outcome is Investigate, with the cause.
 - **Per-run statistics:** median and 99th percentile (nearest rank) of the batch results. With 16 or
-  32 batches the 99th percentile is close to the maximum, and the results file says so.
+  32 batches the nearest-rank 99th percentile is the maximum batch, and the results file says so.
+  The median of an even number of values is the mean of the two middle values.
 - **Reported across runs:** the median of run medians (the headline), the minimum and maximum run
   median, the interquartile range (Q3 minus Q1, linear interpolation), and the median of run 99th
   percentiles, for each system and workload.
-- **Ratio:** the seL4 headline divided by the Linux headline, per workload, rounded to two
-  significant figures, with a range from the lowest seL4 run median over the highest Linux run
-  median to the highest seL4 run median over the lowest Linux run median. The 3 times threshold is
-  tested on the headline ratio.
+- **Ratio:** the seL4 headline divided by the Linux headline, per workload, with a range from the
+  lowest seL4 run median over the highest Linux run median to the highest seL4 run median over the
+  lowest Linux run median. Ratios are rounded to two significant figures for display only. The 3
+  times threshold is tested on the unrounded headline ratio.
 
 ## Cause analysis above 3 times
 

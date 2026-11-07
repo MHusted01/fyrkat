@@ -15,7 +15,7 @@ only through a page summariser, so quotes are unverified. "Re-checked" means I c
 
 ## The short answer
 
-1. **[Measured, re-checked]** The pinned seL4 tree has an SMMUv2 driver (`src/drivers/smmu/` holds
+1. **[Documented, re-checked]** The pinned seL4 tree has an SMMUv2 driver (`src/drivers/smmu/` holds
    `config.cmake` and `smmuv2.c`) and no SMMUv3 file anywhere.
 2. **[Inferred]** Every working seL4 or hypervisor SMMUv3 design found puts the logic in the kernel or
    hypervisor. No published user-level SMMUv3 management on seL4 was found. This is a generalisation
@@ -148,9 +148,12 @@ experiment. None is authorized, and each belongs to the A5 design, not to S1 Sta
 A5-arm can pass only through K3, and revoke-while-mapped is the test most likely to decide it.
 **Open interpretation (the owner's to settle before A5 runs):** the plan makes a required test that "did
 not exercise the code the property rests on" a class D cell. QEMU completes SMMU commands inside the
-MMIO write, so a server that omits `CMD_SYNC` can pass every P5 test [Documented: `smmuv3.c`]. If that
-counts as "did not exercise", the K3 cell for P5 is class D on this host and A2 is a Fail whatever the
-design. The decision package recommends a reading and does not apply it. The
+MMIO write, so a server that omits `CMD_SYNC` could pass every P5 test [Documented: `smmuv3.c`, read
+and not run. The consequence is Inferred]. If that counts as "did not exercise", the K3 cell for P5 is
+class D on this host and A2 is a Fail whatever the design. The decision package recommends no
+loosening: under the plan as written an untestable mandatory step leaves A5-arm at Investigate, which
+becomes Fail at the end of the spike. A looser reading is a proposed Amendment (P5) for the A5 design
+gate. The
 A5 design gate should therefore settle three things before any code: how the root task's revoke
 power is handled (trusted and constrained, or detected by O1), who owns the DMA pool (O3), and how
 the tests are shown to have power (O4). If K3 cannot meet the tests, A5-arm is a Fail and the
