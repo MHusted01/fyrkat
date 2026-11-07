@@ -1,7 +1,15 @@
 {
   "model": "sonnet",
   "enabledPlugins": {
-    "ecc@ecc": false
+    "ecc@ecc": false,
+    "postman@claude-plugins-official": false,
+    "swift-lsp@claude-plugins-official": false,
+    "adhd-study-coach@synced": false,
+    "engineering@synced": false,
+    "design@synced": false,
+    "data@synced": false,
+    "learn-with-coursera@synced": false,
+    "cowork-plugin-management@synced": false
   },
   "permissions": {
     "allow": [
