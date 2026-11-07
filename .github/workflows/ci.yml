@@ -109,4 +109,15 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: ./.github/scripts/sensitive-paths.sh "$BASE_SHA" "$HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"
+        # This is a notice for the reviewer, not an access control. The workflow file comes
+        # from the pull request, so a PR can change what this step does. Where the base
+        # branch has the script, run that copy so the PR cannot edit the script itself.
+        run: |
+          script="$RUNNER_TEMP/sensitive-paths.sh"
+          if git cat-file -e "$BASE_SHA:.github/scripts/sensitive-paths.sh" 2>/dev/null; then
+            git show "$BASE_SHA:.github/scripts/sensitive-paths.sh" > "$script"
+          else
+            echo "::notice::The base has no sensitive-paths script, so this run used the pull request's copy."
+            cp .github/scripts/sensitive-paths.sh "$script"
+          fi
+          bash "$script" "$BASE_SHA" "$HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"

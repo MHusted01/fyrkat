@@ -56,7 +56,7 @@ cargo xtask boot           # boot-smoke under QEMU, AArch64 and x86-64
 | Command | What it does |
 |---|---|
 | `cargo xtask tools` | Install the pinned tools into `.tools/` (gitignored). Versions live in `xtask/src/tools.rs`. |
-| `cargo xtask check` | Run rustfmt, clippy (host and both UEFI targets), nextest, rustdoc, cargo-deny, shellcheck, hook tests, actionlint, Markdown link check, spike isolation check. Prints PASS or FAIL per step and fails if any failed. |
+| `cargo xtask check` | Run rustfmt, clippy (host and both UEFI targets), nextest, rustdoc, cargo-deny, shellcheck, script tests (hooks and CI helper scripts), actionlint, Markdown link check, spike isolation check. Prints PASS or FAIL per step and fails if any failed. |
 | `cargo xtask boot` | Build boot-smoke and boot it under QEMU. Fails unless the marker appears before the timeout. |
 | `cargo test` | Host unit tests of `xtask` only. |
 

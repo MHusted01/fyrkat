@@ -8,7 +8,11 @@ use std::ffi::OsString;
 use std::path::PathBuf;
 
 const UEFI_TARGETS: [&str; 2] = ["aarch64-unknown-uefi", "x86_64-unknown-uefi"];
-const HOOK_TESTS: &str = ".claude/hooks/test-hooks.sh";
+/// Shell test suites for the hooks and the CI helper scripts.
+const SCRIPT_TESTS: [&str; 2] = [
+    ".claude/hooks/test-hooks.sh",
+    ".github/scripts/test-sensitive-paths.sh",
+];
 
 /// Shared inputs for every step.
 struct Ctx {
@@ -56,8 +60,8 @@ const STEPS: &[Step] = &[
         run: shellcheck,
     },
     Step {
-        name: "hook tests",
-        run: hook_tests,
+        name: "script tests",
+        run: script_tests,
     },
     Step {
         name: "actionlint",
@@ -139,11 +143,14 @@ fn shellcheck(ctx: &Ctx) -> Result<()> {
     Cmd::new("shellcheck").args(scripts).dir(&ctx.root).run()
 }
 
-fn hook_tests(ctx: &Ctx) -> Result<()> {
-    if !ctx.root.join(HOOK_TESTS).is_file() {
-        return Err(XtaskError::new(format!("{HOOK_TESTS} is missing")));
+fn script_tests(ctx: &Ctx) -> Result<()> {
+    for test in SCRIPT_TESTS {
+        if !ctx.root.join(test).is_file() {
+            return Err(XtaskError::new(format!("{test} is missing")));
+        }
+        Cmd::new("bash").args([test]).dir(&ctx.root).run()?;
     }
-    Cmd::new("bash").args([HOOK_TESTS]).dir(&ctx.root).run()
+    Ok(())
 }
 
 fn actionlint(ctx: &Ctx) -> Result<()> {

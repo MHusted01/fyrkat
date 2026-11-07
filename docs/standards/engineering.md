@@ -42,8 +42,11 @@ computing base need an ADR. `cargo-deny` enforces licences, advisories, bans and
 - Review should be independent: the author does not approve their own change. While there
   is a single maintainer, the owner merges their own PRs with no required approval, and the
   `reviewer` agent is adversarial review, not independent human review.
-- Security-sensitive paths (`.github/`, `deny.toml`, `rust-toolchain.toml`, `.claude/`,
-  `Cargo.lock`, `docs/adr/`) are listed in the PR job summary and need owner approval.
+- Security-sensitive paths (`.github/`, `.claude/`, `.cargo/`, `xtask/`, `docs/adr/`, `deny.toml`, `rust-toolchain.toml`, every `Cargo.toml` and `Cargo.lock`, `AGENTS.md`, `CLAUDE.md`) are listed in the PR job summary and need owner approval. The
+  listing is a notice for the reviewer, not an access control: the workflow file comes from
+  the PR. Owner review and branch protection are the controls. With one maintainer, GitHub
+  cannot require a second approver, so "needs owner approval" is a convention the owner
+  upholds when merging.
 - A claim in a PR or document carries an evidence label from the
   [ADR README](../adr/README.md#evidence-labels).
 
