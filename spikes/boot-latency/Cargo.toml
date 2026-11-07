@@ -1,0 +1,26 @@
+[package]
+name = "boot-latency-spike"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+# A spike is not part of the product workspace.
+[workspace]
+
+[[bin]]
+name = "bare"
+path = "src/bin/bare.rs"
+test = false
+bench = false
+
+[[bin]]
+name = "uefi"
+path = "src/bin/uefi.rs"
+test = false
+bench = false
+
+[profile.release]
+panic = "abort"
+opt-level = 2
+debug = false
