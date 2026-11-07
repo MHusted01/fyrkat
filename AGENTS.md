@@ -38,15 +38,17 @@ Accepted. Read [docs/adr/README.md](docs/adr/README.md) for the ADR process.
 
 ## Research, innovation and critical thinking
 
-Fyrkat aims to be a secure, modern, high-performance, AI-native operating system. Where existing
-technology demonstrably fails a requirement, investigate whether a better solution can be built.
-Existing solutions are not exempt from scrutiny because they are mature, widely adopted, or
-previously accepted in this project.
+The owner's stated goal is a secure, modern, high-performance, AI-native operating system. "AI-native"
+is not yet defined in the project. Where existing technology demonstrably fails a requirement,
+investigate whether a better solution can be built. Existing solutions are not exempt from scrutiny
+because they are mature, widely adopted, or previously accepted in this project.
 
 - **Challenge, with evidence.** Question assumptions, industry practice and earlier project
-  decisions, the owner's included, when one could compromise the long-term goals. Prefer evidence
-  to consensus and measurement to intuition. Do not suppress an idea because it is difficult or
-  unconventional.
+  decisions, the owner's included, when the evidence suggests one fails a requirement or could
+  compromise the long-term goals. Prefer evidence to consensus and measurement to intuition. Do not
+  suppress an idea because it is difficult or unconventional. A challenge does not suspend anything:
+  accepted ADRs, the approved spike plan and its fixed criteria stay in force until the owner changes
+  them through a superseding ADR or an Amendment.
 - **Reuse first.** Reuse existing technology that meets the requirements. Reinvention needs a
   defensible purpose.
 - **A proposal for something new states** the limitation it addresses, the prior art, the
@@ -54,10 +56,13 @@ previously accepted in this project.
   hypotheses, experimental findings and speculation apart, using the evidence labels below.
 - **Rigor comes first.** Never trade security, correctness or engineering rigor for novelty.
 - **Keep moving.** Research is proportionate to the decision it serves and ends in working
-  software or a recorded decision, not in more planning.
+  software or a recorded decision, not in more planning. Stopping at an approval gate is part of
+  the process and is not "more planning".
 - **Gates still apply.** A novel architectural experiment may be proposed at any time. It is
-  written as a proposal (under `docs/research/`, or an ADR drafted as Proposed) and it does not
-  start, install anything or bypass an approval gate until the owner authorizes it.
+  written as a proposal (under `docs/research/`, or an ADR drafted as Proposed), clearly marked as
+  a proposal and carrying evidence labels, so it does not read as a description of existing
+  behaviour. It does not start, install anything or bypass an approval gate until the owner
+  authorizes it.
 
 ## Approval gates
 
