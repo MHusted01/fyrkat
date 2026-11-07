@@ -23,7 +23,7 @@ Commands you ran and what they printed. Say what you did not run, and why.
 
 - [ ] Commits are signed and carry a `Signed-off-by` line (DCO)
 - [ ] Docs describe behaviour that exists, and nothing undecided is stated as decided
-- [ ] No secrets and no personal email addresses
+- [ ] No secrets and no personal email addresses (public research-source URLs excepted)
 - [ ] Any `unsafe` has a `// SAFETY:` comment and is called out in this description
 - [ ] Touches a security-sensitive path (`.github/`, `deny.toml`, `rust-toolchain.toml`, `.claude/`, `Cargo.lock`, `docs/adr/`): owner approval needed
 - [ ] An ADR is not accepted by this PR unless the owner is doing it

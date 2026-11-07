@@ -27,7 +27,9 @@ with the owner.
   `// SAFETY:` comment. See [docs/standards/](docs/standards/engineering.md).
 - Pin everything: toolchain, tools, dependencies, GitHub Actions (by full commit SHA).
 - `spikes/` is disposable and isolated. Nothing outside it may depend on it.
-- No secrets and no personal email addresses in any file.
+- No secrets and no personal email addresses in any file. One exception: a publicly
+  attributed research-source URL, such as a mailing-list archive link, may contain the
+  public address it was published with. Do not copy such an address anywhere else.
 
 ## Approval gates
 
