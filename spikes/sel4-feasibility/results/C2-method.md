@@ -4,7 +4,8 @@
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C2,
   approved at `46a90fa`.
 - **Effect:** the plan requires this file to be committed before any C2 run. Edits before the first
-  run are ordinary edits. Changing the method after the first run is an Amendment to the plan. Every
+  run are ordinary edits, except an edit that loosens a criterion, which is an Amendment. Changing the
+  method after the first run is an Amendment to the plan. Every
   C2 results file cites the commit SHA of this file as it exists on `main`.
 - **Pilot rule:** a pilot may check that the harness works. Its numbers are not recorded as
   results and may not change this method.
@@ -31,8 +32,12 @@ each before the first run:
 2. **Linux keeps its shipped `fault_around_bytes`** for the headline. The one-page setting is a
    sensitivity result.
 3. **The seL4 headline pager retypes one frame inside each fault that allocates** (F1, F3 and the
-   allocating part of F4), so that its cost includes the zeroing that Linux does inside its fault
-   for anonymous memory. F2 maps an existing frame. See
+   allocating part of F4). In F1 it also **zeroes the frame explicitly** inside the fault, so that
+   both systems do the zeroing work for anonymous memory inside the fault. The seL4 kernel does not
+   zero on retype: it clears memory when an untyped is reset [Documented: seL4 `62e345c`,
+   `untyped.c` `resetUntypedCap`, and `objecttype.c` `Arch_createObject`, which only cleans the
+   cache]. Without the explicit write the seL4 side would skip work that Linux does, which favours a
+   Pass. The variant without it is a sensitivity result. F2 maps an existing frame. See
    [Pager action per workload](#pager-action-per-workload-on-sel4).
 4. **The statistic** is the median of 30 completed-run medians, with the rules under
    [Counting and reporting](#counting-and-reporting).
@@ -75,7 +80,7 @@ each before the first run:
 - **seL4 side:** the kernel build in the [C1 method](C1-method.md#kernel-build-for-c1-and-c2). The
   B3 pager, at a commit recorded in the results file. The client and the pager are both pinned to
   core 0, so no inter-processor interrupt takes part. The headline pager maps **one page per fault**
-  and retypes **one 4 KiB frame inside each fault**. Any other pager policy is a separate
+  and retypes **one 4 KiB frame inside each fault that allocates**. Any other pager policy is a separate
   experiment with its own record and is never the headline. The pager commit and its build profile
   (release) are fixed before the first run.
 - **Harness:** the same Rust crate, built in release mode for each target (static
@@ -107,13 +112,14 @@ Notes:
   4,096 pages (16 MiB) of the 128 MiB file. The copy-on-write region is a private mapping of the
   next 4,096 pages (16 MiB) of the same file, read once beforehand. The three regions do not overlap.
 - **F4 order:** the list of 16,384 (region, page) pairs is generated in region order, then shuffled
-  with a Fisher–Yates shuffle: for `i` from 15,383 down to 1, take `j = x mod (i + 1)` where `x` is the
+  with a Fisher–Yates shuffle: for `i` from 16,383 down to 1, take `j = x mod (i + 1)` where `x` is the
   next output, and swap positions `i` and `j`. The random numbers come from `xorshift64*` with state
   shifts 12, 25 and 27 and multiplier `0x2545F4914F6CDD1D`, seeded with `0x0F1A2B3C4D5E6F70`. Both
   systems get the same order. F4 has 16 batches of 1,024 pages.
 - **Order within a boot, and cleanup:** F1, F2, F3, F4, each on a fresh mapping. After each workload,
-  outside timing, the region is unmapped. On seL4 its frames are revoked and retyped back to
-  untyped memory. On Linux the harness calls `munmap`, and the file's pages stay resident.
+  outside timing, the region is unmapped. On seL4 its frames are revoked, and the untyped is reset
+  (the kernel clears memory then) by a throwaway retype before the next timed phase, so that no
+  untyped reset, which can clear a large region, falls inside a timed batch. On Linux the harness calls `munmap`, and the file's pages stay resident.
 - **F1 to F3** have 32 batches each. A fresh mapping is used for each workload and each run, so F2
   does not warm F3.
 - **File:** on Linux it is a regular file on the guest's root filesystem, not tmpfs, because tmpfs
@@ -124,16 +130,17 @@ Notes:
 
 The headline pager does the following, and any other action is a separate result:
 
-- **F1:** retype one 4 KiB frame inside the fault. The kernel zeroes it on retype. Map it
-  read-write. Linux zeroes an anonymous page inside its fault as well.
+- **F1:** retype one 4 KiB frame inside the fault, zero it with an explicit 4 KiB write of zeros,
+  and map it read-write. Linux zeroes an anonymous page inside its fault [Inferred: Linux source not
+  read this session].
 - **F2:** the store's frame already exists and is resident. Map it read-only. No retype, copy or
   zeroing. Linux maps a page-cache page without zeroing, so none is expected on either side.
 - **F3:** retype one frame, copy 4 KiB into it from the store's frame, and remap the page read-write.
-  The retype zeroes the frame and the copy then overwrites it. Linux copies without zeroing, so that
-  zeroing is a cost of this pager's design and is reported separately.
+  There is no zeroing on either side: the retype does not zero, and a copy-on-write copy overwrites
+  the page [Inferred for Linux].
 - **F4:** each access follows the action for its region.
 
-Zeroing therefore sits in both headlines for F1 only. As a sensitivity result the pager also runs
+Zeroing therefore sits in both headlines for F1 only, by the explicit write on seL4. As a sensitivity result the pager also runs
 with a retype of 64 frames at a time, inside the timed batch, for F1, F3 and the allocating part of
 F4. The cost of the retypes is reported separately.
 
@@ -154,10 +161,14 @@ F4. The cost of the retypes is reported separately.
 - **Batches:** every batch of every run is kept, including the first, because first-touch cost is
   the measurement. No batch or run is removed as an outlier. A stopped run is reported with its data
   and cause, as in C1.
-- **Stopped runs:** handled as in the [C1 method](C1-method.md#measurement): kept and reported in their
-  own table, replaced by fresh labelled runs up to 10 per workload, system and setting, and left out
-  of the headline statistics, with a sensitivity result that includes them. If 30 completed runs
-  cannot be had, the outcome is Investigate, with the cause.
+- **Stopped runs:** a run is **completed** when one boot finishes F1 to F4 on one system and
+  setting. A run is **stopped** by a batch under 100 ticks, a load average that never falls under
+  0.05, a crash or hang, or a wall time over 30 minutes. Stopped runs are kept and reported in their
+  own table with their data and cause. Each is replaced by a fresh, labelled run, up to 10 per system
+  and setting, placed at the end of that system's alternating order. The headline statistics use the
+  30 completed runs only. A sensitivity result includes the stopped runs' data. The 3 times test must
+  hold with and without them to be reported as met. If 30 completed runs cannot be had, the outcome
+  is Investigate, with the cause.
 - **Per-run statistics:** median and 99th percentile (nearest rank) of the batch results. With 16 or
   32 batches the nearest-rank 99th percentile is the maximum batch, and the results file says so.
   The median of an even number of values is the mean of the two middle values.

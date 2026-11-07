@@ -5,7 +5,8 @@
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C1,
   approved at `46a90fa`.
 - **Effect:** the plan requires this file to be committed before any C1 run. Edits before the first
-  run are ordinary edits. Changing the method after the first run is an Amendment to the plan. Every
+  run are ordinary edits, except an edit that loosens a criterion, which is an Amendment. Changing the
+  method after the first run is an Amendment to the plan. Every
   C1 results file cites the commit SHA of this file as it exists on `main`.
 - **Pilot rule:** a pilot may check that the harness works. Its numbers are not recorded as
   results and may not change this method.
@@ -21,7 +22,8 @@ From the plan, unchanged:
   differences and seL4 behaviour. This is a non-passing outcome, and not a Fail.
 
 **Interpretations to confirm (owner).** The plan leaves these open. This draft chooses as follows,
-and the owner confirms or changes each before the first run:
+and the owner confirms or changes each before the first run. A change that loosens the criterion is
+an Amendment and not an ordinary edit:
 
 1. **Which workloads carry the criterion:** W1 (empty message, same core) and W2 (4 KiB in shared
    memory, same core). The plan lists both payload sizes under C1 and says "same-core round trip",
@@ -32,7 +34,7 @@ and the owner confirms or changes each before the first run:
    reported in full and carry no threshold.
 2. **Which statistic:** the median of the 30 completed-run medians, for each of W1 and W2. The
    rules for stopped runs, ties and rounding are under [Measurement](#measurement).
-3. **Which kernel:** the 4-vCPU SMP kernel (K2), with W1 pinned to one core. K1 (1 vCPU) is not used
+3. **Which kernel:** the 4-vCPU SMP kernel (K2), with W1 and W2 pinned to one core. K1 (1 vCPU) is not used
    for the criterion.
 
 ## Kernel build for C1 and C2
@@ -87,12 +89,18 @@ that uses it, set up before timing.
 | ID | Placement | Payload | What happens per iteration |
 |---|---|---|---|
 | W1 | Same core | 0 message registers | Client calls, server replies at once |
-| W2 | Same core | 4 KiB in shared memory | Client fills the page, calls, server reads every byte (sum), replies with the sum |
+| W2 | Same core | 4 KiB in shared memory | Client fills the page, calls, server sums the page, replies with the sum. The fill and the sum are fixed below |
 | W2n | Same core | 4 KiB mapped, not touched | As W2 but neither side touches the page. This separates IPC cost from the fill-and-sum cost |
 | W3 | Cross core | 0 message registers | Client on core 0, server on core 1 |
 | W4 | Cross core | 4 KiB in shared memory | As W2, client on core 0, server on core 1 |
 | W5 | Same core | 4 KiB in shared memory | Chain: client calls S1, S1 calls S2, S2 calls S3, each reads the page and replies. All four on core 0 |
 | W6 | Cross core | 4 KiB in shared memory | As W5 with client on core 0 and S1, S2, S3 on cores 1, 2 and 3 |
+
+**Fill and sum, fixed before the first run.** The fill is 512 aligned 64-bit stores to the page and
+the sum is 512 aligned 64-bit loads with a wrapping add, as plain non-volatile code in the release
+harness. The loops are committed in the harness source before the first run, and the disassembly of both is
+recorded in the results. They are not edited after a pilot. Changing them is an Amendment. An
+above-1 µs W2 is Investigate and not Fail, and W2n separates the loop cost from the IPC cost.
 
 A round trip is one call plus one reply. For W5 and W6 an iteration is the whole chain, which has
 **3 call-reply pairs** (client to S1, S1 to S2, S2 to S3). The results file also reports the
@@ -119,9 +127,10 @@ Amendment after it.
   sign of a broken clock and stops the run.
 - **Stopped runs.** A run stopped for a broken clock or a timeout is kept and reported in its own
   table with its data and its cause. It does not count toward the 30. Each is replaced by a fresh
-  run, labelled as a replacement, up to 10 replacements per workload series. The Pass test and the
-  headline statistics use the 30 completed runs only. Statistics that include the stopped runs are
-  reported beside them as a sensitivity result. If 30 completed runs cannot be had within 10
+  run, labelled as a replacement, up to 10 replacements per series of 30 runs. The Pass test and the
+  headline statistics use the 30 completed runs only. Statistics that include the stopped runs,
+  with their W1 and W2 data where they exist, are reported beside them. The Pass test must hold both
+  with and without them, so that a slow host state that causes timeouts cannot select the runs. If 30 completed runs cannot be had within 10
   replacements, the outcome is Investigate, with the cause. A run is completed when it finishes all
   seven workloads.
 - **Runs:** 30 per workload. Every run is a fresh VM boot, so VM-to-VM variation and vCPU
@@ -178,6 +187,7 @@ The results file separates the causes below, with evidence for each, and does no
 - **Virtualization:** the number of VM exits per batch, counted with QEMU trace events if HVF
   provides them, and otherwise stated as not counted. Cross-core results add inter-processor
   interrupts and wake-ups, which probably exit [Inferred].
+- **Fill and sum:** W2 minus W2n, which separates the cost of the 4 KiB fill and sum from the IPC.
 - **Hardware:** the recorded core types and the counter resolution.
 - **seL4 behaviour:** the kernel configuration above, whether the fast path is taken, and the IPC
   path length where measurable.

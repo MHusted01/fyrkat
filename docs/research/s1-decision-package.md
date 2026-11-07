@@ -47,7 +47,8 @@ falsify the hypothesis.
   and fixed now so that A2a cannot pick the file that suits the result: `AARCH64_verified.cmake`,
   with the platform it sets recorded in the A2 results. Board files such as
   `AARCH64_bcm2711_verified.cmake` are compared as secondary references.
-- **Reversible:** until the first run, by ordinary edit. After it, only by Amendment.
+- **Reversible:** until the first run, by ordinary edit, except that a change which loosens a
+  criterion is an Amendment (choice 1a). After the first run, only by Amendment.
 
 ### 2. Cross-compilers: Homebrew `aarch64-elf-gcc` now, x86-64 later
 
@@ -126,9 +127,9 @@ falsify the hypothesis.
 - **Other gated files are not included.** A rust-sel4 workspace may also need a `.cargo/config.toml`
   or a `build.rs` [Inferred]. AGENTS.md gates both at any depth. If A1 needs one, the work stops and
   asks, and this approval does not cover it.
-- **Coupling.** Decisions 3, 4, 5 and P1 all assume the same nightly, `nightly-2026-08-21`. They are
-  not independent. If decision 3 changes the rust-sel4 pin, the nightly in decisions 4 and 5 and in
-  P1 changes with it.
+- **Coupling.** Decisions 3, 4, 5 and 8 and P1 all assume the same pin and nightly, `v6.0.0` and
+  `nightly-2026-08-21`. They are not independent. If decision 3 changes the rust-sel4 pin, the
+  nightly in decisions 4 and 5, the first A1 approach in decision 8 and P1 change with it.
 - **Evidence:** AGENTS.md gates these files at any depth [Documented]. The "spike isolation" step of
   `cargo xtask check` enforces that nothing outside `spikes/` depends on them, and it passes today
   [Measured]. The plan requires the spike to be its own workspace [Documented].
@@ -182,10 +183,16 @@ falsify the hypothesis.
   `smmuv3.c`, read and not run; the consequence is Inferred]. If that counts as "did not exercise",
   the K3 cell for P5 is class D on this host, whatever the design. The A5-arm Pass also needs
   teardown that "provably blocks device access before memory is reused" [Documented: plan, A5].
-  - **Recommended default: no loosening.** Under the plan as written, a mandatory step that this
-    host cannot test leaves A5-arm at **Investigate** [Documented: plan, Outcomes, "something that
-    cannot be tested"]. Investigate on A5-arm becomes Fail at the end of the spike [Documented:
-    plan, "End of spike"]. Only hardware could close it. This default decides nothing before A5.
+  - **Recommended default: no loosening.** The plan as written has two strict readings, and the
+    owner chooses between them at the A5 design gate:
+    - **(a) Class D.** The plan applies Fail first and nothing downgrades it [Documented: plan,
+      Outcomes, item 1]. A required test that did not exercise the code is class D, which is a Fail
+      that falsifies the hypothesis at once. This is the literal reading of the facts above.
+    - **(b) Investigate.** The cell is "something that cannot be tested" [Documented: plan,
+      Outcomes, item 2], which is non-passing and becomes Fail at the end of the spike [Documented:
+      plan, "End of spike"]. This is milder, because the Fail is deferred and hardware could close it.
+    Neither reading loosens anything. Reading (b) is the one that leaves room for hardware, and this
+    package does not choose it for the owner. This default decides nothing before A5.
   - **The looser reading is Amendment P5**, below. It would treat a step whose effect QEMU does not
     model as an emulator limit instead of Investigate, so it loosens both the class D wording and
     the "provably" wording of the A5-arm Pass. It is decided at the A5 design gate, with the design
@@ -193,11 +200,13 @@ falsify the hypothesis.
 - **A1 approaches, in order, fixed now.** The plan records an experiment as Blocked after "three
   distinct, documented approaches" and treats Blocked as Fail [Documented: plan, Blocked]. So that
   this is not interpreted after a failure, the recommended order is: (1) Homebrew `aarch64-elf-gcc`
-  with rust-sel4 `v6.0.0`; (2) the Arm cask `gcc-aarch64-embedded`; (3) a digest-pinned container.
-  Approaches 2 and 3 are new installations, so each needs the owner's approval when reached.
-  Switching the rust-sel4 version, or a flag change inside an approach, is recorded in the A1 results
-  and does not count as a new approach and does not reset the count. The owner may change this order
-  before A1 starts.
+  with rust-sel4 `v6.0.0`; (2) the same compiler with rust-sel4 `f631577` and `nightly-2026-10-28`;
+  (3) the Arm cask `gcc-aarch64-embedded`. Each change of compiler route or of rust-sel4 pin **counts
+  as one approach**. A flag change inside an approach does not, and is recorded in the A1 results.
+  Approaches 2 and 3 are new installations (another nightly, or a `.pkg`), so each needs the owner's
+  approval when reached, and approach 1 with `v6.0.0` already depends on Amendment P1. The
+  digest-pinned container is the plan's A1 Conditional route, a separate outcome and not a fourth
+  approach. The owner may change this order before A1 starts.
 - **Order and stop rules:** A1 first. If A1 is Fail or Blocked, stop and report, because that
   falsifies the hypothesis. A2a needs A1's preprocessed kernel. A3 needs A1's build. A4 needs A3's
   boot.
@@ -216,8 +225,8 @@ Only P1 and P2 are recommended for approval now.
 
 ## Approval checklist
 
-Answer each row with "yes" or the change you want. Rows 3, 4 and 5 and P1 are coupled through the
-nightly (see decision 5). The other rows are independent.
+Answer each row with "yes" or the change you want. Rows 3, 4, 5 and 8 and P1 are coupled through the
+pin and nightly (see decision 5). The other rows are independent.
 
 | # | Decision | Recommended answer |
 |---|---|---|

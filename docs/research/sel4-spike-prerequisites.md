@@ -42,8 +42,8 @@ This file first proposed `f631577` because the plan names its nightly. The
 release compatible with seL4 17.0.0, it has a known-good recipe, and both versions have the same git
 footprint. That needs an Amendment to a pinned input. If the chosen version later fails to build,
 switching is recorded as an approach in the A1 results. The order of approaches, and which of them
-count toward the plan's three-approach Blocked rule, is fixed in decision 8 of the decision package
-before A1 starts, so that it is not interpreted after a failure.
+count toward the plan's three-approach Blocked rule, is proposed in decision 8 of the decision package
+for the owner to fix before A1 starts, so that it is not interpreted after a failure.
 
 **Note on the plan's K0.** At the pinned seL4 commit `configs/` holds `AARCH64_verified.cmake` and
 many board files such as `AARCH64_bcm2711_verified.cmake` and `AARCH64_bcm2712_verified.cmake`, and
@@ -135,7 +135,7 @@ on macOS without an extra linker is **not tested**.
 | C1 and C2 method files | Drafted: [C1](../../spikes/sel4-feasibility/results/C1-method.md), [C2](../../spikes/sel4-feasibility/results/C2-method.md). Need owner review. The C1 published baseline is fixed in the file |
 | rust-sel4 pin | Two candidates above. The decision package recommends `v6.0.0` and the owner chooses |
 | Nightly toolchain, cross GCC, Python environment, Linux image | Not installed. Need owner approval |
-| Spike workspace manifest, lock file, toolchain file | Not created. Need owner approval |
+| Spike workspace manifest, lock file, toolchain file and spike-local `deny.toml` | Not created. Need owner approval |
 | Owner's authorization to execute | **Not given** |
 
 ## Decisions for the owner
