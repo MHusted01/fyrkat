@@ -1,119 +1,137 @@
 # Session handoff
 
 A snapshot for the next session, not a source of truth. [ADRs](../adr/README.md) and Git win
-over it. It records approvals and grants none. The previous handoff named branch
-`m0/post-merge-record` and HEAD `ae054be`. Both are stale, and the file is replaced entirely.
+over it. It records approvals and grants none. The previous handoff described the state before the
+S1 branches were pushed and is replaced entirely.
 
 ## Snapshot
 
-- **Date:** 2026-11-07.
-- **Written from:** branch `m0/complete`, on top of `aa8e40ff9b694f7c0c4942b7f83b14e577d78df4`
-  (PR 3, which equalled `main` when this file was generated). This file is committed by the follow-up
-  PR that also marks M0 complete. **Once that PR is merged, `main` is its squash commit, so the SHA is not
-  written here. Check it with `git log -1 origin/main`.**
-- **Upstream:** `m0/complete` was local until the PR was opened. [Measured: `git branch -vv`]
-- **Remote:** `main` was its only branch when generated. [Measured: `git ls-remote --heads origin`]
-- **Pull requests:** PR 1 (M0 foundation) and PR 3 (merged-state record) are MERGED, and the
-  follow-up PR that carries this file was opened afterwards. PR 2
-  (throwaway failing check) is CLOSED. [Measured: `gh pr list --state all`]
-- **CI on `main`:** run 42415395227 on `aa8e40f` succeeded. `boot (ubuntu arm64)` and `check and boot
-  (ubuntu x86-64)` passed. `security-sensitive paths` was skipped. [Measured: `gh run view`]
+- **Date:** 2026-11-08.
+- **Written from:** branch `spike/s1-prerequisites`, whose HEAD before this file's commit is `a564869`,
+  seven commits on top of `main` at `caf465d`. [Measured: git]
+- **Other branch:** `docs/agents-research-section`, HEAD `6ef78c3`, three commits on top of `main`,
+  touching only `AGENTS.md`. [Measured: git]
+- **Remote:** both branches are pushed and track their upstream. `origin/main` is still `caf465d`.
+  [Measured: `git ls-remote --heads origin`]
+- **Pull requests:** 5 (`docs/agents-research-section`) and 6 (`spike/s1-prerequisites`) are OPEN and
+  not merged. 1, 3 and 4 are MERGED, 2 is CLOSED. [Measured: `gh pr list --state all`]
+- **CI:** on both PRs the three required checks passed at the heads first pushed (`6ef78c3` and `0be808e`). PR 6 has since received `a564869` and this file, and their CI result is not recorded here. The checks are: `check and boot (ubuntu
+  x86-64)`, `boot (ubuntu arm64)` and `security-sensitive paths`. Both PRs report merge state CLEAN.
+  [Measured: `gh pr checks`, `gh pr view`] This file's own commit is pushed afterwards and CI runs
+  again on it. Its result is not recorded here.
+- **Commits:** every commit this session carries a `Signed-off-by` line and a signature header.
+  GitHub's "verified" display and branch-protection signature enforcement were not checked. The
+  protection API reports `required_signatures` as disabled. [Measured: `git cat-file`, GitHub API]
 
 ## Milestone status
 
-**M0 Engineering foundation is complete.** The owner declared it complete on 2026-11-07, on the
-evidence in the [acceptance record](m0-acceptance.md) and accepting its documented limits. Once the
-follow-up PR is merged, `docs/roadmap.md` on `main` says so. [Documented]
+**M0 is complete** (owner declaration, 2026-11-07, `docs/roadmap.md`). **S1 is planned and not
+started.** M1 cannot be finalized before ADR 0004 is decided. ADR statuses: 0001 Part A Provisional,
+Part B Withdrawn. 0002 and 0003 Provisional. 0004 Proposed. None is Accepted. [Measured: grep]
+The spike plan is approved for the text at `46a90fa`. It does not authorize any experiment.
 
-| Exit criterion | Status in the acceptance record |
-|---|---|
-| Fresh clone passes `cargo xtask check` | Done (12 of 12 steps, macOS arm64) |
-| CI on a real PR, failing change blocked | Done (PR 1 passed, PR 2 blocked) |
-| Direct push to `main` rejected, protections via API | Done by equivalent test. `main` itself was not push-tested, by owner decision |
-| ADRs 0001 to 0003 ruled on, spike plan approved | Done. Plan approved at `46a90fa`, which does not authorize execution |
-| Claude Code configuration confirmed in a real session | Done, with limits. Workspace-trust prompt not tested |
-| Adversarial review complete | Done. Two `reviewer` passes, findings fixed or listed as known limits |
+## Done this session
 
-S1 (kernel foundation spike) is planned and not started. M1 cannot be finalized before ADR 0004 is decided.
-
-## Completed since the last handoff
-
-- PR 3 was merged as `aa8e40f`: the "Merged state" and "Workflow skills" sections of the acceptance
-  record, and the previous handoff. [Measured: `git show --stat`]
-- The owner declared M0 complete. The follow-up PR records it in the roadmap and the acceptance record.
+- **Split:** the AGENTS.md research policy is PR 5, on its own. The S1 prerequisites, C1 and C2
+  methods, research notes and decision package are PR 6. They stay one PR because they link to each
+  other, and the markdown-link check would fail on a split.
+- **Independent review** (`reviewer`, fresh context) of the corrected findings and method files:
+  1 High, 9 Medium, 10 Low. The substantiated ones are fixed in `0be808e` (S1) and `6ef78c3`
+  (AGENTS.md). The High finding was that the decision package recommended a looser reading of class D
+  and of the A5-arm Pass without saying so. It now recommends no loosening, and the looser reading is
+  proposed Amendment P5. A second finding was that choice 1a made W1 alone carry the C1 criterion,
+  which the plan's wording does not support. It is now W1 and W2 both.
+- **Re-review of those fixes** (second `reviewer`, narrow): 3 High, 4 Medium, 4 Low, mostly errors
+  in the first round of fixes. Fixed in `a564869`: an off-by-one in the F4 shuffle; a false premise
+  that the seL4 kernel zeroes on frame retype (it clears memory when an untyped is reset, checked
+  against seL4 `62e345c` `objecttype.c` and `untyped.c`); the unspecified W2 fill and sum, now fixed
+  before the first run; stopped-run rules; the two strict readings of the A5 question; and A1
+  approach counting. **`a564869` has had no further independent review.**
+- **Not changed:** any ADR, any plan criterion, the plan file, `.github/`, `xtask/`, `deny.toml`.
 
 ## Authorizations in force
 
+Source: the owner's message of 2026-11-08 in this conversation, unless a document is named. The
+spike plan's Amendments record only the plan approval. The authorizations below are recorded
+nowhere else, so the owner may want them added to the plan's Amendments or to the acceptance record.
+
 - **Spike plan approval** (plan and criteria only): the plan's Amendments, "Owner approval of the plan".
-- **Owner decisions on K4, x86-64 assurance and patch separation:** the same Amendments and the plan text.
-- **M0 declared complete:** by the owner on 2026-11-07. Source, once merged: `docs/roadmap.md` and the
-  acceptance record. The owner also authorized the follow-up PR that records it, and its merge.
-- **Merge of PRs 1 and 3:** both merged on the owner's authorization. See the acceptance record.
-- **Not authorized:** spike execution of any kind, including installing the pinned nightly or any other
-  spike tool. Class 3 kernel changes, including K4. Relaxing any criterion. Accepting any ADR. Any push,
-  PR or GitHub change not named above.
+- **Document-only S1 preparation, local commits, and the `AGENTS.md` research section:** as in the
+  previous handoff, on the owner's earlier messages.
+- **This session:** split the work, review it, fix substantiated findings, commit this file, push the
+  two branches, open their PRs and verify CI. Merging was **not** authorized.
+- **Not authorized:** any experiment or spike execution. Installing a tool or dependency. A new
+  dependency. Changing an Accepted ADR. Merging any PR. Class 3 kernel changes, including K4.
+  Relaxing any criterion. Another broad research phase.
 
 ## Pending approvals
 
-- Authorizing spike execution, which also needs the C1 and C2 method files committed first.
-- Installing the pinned spike toolchain or any other new tool.
-- Deciding ADR 0004. No ADR is Accepted.
-- The `pull_request_target` follow-up for sensitive paths, which touches `.github/`.
+All are the owner's. Recommended defaults are in `docs/research/s1-decision-package.md`.
+
+- **Merge PR 5 and PR 6.** `AGENTS.md` is a security-sensitive path, so PR 5 needs owner approval.
+- **Decisions 1 to 8 and Amendments P1 to P5** in the decision package. Recommended: yes to 1 to 8,
+  yes to P1 and P2, P3 at the owner's wish, decline P4 and P5 for now.
+- **An interpretation before A5:** the looser reading of class D and the A5-arm Pass (P5). The
+  default is no loosening. It is decided at the A5 design gate.
 
 ## Blockers and conflicts
 
-- **None between this file, Git and the ADRs** when the follow-up PR is merged. `/fyrkat-resume` checks it.
-- **Blocked:** spike Stage A, because execution is not authorized. The C1 and C2 method files do not
-  exist. [Measured: `find` for files named `*method*` found none]
-- **Decision wait:** M1 waits on ADR 0004 and therefore on the spike.
-- **Known limits** (from the acceptance record, not re-tested): the sensitive-paths job is only a
-  notice. With one maintainer, GitHub cannot require a second approver. `docs/standards/toolchain.md`
-  still exempts QEMU, EDK2, shellcheck and actionlint from pinning. CI has QEMU 8.2.2, and the spike
-  pins 11.1.3.
+- **None between this file, Git and the ADRs.**
+- **Blocked:** spike execution is not authorized, and the method files are drafts. Stage C needs them
+  on `main` first, so PR 6 has to merge before any C1 or C2 run.
+- **Known issue in the approved plan:** the sentence "about 850 cycles is about 0.25 µs at 3.4 GHz"
+  appears to mix an AArch64 cycle count with an x86 clock. Proposed as Amendment P2.
+  [Inferred: the plan's source is not named. The 3.4 GHz clock is on the x86-64 rows of the
+  performance page.]
+- **Open follow-up from M0:** a base-controlled `pull_request_target` version of the
+  security-sensitive paths check. The current job is a notice and not an access control, because the
+  workflow file comes from the PR. [Documented: `m0-acceptance.md`, Known limits]
+- **CI and the spike use different QEMU versions:** CI runners have QEMU 8.2.2 from Ubuntu packages.
+  The spike plan pins 11.1.3 from Homebrew. [Measured: `m0-acceptance.md`, CI facts]
 
 ## Uncommitted changes
 
-When generated, the working tree held three edits: the roadmap, the acceptance record, and this file.
-All three are committed by the follow-up PR. After it merges, the working tree should be clean.
+This file, until the owner's session commits it. Otherwise the working tree was clean.
 
 ## Verified results
 
 | Check | Commit | Result |
 |---|---|---|
-| `cargo xtask check` | `aa8e40f` plus the uncommitted edits to `roadmap.md` and `m0-acceptance.md` | "check: all 12 steps passed". 46 of 46 tests. Hook tests 80 passed, 0 failed. Sensitive-paths tests 28 passed, 0 failed. cargo-deny, rustdoc, shellcheck, actionlint, markdown links and spike isolation PASS. Ran on macOS arm64 |
-| `gh run view 42415395227` | `aa8e40f` | success. Jobs as in the Snapshot |
-| `gh pr list --state all`, `git ls-remote --heads origin` | `aa8e40f` | PRs 1 and 3 MERGED, PR 2 CLOSED. `origin/main` equals local HEAD |
-| ADR `Status:` lines (grep) | `aa8e40f` | 0001 Part A Provisional, Part B Withdrawn. 0002 and 0003 Provisional. 0004 Proposed |
-| Spike plan `Status:` line | `aa8e40f` | Approved for the text at `46a90fa`. Does not authorize running any experiment |
-
-The `check` run did not include this handoff file, which was written after it. It does not change code.
+| `cargo xtask check` | `0be808e` (S1 branch) | "check: all 12 steps passed", including markdown links and spike isolation. macOS arm64, local |
+| `cargo xtask check` | `6ef78c3` (AGENTS.md branch) | "check: all 12 steps passed". macOS arm64, local |
+| CI, PR 5 and PR 6 | `6ef78c3`, `0be808e` | The three required checks passed on each. `gh pr checks` |
+| Independent review | `7833442` and `566d970` trees | 1 High, 9 Medium, 10 Low. Substantiated findings fixed |
+| Independent re-review of the fixes | `0be808e`, `6ef78c3` | 3 High, 4 Medium, 4 Low, all in the S1 fixes. `6ef78c3` (AGENTS.md) had none. The review fetched seL4 sources read-only |
+| `cargo xtask check` | `a564869` | "check: all 12 steps passed". macOS arm64, local |
+| Review of `a564869` | | **Not done** |
 
 **Not verified:**
 
-- Branch protection on `main`. It was last read back after PR 1 (see the acceptance record) and not
-  rechecked after PR 3. Linux CI results are the CI runs above, not a local run.
-- The `Amendments` text of the spike plan was not re-read in full. Only its tail and Status line were.
-- Whether the spike prerequisites are still missing (pinned nightly, cross GCC, a pinned rust-sel4
-  commit). Not rechecked.
-- Debian firmware paths. The workspace-trust prompt in an interactive session.
-- Commit signatures: `git log --format=%G?` prints `E` locally, because no allowed-signers file is
-  configured. GitHub's verification of `aa8e40f` was not queried.
+- `cargo xtask boot` locally. Nothing here changes boot, firmware or CI. CI ran the boot jobs.
+- Every external claim in the research notes that the reviewers could not check offline: the sel4bench
+  page, the rust-sel4 README and lock file, QEMU `smmuv3.c`, the Debian image hash, the
+  `sel4test-manifest` commit and most prior-art sources. The notes label these.
+- Whether GCC 16, CMake 4 or Python 3.15 work with seL4 17.0.0. That is an A1 finding.
+- GitHub's "verified" status for the commits, and branch-protection signature enforcement.
 
 ## Next actions
 
-1. Run `git status -sb` and `git log -1 origin/main`. Expect a clean tree on `main`.
-2. **Authorized, no execution:** draft the list of tools the plan needs, pin the rust-sel4 commit in a
-   document, and draft the C1 and C2 method files. Do not install or run anything.
-3. **Needs approval:** authorize spike Stage A, and any tool installation, before starting it.
-4. **Needs approval:** the `pull_request_target` follow-up, which touches `.github/`.
+1. **Needs approval:** the owner answers the checklist in `docs/research/s1-decision-package.md`.
+2. **Needs approval:** merge PR 5 and PR 6. Merge order does not matter. PR 6 is needed on `main`
+   before any C1 or C2 run.
+3. **After approval only:** apply P1 and P2 as Amendment entries in the plan (not inline edits),
+   create the spike workspace files listed in decision 5, install Tier 1, run A1 following the
+   approach order in decision 8, then A3, A4 and A2a, and stop with a report. A5 waits for a reviewed
+   design and its own authorization.
+4. If the owner changes a recommendation, update the package and the method files, and send the
+   change to a fresh `reviewer` pass.
 
 ## Context not recorded elsewhere
 
-- Start a fresh session at the repository root and run `/fyrkat-resume`. Use Sonnet for routine work and
-  stop at the end of each stage, per the spike plan's model policy.
-- Session memory is stored per launch directory and does not carry over between sessions.
-- The previous handoff recorded that the permission prompt refused two Bash calls: `gh api .../protection`
-  and a compound command containing `HEAD^{tree}`. Another compound command with a shell variable was
-  refused in this session. The cause is not investigated. Simpler calls ran.
-- The HongMeng, TickTock and Sculpt PDFs used in the research are gone. Their titles are in
-  `docs/research/sel4-adversarial-review.md`.
+- The owner's goal, stated in conversation, is a secure, modern, high-performance, AI-native OS that
+  does not stop at existing solutions. The AGENTS.md section in PR 5 records the working rules.
+  "AI-native" is not yet defined in the repository.
+- The `reviewer` and `researcher` agents have Bash. A read-only rule is not enforced. Check
+  `git status` after they run. Both reviews this session left the repository unchanged.
+- Session memory is per launch directory. Start a fresh session at the repository root and run
+  `/fyrkat-resume`.
