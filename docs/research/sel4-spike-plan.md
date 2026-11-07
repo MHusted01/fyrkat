@@ -75,16 +75,31 @@ Measure how much of the verified kernel survives in the configurations Fyrkat ne
 test is deterministic and needs no boot.
 
 Compare the preprocessed `kernel_all.c` from a V build (`AARCH64_verified`) with a U build
-adding SMP, and with a U build for `qemu-arm-virt`. Compare per function, reporting the
-share of functions that are textually identical in capability, untyped, endpoint,
-notification and scheduler code.
+adding SMP, and with a U build for `qemu-arm-virt`. The output is a written assessment, not
+a percentage. It must cover, for each configuration Fyrkat needs:
 
-- **Pass:** at least 90% of those functions are identical to V.
-- **Conditional:** 70% to 90%.
-- **Fail:** below 70%. The hypothesis then cannot rely on an assurance argument, and must
-  stand on maturity alone.
+1. **Proof applicability:** which kernel functions and properties the published proofs
+   cover at the pinned commit, and which they do not, for capability, untyped, endpoint,
+   notification and scheduler code.
+2. **Configuration differences:** every configuration option that differs from V, and which
+   code paths it adds, removes or changes. A per-function textual diff is evidence for this,
+   not a score.
+3. **Trusted computing base changes:** code Fyrkat would add to or rely on inside the
+   kernel, such as an IOMMU driver, and code outside it that must be trusted, such as a
+   user-level SMMU server.
+4. **Unverified components:** every component on the path of a required isolation property
+   that has no proof coverage, and what other evidence exists for it.
+
+- **Pass:** the assessment is complete, and no required isolation property rests solely on
+  code that is unverified and that Fyrkat would have to modify.
+- **Conditional:** one or more required properties depend on unverified code or on a
+  configuration the proofs do not cover. Each gap is listed with its compensating evidence,
+  and the owner decides whether to accept it.
+- **Fail:** an unacceptable assurance regression, as defined under
+  [Blockers and regressions](#blockers-and-regressions), or the assessment cannot establish
+  which code a required property depends on.
 - **Limit:** identical text does not mean proofs hold, because concurrency can invalidate
-  sequential reasoning. This measures how much reviewed code is shared, and nothing more.
+  sequential reasoning. A textual diff shows what reviewed code is shared, and nothing more.
 
 ### A3. EL1 and HVF compatibility
 
@@ -124,8 +139,9 @@ mapped region, and DMA outside it must fault and be reported. Labels: S or M.
 
 - **Pass:** the user-level design passes the negative test with no kernel patch, and
   teardown provably blocks device access before memory is reused.
-- **Conditional:** an in-kernel driver passes, within the patch budget below.
-- **Fail:** neither option works within the patch budget.
+- **Conditional:** an in-kernel driver passes, and its change is acceptable under
+  [Kernel modification policy](#kernel-modification-policy).
+- **Fail:** neither option works without a kernel change that policy makes unacceptable.
 - **Also record:** the status of x86-64 VT-d, which lacks interrupt remapping. It does not
   count as a pass for AArch64.
 
@@ -190,21 +206,42 @@ is U at best. Results are valid for this virtualized host only.
 Same-core call and reply, cross-core IPC, and a chain through three servers with a 4 KiB
 payload in shared memory.
 
+**1 µs is a provisional target. It is not an automatic rejection threshold.** Before any
+run, the experiment record must define:
+
+- **Hardware:** the host (Apple M2 Pro under HVF), the core type each vCPU lands on, and
+  the fact that the guest is virtualized. Results are valid for that setup only.
+- **Workload:** the exact call, reply and payload sizes (0 bytes in message registers, and
+  4 KiB in shared memory), same-core and cross-core.
+- **Method:** the virtual counter, warm-up iterations, iteration count, number of runs,
+  and the statistic reported. Report median, 99th percentile and spread across runs.
+- **Baseline:** published seL4 round-trip figures with their hardware stated, and a
+  same-VM Linux comparison such as a Unix-socket round trip. About 850 cycles is about
+  0.25 µs at 3.4 GHz, and is a published figure, not a Fyrkat measurement.
+
 - **Pass:** same-core round trip of 1 µs or less.
-- **Conditional:** up to 3 µs, with the cause understood.
-- **Fail:** over 3 µs with no explanation from virtualization.
-- **Basis:** published figures of about 850 cycles round trip are about 0.25 µs at 3.4 GHz.
-  The margin of four allows for virtualization and different hardware.
+- **Investigate:** above 1 µs. Record the cause, separating virtualization overhead,
+  hardware differences and seL4 behaviour. The result goes to the owner as an input, and is
+  not a Fail on its own.
 
 ### C2. Page faults against Linux
 
-Compare first-touch anonymous page fault cost on the same VM configuration, using a
-pinned Linux guest. This is the primary same-hardware comparison.
+Compare page fault cost on the same VM configuration, using a pinned Linux guest. This is
+the primary same-hardware comparison. Use reproducible, representative workloads rather
+than a single microbenchmark: first-touch anonymous faults, file-backed faults,
+copy-on-write faults, and a mixed workload that touches a working set of stated size.
+Record the method, sample sizes and spread as for C1.
 
-- **Pass:** 3 times Linux or less.
-- **Conditional:** 3 to 5 times, with a fix identified.
-- **Fail:** over 5 times with no identified fix.
+**3 times and 5 times Linux are investigation thresholds until justified.** They are not
+pass or fail lines. Adopting either as a criterion needs a written justification and an
+amendment.
+
+- **Within 3 times Linux:** no action needed.
+- **3 to 5 times:** investigate and record the cause and any identified fix.
+- **Over 5 times:** profile, and record whether the cost is inherent to the design, to the
+  user-level pager, or to the virtualized setup. The owner decides what it means.
 - **Basis:** HongMeng reports 3.4 times Linux as a real problem it had to engineer around.
+  That is a published figure from a different system, not a Fyrkat result.
 
 ### C3. Multicore scaling
 
@@ -242,11 +279,18 @@ cannot settle the question.
 ### The hypothesis is falsified if any of these occurs
 
 1. A1 fails.
-2. Any experiment requires an unacceptable kernel modification, as defined below.
+2. Any experiment requires an unacceptable kernel modification, as defined under
+   [Kernel modification policy](#kernel-modification-policy).
 3. B1 or B2 fails through a kernel leak or use after revocation.
 4. B3 or B4 shows an isolation failure in the kernel or in unrelated components.
-5. DMA isolation cannot be enforced on either architecture within the patch budget.
-6. C2 fails.
+5. DMA isolation cannot be enforced on either architecture without an unacceptable kernel
+   modification.
+6. A2 finds an unacceptable assurance regression.
+
+C1 and C2 results never falsify the hypothesis automatically. They are reported to the
+owner, and Stage D weighs them.
+
+See [Blockers and regressions](#blockers-and-regressions) for the definitions.
 
 ### Results that reopen other decisions without falsifying it
 
@@ -257,12 +301,37 @@ cannot settle the question.
 | A5 passes only on x86-64 | ADR 0002 |
 | User space requires nightly Rust | Toolchain policy |
 | Each board needs its own kernel build | ADR 0003 and hardware strategy |
-| A2 fails | The assurance argument in ADR 0004 |
+| A2 is Conditional | The assurance argument in ADR 0004, with each gap listed |
+| C1 or C2 passes the investigation threshold | The performance assumptions in ADR 0004 |
 
 If all of Stages A to C pass or are accepted as Conditional, Stage D decides. A pass does
 not automatically accept seL4. The owner decides.
 
-## Kernel modification budget
+## Blockers and regressions
+
+Defined before any experiment, so that the outcome can be checked against them.
+
+**Functional blockers.** Each is a Fail, and falsifies the hypothesis where
+[Decision rules](#decision-rules) say so:
+
+- No reproducible build workflow on this Mac (A1).
+- A kernel leak, or any use after revocation (B1, B2).
+- Any isolation breach by the kernel, a pager or a driver (B3, B4).
+- DMA isolation that cannot be enforced (A5).
+- A required experiment that stays blocked after three distinct approaches.
+
+**Unacceptable assurance regressions.** Each is a Fail in A2:
+
+- A required feature needs a change to capability, untyped, endpoint, notification,
+  scheduler or fast-path code.
+- A change alters the V build's output.
+- A change weakens an existing check or disables a security feature.
+- A required isolation property depends solely on unverified code that Fyrkat would have to
+  modify, with no compensating evidence.
+- New code inside the kernel that handles capabilities or memory ownership, and that the
+  owner has not accepted as part of the trusted computing base.
+
+## Kernel modification policy
 
 **Unacceptable, at any size:**
 
@@ -273,8 +342,14 @@ not automatically accept seL4. The owner decides.
 
 **Acceptable, with label M:** platform and timer fixes, or a new IOMMU driver.
 
-**Budget:** 1,550 lines in total, which matches the existing SMMUv2 support (645, 431, 437
-and 37 lines across four files). Exceeding it is treated as an unacceptable modification.
+**Investigation trigger:** 1,550 lines in total, which matches the existing SMMUv2 support
+(645, 431, 437 and 37 lines across four files). This is not a hard limit. Passing it starts
+a written evaluation, and a small patch can still be unacceptable. Judge every patch by:
+
+- **Security impact:** what it can reach, and what it can break.
+- **Complexity:** how hard it is to review and to reason about.
+- **Proof implications:** which proofs it touches or invalidates.
+- **Maintenance burden:** the cost of carrying it across seL4 releases.
 
 ## Reconsideration criteria after the spike
 
@@ -283,7 +358,8 @@ If the hypothesis survives, any of these reopens ADR 0004:
 1. A required kernel patch is rejected upstream, or stays out of tree for two releases.
 2. Keeping up with seL4 costs over 500 changed lines in `fyrkat-rt` in two consecutive
    releases.
-3. A representative workload exceeds the C2 Fail threshold after profiling-driven work.
+3. A representative workload stays above the C2 investigation threshold of 5 times Linux
+   after profiling-driven work.
 4. On physical hardware, kernel lock contention exceeds 20% of wall time at target core
    counts.
 5. A Verus or similar proof of seL4-style derivation and revocation is demonstrated at a
@@ -325,7 +401,8 @@ Each experiment gets `spikes/sel4-feasibility/results/<id>.md`, containing:
 These require owner approval first:
 
 - Building the comparator prototype.
-- Any kernel patch beyond a Conditional allowance.
+- Any kernel patch beyond a Conditional allowance, or one that passes the investigation
+  trigger.
 - Buying hardware, including a Raspberry Pi to run V configurations.
 - Installing global tools beyond those already approved.
 - Publishing or upstreaming anything.
@@ -333,4 +410,23 @@ These require owner approval first:
 
 ## Amendments
 
-None yet.
+### 2026-11-07: Gate 2 revisions
+
+Made before any experiment ran, so no result was seen. The owner's Gate 2 decision 4
+required them.
+
+| Item | Before | After |
+|---|---|---|
+| A2 | Pass at 90% identical functions, Fail below 70% | Assessment of proof applicability, configuration differences, TCB changes and unverified components |
+| C1 | Pass at 1 µs or less, Fail over 3 µs | 1 µs is a provisional target. Hardware, workload, method and baseline are defined. No automatic Fail |
+| C2 | Pass at 3 times Linux, Fail over 5 times | 3 and 5 times are investigation thresholds until justified. Representative workloads |
+| Kernel patches | 1,550-line hard limit | Investigation trigger, judged by security impact, complexity, proof implications and maintenance |
+| Decision rule 6 | C2 fails | A2 finds an unacceptable assurance regression. C1 and C2 never falsify automatically |
+
+Added the Blockers and regressions section, which defines the functional blockers and the
+unacceptable assurance regressions up front. Falsifiable criteria are kept: A1, A3, A4, A5,
+B1 to B4 and C3 are unchanged apart from replacing the "patch budget" wording with the
+policy above. The V, U, M and S labels and the changes that are unacceptable at any size
+are unchanged.
+
+The owner has not yet reviewed this wording.
