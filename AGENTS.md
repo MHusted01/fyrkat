@@ -39,7 +39,7 @@ The owner alone decides the following. Agents prepare the change and stop.
 |---|---|
 | Accept or provisionally approve an ADR | Owner only. Agents draft ADRs as Proposed. |
 | Any remote action: push, PR, GitHub repository changes, publishing | Owner approval first |
-| Changes to `.github/`, `.claude/`, `.cargo/`, `xtask/`, `docs/adr/`, `deny.toml`, `rust-toolchain.toml`, every `Cargo.toml` and `Cargo.lock`, `AGENTS.md`, `CLAUDE.md` | Owner approval (security-sensitive) |
+| Changes to `.github/`, `docs/adr/`, `xtask/`, `deny.toml`, and at any depth `.claude/`, `.cargo/`, `rust-toolchain.toml`, `rust-toolchain`, `.mcp.json`, `AGENTS.md`, `CLAUDE.md`, `build.rs`, `Cargo.toml` and `Cargo.lock` | Owner approval (security-sensitive) |
 | New dependency, new tool, or new global installation | Owner approval |
 | Buying hardware, changing accepted criteria | Owner approval |
 

@@ -2,15 +2,18 @@
 # PreToolUse hook for Bash. Refuses git pushes to main or master, force pushes, and pushes
 # of every branch. Exit 2 blocks the call and shows stderr to Claude.
 #
-# This is a guard against mistakes, not a security boundary. It splits the command on
-# ; & | ( ) and backticks, finds `git [options] push`, and reads the remaining words with
-# their quotes removed. It does not look inside `bash -c "..."`, variables, aliases or
-# scripts. GitHub branch protection on main is the authoritative control, and the
-# permission deny rules in .claude/settings.json back this hook up.
+# This is a guard against mistakes, not a security boundary. It joins backslash
+# continuations, splits the command on ; & | ( ) and backticks, skips shell keywords and
+# common wrappers, finds `git [options] push`, and reads the remaining words with their
+# quotes removed. It does not look inside `bash -c "..."`, `eval`, variables, aliases or
+# scripts, and it can block a harmless message that contains a pushing command after a
+# separator. GitHub branch protection on main is the authoritative control, and the
+# permission deny and ask rules in .claude/settings.json back this hook up.
 set -euo pipefail
 
 input=$(cat)
 command=$(jq -r '.tool_input.command // empty' <<<"$input")
+command=${command//$'\\\n'/ }
 
 block() {
   echo "BLOCKED: $1 Pushing to main or force pushing needs the owner's approval; ask the owner." >&2
@@ -25,21 +28,29 @@ unquote() {
 }
 
 # True for a refspec whose destination is main or master: main, HEAD:main, +x:main,
-# :main (delete) and refs/heads/main.
+# :main (delete), refs/heads/main and heads/main.
 targets_main() {
   local ref=$1
   ref=${ref#+}
   ref=${ref##*:}
-  ref=${ref#refs/heads/}
+  ref=${ref#refs/}
+  ref=${ref#heads/}
   [[ "$ref" == "main" || "$ref" == "master" ]]
 }
 
 # Handle the words of one `git push`, given as arguments.
 check_push_words() {
-  local word
+  local word skip=0
   for word in "$@"; do
+    if ((skip)); then
+      skip=0
+      continue
+    fi
     word=$(unquote "$word")
     case "$word" in
+      -o | --push-option | --receive-pack | --exec | --repo)
+        skip=1
+        continue ;;
       --force | --force=* | --force-with-lease | --force-with-lease=* | --force-if-includes)
         block "Force pushes are not allowed." ;;
       --all | --mirror)
@@ -63,10 +74,15 @@ while IFS= read -r segment; do
   count=${#words[@]}
   index=0
 
-  # Skip leading VAR=value words and common wrappers.
+  # Skip leading VAR=value words, shell keywords and common wrappers.
   while ((index < count)); do
     case "$(unquote "${words[index]}")" in
-      *=* | env | command | time | sudo | exec | nohup) index=$((index + 1)) ;;
+      *=* | env | command | time | sudo | exec | nohup | xargs | nice | \
+        if | then | else | elif | do | while | until | '!' | '{' | '}')
+        index=$((index + 1)) ;;
+      timeout | -u | -g | -n)
+        index=$((index + 2)) ;;
+      -*) index=$((index + 1)) ;;
       *) break ;;
     esac
   done

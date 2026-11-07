@@ -43,6 +43,18 @@ echo x >crates/a/Cargo.toml
 echo x >docs/adr/0005-new.md
 echo x >"docs/adr/with space.md"
 echo x >AGENTS.md
+mkdir -p .claude spikes/y/.cargo sub
+echo x >.claude/settings.json
+echo x >CLAUDE.md
+echo x >rust-toolchain.toml
+echo x >Cargo.lock
+echo x >.mcp.json
+echo x >spikes/y/.cargo/config.toml
+echo x >spikes/y/rust-toolchain.toml
+echo x >spikes/y/rust-toolchain
+echo x >crates/a/build.rs
+echo x >sub/CLAUDE.md
+echo x >docs/my-CLAUDE.md
 echo x >deny.toml
 echo x >src/other.rs
 echo x >xtask-notes.md
@@ -80,6 +92,28 @@ has_path 'AGENTS.md'
 check "AGENTS.md is listed" $?
 has_path 'deny.toml'
 check "deny.toml is listed" $?
+has_path '.claude/settings.json'
+check ".claude/ is listed" $?
+has_path 'CLAUDE.md'
+check "root CLAUDE.md is listed" $?
+has_path 'rust-toolchain.toml'
+check "root rust-toolchain.toml is listed" $?
+has_path 'Cargo.lock'
+check "root Cargo.lock is listed" $?
+has_path '.mcp.json'
+check ".mcp.json is listed" $?
+has_path 'spikes/y/.cargo/config.toml'
+check "a nested .cargo/ is listed" $?
+has_path 'spikes/y/rust-toolchain.toml'
+check "a nested rust-toolchain.toml is listed" $?
+has_path 'spikes/y/rust-toolchain'
+check "a legacy rust-toolchain file is listed" $?
+has_path 'crates/a/build.rs'
+check "build.rs is listed" $?
+has_path 'sub/CLAUDE.md'
+check "a nested CLAUDE.md is listed" $?
+lacks 'docs/my-CLAUDE.md'
+check "my-CLAUDE.md is not mistaken for CLAUDE.md" $?
 lacks 'src/other.rs'
 check "ordinary source is not listed" $?
 lacks 'xtask-notes.md'

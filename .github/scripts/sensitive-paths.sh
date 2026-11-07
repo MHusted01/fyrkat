@@ -17,7 +17,7 @@ head=$2
 
 # One extended regular expression. Keep in sync with CODEOWNERS, AGENTS.md, CONTRIBUTING.md,
 # docs/standards/engineering.md and .github/pull_request_template.md.
-sensitive='^(\.github/|\.claude/|\.cargo/|docs/adr/|xtask/|AGENTS\.md$|CLAUDE\.md$|deny\.toml$|rust-toolchain\.toml$)|(^|/)Cargo\.(lock|toml)$'
+sensitive='^(\.github/|docs/adr/|xtask/|deny\.toml$)|(^|/)(\.claude/|\.cargo/|rust-toolchain(\.toml)?$|\.mcp\.json$|AGENTS\.md$|CLAUDE\.md$|build\.rs$|Cargo\.(lock|toml)$)'
 
 # -z keeps non-ASCII names and names with spaces intact. --no-renames lists both the old
 # and the new path, so moving a file out of a sensitive directory still shows up.

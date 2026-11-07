@@ -6,12 +6,17 @@
 
 /.github/              @MHusted01
 /.claude/              @MHusted01
+# Nested config that changes what runs or what agents do:
+**/.claude/            @MHusted01
 /docs/adr/             @MHusted01
-/.cargo/               @MHusted01
+**/.cargo/             @MHusted01
 /xtask/                @MHusted01
 /deny.toml             @MHusted01
-/rust-toolchain.toml   @MHusted01
+rust-toolchain.toml    @MHusted01
+rust-toolchain         @MHusted01
+.mcp.json              @MHusted01
+build.rs               @MHusted01
 Cargo.toml             @MHusted01
 Cargo.lock             @MHusted01
-/AGENTS.md             @MHusted01
-/CLAUDE.md             @MHusted01
+AGENTS.md              @MHusted01
+CLAUDE.md              @MHusted01
