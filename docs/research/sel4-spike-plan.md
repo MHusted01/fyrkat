@@ -1,15 +1,19 @@
 # seL4 feasibility spike plan
 
-- **Status:** Draft, awaiting owner approval. Written on 2026-11-07, before any experiment
-  was run. It becomes pre-registered only when the owner's approval is recorded under
-  [Amendments](#amendments) with a date and the commit SHA of the approved text.
+- **Status:** Approved by the owner on 2026-11-07 for the text at commit
+  `46a90fac7ec09865502de1059dc9a213fa3fcd9f` (`46a90fa`). Written before any experiment was run. The approval covers this
+  plan and its acceptance criteria only. It does **not** authorize running any experiment,
+  implementing a Class 3 kernel change, or relaxing a criterion. See
+  [Amendments](#amendments).
 - **Supports:** [ADR 0004](../adr/0004-kernel-foundation.md).
 - **Owner approval required for:** anything listed under [Scope limits](#scope-limits).
 
-No experiment starts until that approval is recorded. Every results file must cite the
-approved commit SHA. Once approved, criteria are fixed. Loosening a criterion after seeing
-a result requires owner approval, and must be recorded under [Amendments](#amendments)
-with the reason.
+No experiment starts until the owner separately authorizes execution, and approval of this
+plan is not that authorization. Every results file must cite the approved commit SHA
+`46a90fa`. The criteria are fixed. Later commits to this file may record approvals and
+other Amendments, but may not change a criterion. Loosening a criterion after seeing a
+result requires owner approval, and must be recorded under [Amendments](#amendments) with
+the reason.
 
 ## Hypothesis
 
@@ -699,7 +703,8 @@ These require owner approval first:
 - Installing global tools beyond those already approved.
 - Publishing or upstreaming anything.
 - Changing any accepted criterion.
-- Starting any experiment before the owner's approval of this plan is recorded.
+- Starting any experiment before the owner separately authorizes execution. Approval of this
+  plan does not authorize it.
 
 ## Amendments
 
@@ -780,3 +785,20 @@ Before column was corrected in `7baa6c1`, not in `d0dc042`.
 - **Kept as loosened in the Gate 2 entry:** the numeric kernel patch bound.
 
 Unchanged: A1, B1, C3, Stage D, and the V, U, M and S labels, apart from the MCS note.
+
+### 2026-11-07: Owner approval of the plan
+
+The owner approved this plan as reviewed at commit `46a90fac7ec09865502de1059dc9a213fa3fcd9f` (`46a90fa`), the head of PR 1
+at that time. Before recording the approval, the plan text at that commit was checked for
+the owner's three decisions on K4, x86-64 assurance and kernel patches, and the plan file
+was confirmed unchanged between that commit and the commit that records this approval,
+apart from the Status line, the start-gate wording, the Scope limits line and this entry.
+
+The approval covers the plan and its acceptance criteria only. It does **not** authorize:
+
+- executing any experiment, which needs the owner's separate authorization;
+- implementing any Class 3 kernel change, including K4;
+- relaxing any criterion. Any such change needs an Amendment and the owner's approval.
+
+The first-draft and Draft 2 entries above are history. Their statements that the owner had
+not yet approved the plan were true when written.

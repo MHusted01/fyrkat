@@ -25,7 +25,8 @@ conflict with this section, this section is right. Check it against Git and GitH
 - **Protection on `main`:** read back through the API: PR required, three named checks,
   conversations resolved, 0 approvals, admins enforced, linear history, no force pushes or
   deletion, squash only. A failing PR was blocked and its merge refused.
-- **Not yet shown:** a direct push to `main` being rejected. The owner runs that test.
+- **Direct push to `main`:** not tested on `main` itself, by owner decision. Rejection was shown on an
+  identically protected throwaway branch. See the [M0 acceptance record](m0-acceptance.md).
 - **Review fixes (owner-authorized, on PR 1):** the push hook now parses `git push` forms and
   no longer trips on commit messages. The ADR hook applies each edit and compares status
   lines, normalises paths, and covers `edits[]` payloads and common shell-write patterns. It is
@@ -34,7 +35,9 @@ conflict with this section, this section is right. Check it against Git and GitH
   base branch's copy of it where one exists. Both have regression tests in `cargo xtask check`.
   GitHub now has strict required checks, SHA pinning enforced, Actions limited to GitHub-owned
   actions, Dependabot alerts and security updates, and approval for all external contributors.
-- **Spike plan:** Draft 2, **not approved**, and no experiment may start. It has an assurance
+- **Spike plan:** approved by the owner on 2026-11-07 at commit
+  `46a90fac7ec09865502de1059dc9a213fa3fcd9f`, for the plan and its criteria only. **No experiment
+  may start: execution is not authorized.** It has an assurance
   matrix, kernel change Classes 0 to 3, fixed outcome precedence, a consequences table, an
   A5-arm and A5-x86 split, and rules requiring the C1 and C2 method files (not yet written) to
   be committed before any run. Two adversarial reviews fed it. **Owner decisions, 2026-11-07, incorporated into the draft:** (1) K4, an in-kernel IOMMU
@@ -45,14 +48,14 @@ conflict with this section, this section is right. Check it against Git and GitH
   patches stay separate from this repository for now, with upstream commits, hashes, files,
   configurations, toolchains and reproduction instructions recorded. Distribution would need a
   separately licensed repository or another approved approach. The seL4 pin was a tag object,
-  and the commit is `62e345c240a15671484530b4e6e069ce266c28d7`. **The plan stays Draft until the
-  owner approves an exact commit SHA. Spike execution is not authorized.**
+  and the commit is `62e345c240a15671484530b4e6e069ce266c28d7`. **Spike execution is not authorized, and Class 3
+  changes and criterion changes stay outside the approval.**
 - **Known limits, not fixable here:** the sensitive-paths check is a notice, because the workflow
   file comes from the PR. With one maintainer GitHub cannot require a second approver. A
   base-controlled `pull_request_target` check is a follow-up for after PR 1 merges, because it
   needs the workflow to exist on `main` first.
-- **M0 is not complete.** Remaining: the owner's review of the spike plan, the direct-push test,
-  and merging PR 1.
+- **M0:** the evidence is in the [M0 acceptance record](m0-acceptance.md). Remaining: the owner's
+  review, merging PR 1, and declaring M0 complete.
 
 ## Gate 2 decision
 

@@ -43,6 +43,9 @@ Exit criteria:
 - A fresh clone passes `cargo xtask check`.
 - CI runs on a real pull request, and a deliberately failing change is blocked.
 - A direct push to `main` is rejected, and protections are confirmed through the API.
+  The rejection was demonstrated on an identically protected throwaway branch, and `main`
+  itself was deliberately not push-tested. See the
+  [M0 acceptance record](development/m0-acceptance.md).
 - ADRs 0001 to 0003 are ruled on, and the spike plan is approved.
 - Project Claude Code configuration is confirmed working in a real session.
 - The adversarial review is complete, with material findings fixed or tracked.
