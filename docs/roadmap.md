@@ -128,3 +128,5 @@ Unscheduled, because each depends on evidence that does not exist yet:
 | R3 | How should heterogeneous cores be scheduled? | M4 |
 | R4 | Which component should be verified first, and with which tools? | M3 |
 | R5 | What is the policy for speculative side channels? | Running mutually distrusting code |
+
+[deliberately broken link](./does-not-exist.md)
