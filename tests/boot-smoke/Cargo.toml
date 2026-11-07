@@ -1,0 +1,20 @@
+[package]
+name = "boot-smoke"
+version = "0.0.0"
+description = "UEFI toolchain and firmware pipeline check. Not a kernel."
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+# Built only with an explicit UEFI --target. See docs/development.md.
+[dependencies]
+
+[[bin]]
+name = "boot-smoke"
+path = "src/main.rs"
+test = false
+bench = false
+
+[lints]
+workspace = true

@@ -1,0 +1,40 @@
+# Fyrkat Cargo workspace. The build and verification entry point is `cargo xtask`.
+[workspace]
+resolver = "3"
+members = ["xtask", "tests/boot-smoke"]
+# Plain `cargo build` and `cargo test` act on the host-buildable members only.
+# tests/boot-smoke is a UEFI application and needs an explicit --target.
+default-members = ["xtask"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+rust-version = "1.99"
+publish = false
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+missing_debug_implementations = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"
+unused_lifetimes = "warn"
+unused_qualifications = "warn"
+unit_bindings = "warn"
+let_underscore_drop = "warn"
+single_use_lifetimes = "warn"
+unused_import_braces = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+undocumented_unsafe_blocks = "deny"
+missing_safety_doc = "deny"
+multiple_unsafe_ops_per_block = "deny"
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
+dbg_macro = "deny"
+allow_attributes_without_reason = "warn"
+mem_forget = "deny"
