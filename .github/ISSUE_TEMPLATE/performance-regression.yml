@@ -1,0 +1,36 @@
+name: Performance regression
+description: Something measurably got slower or larger
+labels: [performance]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        See docs/standards/performance.md. Do not compare Fyrkat with another system without
+        comparable measurements.
+  - type: input
+    id: commits
+    attributes:
+      label: Baseline and regressed commits
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Measurement method
+      description: Exact command, workload, number of runs, and whether runs were warm or cold.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Results
+      description: Median with minimum and maximum for both commits.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Hardware, CPU, host OS, QEMU and accelerator, compiler version, build profile.
+    validations:
+      required: true

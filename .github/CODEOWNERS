@@ -1,0 +1,12 @@
+# The project owner reviews everything, and must approve security-sensitive paths.
+# Keep the sensitive list in sync with AGENTS.md and .github/scripts/sensitive-paths.sh.
+# The last matching pattern wins.
+
+*                      @MHusted01
+
+/.github/              @MHusted01
+/.claude/              @MHusted01
+/docs/adr/             @MHusted01
+/deny.toml             @MHusted01
+/rust-toolchain.toml   @MHusted01
+/Cargo.lock            @MHusted01

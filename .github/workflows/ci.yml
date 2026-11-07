@@ -1,0 +1,112 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  ACTIONLINT_VERSION: "1.7.12"
+  # sha256 of actionlint_<version>_linux_amd64.tar.gz, from the release's checksums file.
+  ACTIONLINT_SHA256_LINUX_AMD64: "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+
+jobs:
+  # The whole verification suite, once, on x86-64. This is the same command developers run.
+  check:
+    name: check and boot (ubuntu x86-64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            jq shellcheck qemu-system-arm qemu-system-x86 qemu-efi-aarch64 ovmf
+
+      - name: Install actionlint
+        run: |
+          archive="$RUNNER_TEMP/actionlint.tar.gz"
+          curl --proto '=https' --tlsv1.2 -sSfL -o "$archive" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256_LINUX_AMD64}  ${archive}" | sha256sum --check --strict -
+          mkdir -p "$HOME/.local/bin"
+          tar -xzf "$archive" -C "$HOME/.local/bin" actionlint
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Report host capabilities
+        run: ./.github/scripts/host-report.sh
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      - name: Cache pinned tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tools
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('xtask/src/tools.rs', 'rust-toolchain.toml') }}
+
+      - name: Install pinned tools
+        run: cargo xtask tools
+
+      - name: Check
+        run: cargo xtask check
+
+      - name: Boot (QEMU, TCG)
+        run: cargo xtask boot
+
+  # Boot on a native arm64 host. check is not repeated: it adds nothing here except
+  # compiling xtask for arm64, which the boot step does anyway.
+  boot-arm64:
+    name: boot (ubuntu arm64)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install system packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            qemu-system-arm qemu-system-x86 qemu-efi-aarch64 ovmf
+
+      - name: Report host capabilities
+        run: ./.github/scripts/host-report.sh
+
+      - name: Install the pinned Rust toolchain
+        run: rustup toolchain install
+
+      - name: Boot (QEMU, TCG)
+        run: cargo xtask boot
+
+  sensitive-paths:
+    name: security-sensitive paths
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: List changed security-sensitive paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: ./.github/scripts/sensitive-paths.sh "$BASE_SHA" "$HEAD_SHA" >> "$GITHUB_STEP_SUMMARY"

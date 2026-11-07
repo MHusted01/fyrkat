@@ -1,0 +1,60 @@
+name: macOS development host
+
+# The primary development machine is a Mac. This weekly run confirms that the documented
+# workflow (docs/development.md) still works there, and records whether HVF is available
+# on a hosted runner.
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+
+jobs:
+  check:
+    name: check and boot (macOS arm64)
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install prerequisites
+        run: brew install qemu shellcheck actionlint jq
+
+      - name: Install the pinned Rust toolchain
+        run: |
+          command -v rustup >/dev/null 2>&1 || brew install rustup
+          rustup toolchain install
+
+      - name: Cache pinned tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .tools
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('xtask/src/tools.rs', 'rust-toolchain.toml') }}
+
+      - name: Install pinned tools
+        run: cargo xtask tools
+
+      - name: Check
+        run: cargo xtask check
+
+      - name: Boot (QEMU, TCG)
+        run: cargo xtask boot
+
+      # Informational: hosted macOS runners are virtual machines and may not offer HVF.
+      # A failure here does not fail the workflow; read the log.
+      - name: Boot AArch64 with HVF (informational)
+        continue-on-error: true
+        run: cargo xtask boot --arch aarch64 --accel hvf
