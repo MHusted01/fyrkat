@@ -1,0 +1,15 @@
+# Build output, including the spikes' own target directories
+target/
+
+# Pinned developer tools installed by `cargo xtask tools`
+/.tools/
+
+# Per-developer Claude Code state
+/.claude/settings.local.json
+/CLAUDE.local.md
+
+# Editor and OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
