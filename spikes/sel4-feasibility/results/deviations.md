@@ -30,20 +30,21 @@ version in `external/rust-sel4/Cargo.lock` at `c819c27`. Release dates are from 
 
 | Crate | Approved | Resolved | Released (resolved / approved) | Path | Reaches the target binary? |
 |---|---|---|---|---|---|
-| `cc` | 1.10.0 | **1.11.0** | 2026-11-02 / 2026-10-23 | build-dependency of `psm` 0.1.32 and of `stacker`, under `pest_stack_guard` and `pest` | No: host-side build script |
+| `cc` | 1.10.0 | **1.11.0** | 2026-11-02 / 2026-10-23 | build-dependency of `psm` 0.1.32 and of `stacker`, under `pest_stack_guard` and `pest` | Not linked into the target. Runs on the build host, with the builder's privileges, inside `sel4-sys`'s build script, which uses `pest` to parse seL4's `.bf` files and generate code that is compiled into the target |
 | `log` | 0.4.34 | **0.4.35** | 2026-10-30 / 2026-08-22 | dependency of `sel4-sys` (normal edge, so on the root task's AArch64 target graph) and of `bindgen` (build) | **Yes**: the only one of the six on the target's normal graph. Whether it changes the root-task bytes was not tested |
-| `psm` | 0.1.24 | **0.1.32** | 2026-08-02 / 2024-11-13 | `pest_stack_guard` 1.0.1 and `stacker` -> `pest` -> `pest_derive`, a build-dependency of `sel4-sys` | No: host-side build script |
-| `pest_stack_guard` | 1.0.0 | **1.0.1** | 2026-11-03 / 2026-10-26 | `pest` 2.9.5 -> `pest_derive`, `pest_generator`, `pest_meta`, build-dependencies of `sel4-sys` | No |
-| `ar_archive_writer` | absent | **0.5.3** (new) | 2026-07-31 / n/a | build-dependency of `psm` 0.1.32 (its manifest requires `^0.5.0`) | No |
-| `object` | 0.40.0 | **0.39.1** (older) | 2026-04-21 / 2026-08-01 | dependency of `ar_archive_writer` 0.5.3, whose manifest requires `^0.39` | No |
+| `psm` | 0.1.24 | **0.1.32** | 2026-08-02 / 2024-11-13 | `pest_stack_guard` 1.0.1 and `stacker` -> `pest` -> `pest_derive`, a build-dependency of `sel4-sys` | Not linked into the target. Runs on the build host, with the builder's privileges, inside `sel4-sys`'s build script, which uses `pest` to parse seL4's `.bf` files and generate code that is compiled into the target |
+| `pest_stack_guard` | 1.0.0 | **1.0.1** | 2026-11-03 / 2026-10-26 | `pest` 2.9.5 -> `pest_derive`, `pest_generator`, `pest_meta`, build-dependencies of `sel4-sys` | Same as above |
+| `ar_archive_writer` | absent | **0.5.3** (new) | 2026-07-31 / n/a | build-dependency of `psm` 0.1.32 (its manifest requires `^0.5.0`) | Same as above |
+| `object` | 0.40.0 | **0.39.1** (older) | 2026-04-21 / 2026-08-01 | dependency of `ar_archive_writer` 0.5.3, whose manifest requires `^0.39` | Same as above |
 
 **Why they resolved this way.** The spike lock is the demo's lock, produced by "update everything" on 2026-11-04. rust-sel4's own lock at
 `v6.0.0` is from 2026-10-29. Three of the resolved versions were published after the release lock (`cc` 1.11.0, `log` 0.4.35 and
-`pest_stack_guard` 1.0.1). `psm` 0.1.32 was published before it, but the release lock never bumped `psm`. `psm` 0.1.32 is what adds
-`ar_archive_writer` as a build-dependency, and `ar_archive_writer` 0.5.3 requires the `object` 0.39 series, which is why `object` is *older* than
-the approved 0.40.0 [Documented: the crates' own manifests]. The other differences in a full comparison (`bitflags`, `itertools`, `windows-sys`)
-are only extra older copies that the larger rust-sel4 workspace carries and the spike does not. The loader and `add-payload` were built from
-rust-sel4's own lock, which is the approved one. **Only the root task, built in the spike workspace, used the spike lock.**
+`pest_stack_guard` 1.0.1). The `psm` change is different [Measured: the crates' own manifests]: `pest_stack_guard` 1.0.0 requires `psm` as
+exactly `=0.1.24`, so the release lock could not move it. `pest_stack_guard` 1.0.1 (2026-11-03) relaxed that to `0.1.24`, which let `psm` resolve to
+0.1.32. `psm` 0.1.32 adds `ar_archive_writer` as a build-dependency, and `ar_archive_writer` 0.5.3 requires the `object` 0.39 series, which is why
+`object` is *older* than the approved 0.40.0. The other differences in a full comparison (`bitflags`, `itertools`, `windows-sys`) are only extra
+older copies that the larger rust-sel4 workspace carries and the spike does not. The loader and `add-payload` were built from rust-sel4's own
+lock, which is the approved one. **Only the root task, built in the spike workspace, used the spike lock.**
 
 **Advisories.** None of the six crates has an entry in the local RustSec database (checked out 2026-11-06, 999 crate directories, none for these
 six). `cargo deny` 0.20.2 on the spike workspace passes (advisories, bans and sources ok) with the original lock and with the restored one below
@@ -57,8 +58,19 @@ Costs and unknowns: it edits a gated file (`Cargo.lock`), so it needs the owner'
 [Inferred, not tested], so the A1 root-task hash (`a7c6be9a…`) and the identical-build claim would have to be re-established by a new A1 run,
 which is not authorized; and it moves the lock away from the demo's lock, so the demo's own provenance claim changes.
 
-**Options for the owner** (the agent's recommendation is in the report that goes with this file): approve the six versions as they are, with the
-reason that five are host-side build-time only and `log` is a patch bump; or restore the approved versions and re-run A1 under a new authorization.
+**Options for the owner.** Each has reasons for and against.
+
+1. *Approve the six versions as they are.* For: A1's results and the root-task hash stay as recorded; five of the six only run at build time, and
+   `log` is a patch bump. Against: the lock then differs from the one the owner approved at `v6.0.0` (the rule at the plan's Amendment of
+   2026-11-08 is that such differences stop the work and ask), the root task is built from a lock the loader does not use, and the build-time crates
+   still run code on the build host.
+2. *Restore the approved versions* (four `cargo update --precise` commands, offline). For: it matches the approval, and the root task would use the
+   same reviewed lock as the loader and `add-payload`. Against: it edits a gated file, whether it changes the root-task bytes is unknown, and A1 would
+   need a new run under its own authorization, so A1's recorded hashes would be replaced.
+3. *Restore only `log`* (the one crate that reaches the target binary) and approve the build-time five as they are. For: it limits the change to the
+   binary's dependency. Against: it leaves a lock that matches neither the approved lock nor the demo's, and it still needs a new A1 run.
+
+The agent's recommendation was given to the owner in the session report: option 2. It is not part of this record, and nothing here is decided.
 
 ## Privacy note
 

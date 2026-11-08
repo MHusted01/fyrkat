@@ -11,9 +11,9 @@ It records approvals and grants none. The owner's S1 decisions are in the last e
   `b563904`, `899d841`, `5937762`, `24634be` (on GitHub since the first push of this session), `05c40b2`,
   `6009f43`, then the commit that holds this file. Check `git log main..HEAD` and `git status -sb` for the
   live state. [Measured at the time of writing]
-- **Open PR:** **PR 8**, not merged. On `24634be` all three required checks passed (`check and boot (ubuntu
-  x86-64)`, `boot (ubuntu arm64)`, `security-sensitive paths`). **CI on the newer head is not recorded here**:
-  run `gh pr checks 8`. [Measured: `gh pr checks 8` at `24634be`]
+- **Open PR:** **PR 8**, not merged. All three required checks (`check and boot (ubuntu x86-64)`, `boot (ubuntu
+  arm64)`, `security-sensitive paths`) passed on `24634be` and on `2235daf`. **CI on any later head is not
+  recorded here**: run `gh pr checks 8`. [Measured: `gh pr checks 8`]
 - **Other PRs:** 1, 3, 4, 5, 6 merged. 2 and 7 closed. PR 7 held the same work with unredacted logs.
 - **Remote branches:** only `main` and the PR 8 branch.
 
@@ -51,7 +51,7 @@ The review returned **NOT MERGE-READY**. Status of its findings:
 | F3 privacy wording | Fixed in `EVIDENCE-PRIVACY.md` and `deviations.md`: not erased, `c99300d` still resolves by SHA |
 | F4 stale A3 status | Fixed |
 | F5 unverifiable configuration claims | Fixed: sanitized excerpts `A3/41` and `A3/42`, and the verifier checks their contents |
-| F6, F17 PR text | The PR description needs the two corrections. Check `gh pr view 8` |
+| F6, F17 PR text | The PR description was rewritten, but its `unsafe-libyaml` sentence was still wrong (delta finding N1). Corrected afterwards: check `gh pr view 8` |
 | F7 nightly Rust | Owner acknowledged. Recorded in A1 and the Amendments. The long-term toolchain policy is **unresolved** |
 | F8 this handoff | Refreshed here |
 | F9 roadmap | Fixed |
@@ -60,8 +60,15 @@ The review returned **NOT MERGE-READY**. Status of its findings:
 | F13 to F16 | Fixed or recorded (A1, A3, `A3/shim-era/README.md`, D14) |
 | F18 the local unsanitized branch | Not changed. The owner's choice |
 
-A **focused delta review** is required next. The conditional merge authorization applies only if every material
-finding, F2 included, is resolved and the reviewer explicitly returns MERGE-READY.
+The **delta review** (at `2235daf`) returned **NOT MERGE-READY**: F2 (awaiting the owner), and two material
+findings of its own. **N1**: the `unsafe-libyaml` statement in the PR text and in the verifier check was wrong
+(the package is in the loader's build-time graph, through `sel4-platform-info`'s build script, and not in its
+normal graph). **N2**: deviation D13 had the cause of the `psm` change backwards (`pest_stack_guard` 1.0.0 pins
+`psm` exactly) and understated what the build-time crates do. Both were corrected afterwards, with the lower-
+severity items N3 to N8 (option framing, verifier precision, a provenance correction row, PR text, this file).
+**A final delta check is still needed, and the merge also needs the owner's F2 decision.** The conditional merge
+authorization applies only if every material finding, F2 included, is resolved and the reviewer explicitly
+returns MERGE-READY.
 
 ## Authorizations in force
 
@@ -111,14 +118,15 @@ Source: the owner's messages in this conversation, and the plan's 2026-11-08 Ame
 | `cargo deny` on the spike workspace | scratch copies | advisories, bans, sources ok with the original lock and with the restored lock |
 | Local commit signatures | `24634be`, `05c40b2`, `6009f43` | each has a signature and a DCO trailer. GitHub's own verification is not re-read here |
 
-**Not verified:** CI on any head after `24634be`; `cargo xtask boot` locally; any seL4 run on a host other
+**Not verified:** CI on any head after `2235daf`; `cargo xtask boot` locally; any seL4 run on a host other
 than this M2 Pro; whether restoring the approved lock changes the root-task binary; whether the 4-node SMP
 kernel boots under any machine setting; whether a GitHub Support request would remove retained references.
 
 ## Next actions
 
-1. Check `gh pr checks 8` on the pushed head and `gh pr view 8` for the PR text corrections.
-2. Run the focused delta review (`reviewer` agent, fresh context). Then check `git status` for stray edits.
+1. Check `gh pr checks 8` on the pushed head and `gh pr view 8` for the PR text.
+2. After the owner decides F2, run a final delta check (`reviewer` agent, fresh context). Then check
+   `git status` for stray edits.
 3. **Needs the owner:** decide F2. Nothing merges before that.
 4. **Authorized now:** read-only checks and answering questions, plus the corrections the delta review finds
    within PR 8's scope. Nothing that runs an experiment, installs a tool, or changes the lockfile.
@@ -128,7 +136,8 @@ kernel boots under any machine setting; whether a GitHub Support request would r
 - **Unsanitized history is kept locally** on branch `local-only/s1-workspace-unsanitized` (no upstream).
   **Never push it.** Raw logs are in the gitignored `spikes/sel4-feasibility/results-raw/`, and a backup
   `fyrkat-s1-raw-evidence-2026-11-08.tar.gz` (SHA-256 `768af917…`) sits next to the repository directory.
-  The hooks block pushes to `main` only, so an accidental push of that branch would not be stopped.
+  The hooks block pushes to `main` or `master`, force pushes and `push --all`, but a push of that one branch by
+  name would not be stopped.
 - The sanitizer reads the user, home and host names from the machine it runs on. Rerun it only there. It
   now fails closed on an unterminated tap warning.
 - Stale local branches `spike/s1-prerequisites` and `docs/agents-research-section` are merged and can go.

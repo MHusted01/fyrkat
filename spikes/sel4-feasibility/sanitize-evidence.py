@@ -69,7 +69,7 @@ class Redactor:
             (re.compile(r"/private/tmp/claude-[0-9]+/\S*"), "<SCRATCH>"),
             (re.compile(r"/private/var/folders/[^/\s]+/[^/\s]+/T"), "<TMPDIR>"),
             (re.compile(r"/var/folders/[^/\s]+/[^/\s]+/T"), "<TMPDIR>"),
-            (re.compile(re.escape(home), re.IGNORECASE), "<HOME>"),
+            (re.compile(re.escape(home) + r"(?![A-Za-z0-9])", re.IGNORECASE), "<HOME>"),
             (word(user), "<user>"),
             (re.compile(r"(==> Tapp(?:ing|ed) )\S+/\S+"), r"\1<tap>"),
         ]
@@ -196,6 +196,7 @@ def main() -> int:
         return 2
     red = Redactor(repo)
     manifest = ["# raw SHA-256  sanitized SHA-256  path (relative to results/). Raw files are kept locally.\n"]
+    cleaned: list[tuple[Path, str, str]] = []  # (source, relative name, sanitized text)
     for src in sorted(p for p in raw.rglob("*") if p.is_file()):
         rel = src.relative_to(raw).as_posix()
         try:
@@ -204,10 +205,12 @@ def main() -> int:
             print(f"error: {rel} is not UTF-8 text", file=sys.stderr)
             return 2
         try:
-            clean = sanitize(rel, text, red)
+            cleaned.append((src, rel, sanitize(rel, text, red)))
         except ValueError as err:
             print(f"error: {rel}: {err}", file=sys.stderr)
             return 2
+    # Nothing is written until every file has been sanitized, so a failure leaves no partial output.
+    for src, rel, clean in cleaned:
         dst = out / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         with open(dst, "w", encoding="utf-8", newline="") as fh:

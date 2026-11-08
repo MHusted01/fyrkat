@@ -5,9 +5,11 @@
 
 It reads only the sanitized files (never results-raw/), so anyone with a clone can run it. It checks
 that the measurements the records rely on are present and consistent, that the manifest's hashes match
-the files, and that no home path remains. The privacy check does not depend on who runs it: it looks for
-any `/Users/NAME/` or `/home/NAME/` path, and also for the running user's own home path, host name and,
-when it is a distinctive name, user name. Exit code 0 when every check passes. Spike code, stdlib only.
+the files, and that no home path remains. The privacy check looks for any home-directory path under the macOS or
+Linux users root, an encoded scratch-directory name, and the running user's own home path and host name. It checks the
+running user's name only when it has at least six characters and is not a common service name, so it cannot
+prove that some other person's name is absent: the sanitizer is what removes names. Exit code 0 when every
+check passes. Spike code, stdlib only.
 """
 import argparse
 import getpass
@@ -55,7 +57,8 @@ def smp_build_ok(text: str, nodes: str, smp: bool) -> bool:
             and c.get("CONFIG_ARM_HYPERVISOR_SUPPORT") == "False" and c.get("KernelArmHypervisorSupport") == "OFF"
             and c.get("CONFIG_PLAT_QEMU_ARM_VIRT") == "True" and c.get("CONFIG_KERNEL_MCS") == "False"
             and c.get("CONFIG_ARM_CORTEX_A53") == "True" and c.get("KernelArmCPU") == "cortex-a53"
-            and f"cpu nodes: {nodes}" in text)
+            and re.search(rf"(?m)^cpu nodes: {nodes}$", text) is not None
+            and set(re.findall(r'method = "(\w+)";', text)) == {"hvc"})
 
 
 def main() -> int:
@@ -95,9 +98,10 @@ def main() -> int:
         ids = set(re.findall(r"RUSTSEC-\d{4}-\d{4}", read(res, rel)))
         check(f"A1 {rel}: the only advisory is RUSTSEC-2024-0449", ids == {"RUSTSEC-2024-0449"})
     path = read(res, "A1/19-unsafe-libyaml-path.txt")
-    check("A1 unsafe-libyaml has no normal or build edge into the target loader, and no symbol in it",
-          all("warning: nothing to print" in section(path, f"edges: {kind}, package sel4-kernel-loader,")
-              for kind in ("normal", "build"))
+    check("A1 unsafe-libyaml: no normal edge into the target loader, no symbol in it, and the build-time path "
+          "is through sel4-platform-info",
+          "warning: nothing to print" in section(path, "edges: normal, package sel4-kernel-loader,")
+          and "sel4-platform-info" in section(path, "edges: all, package sel4-kernel-loader,")
           and "nm matches=0" in path and "strings matches=0" in path)
     base = read(res, "A1/00-baseline.txt")
     check("A1 host and tool versions recorded (M2 Pro, CMake 4.4.5, QEMU 11.1.3)",
@@ -133,8 +137,8 @@ def main() -> int:
           smp_build_ok(cfg1, "1", False))
     check("A3 4-vCPU image: a real 4-node SMP, non-hypervisor kernel with four cpu nodes",
           smp_build_ok(cfg4, "4", True))
-    check("A3 the device tree names the hvc PSCI conduit that the elfloader rejects",
-          all('method = "hvc";' in t for t in (cfg1, cfg4)))
+    check("A3 the device trees name hvc as the only PSCI conduit, which the elfloader rejects",
+          all(set(re.findall(r'method = "(\w+)";', t)) == {"hvc"} for t in (cfg1, cfg4)))
 
     # ---- integrity and privacy
     listed: set[str] = set()
@@ -148,8 +152,8 @@ def main() -> int:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
     evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A3") for p in (res / sub).rglob("*")
-                if p.is_file() and p.name != "README.md"}
-    check("manifest: it lists exactly the evidence files under A1/ and A3/ (README.md notes aside)",
+                if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
+    check("manifest: it lists exactly the evidence files under A1/ and A3/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -157,7 +161,8 @@ def main() -> int:
     plain = {n for n in (host, host.split(".")[0]) if len(n) >= 4} - {"localhost"}
     if home not in ("", "/"):
         plain.add(home)
-    patterns = [r"(?:/Users|/home)/[A-Za-z0-9._-]+/", r"/var/folders", r"/private/tmp/claude-"]
+    patterns = [r"(?:/Users|/home)/[A-Za-z0-9._-]+", r"-Users-[A-Za-z0-9._]+-", r"/var/folders",
+                r"/private/tmp/claude-"]
     if len(user) >= 6 and user.lower() not in common:
         patterns.append(rf"(?<![A-Za-z0-9]){re.escape(user)}(?![A-Za-z0-9])")
     rx = re.compile("|".join(patterns), re.IGNORECASE)
