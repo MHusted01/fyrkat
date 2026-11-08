@@ -1,0 +1,43 @@
+# sel4test configure, 1 node 2026-11-08T01:34:32Z
+loading initial cache file /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4test/settings.cmake
+-- Set platform details from PLATFORM=qemu-arm-virt
+--   KernelPlatform: qemu-arm-virt
+-- Setting from flags KernelSel4Arch: aarch64
+-- Found seL4: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/kernel
+-- ARM_CPU not set, defaulting to cortex-a53
+-- Extracting device tree from QEMU
+-- ARM_CPU not set, defaulting to cortex-a53
+-- Extracting device tree from QEMU
+-- The C compiler identification is GNU 16.2.0
+-- The CXX compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/homebrew/bin/aarch64-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found elfloader-tool: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/seL4/elfloader-tool
+-- /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu/kernel/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- CPIO test cpio_reproducible_flag FAILED
+-- Found musllibc: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/musllibc
+-- Found util_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/util_libs
+-- Found seL4_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/seL4_libs
+-- Found sel4_projects_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4_projects_libs
+-- Found sel4runtime: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4runtime
+-- Performing Test compiler_arch_test
+-- Performing Test compiler_arch_test - Success
+-- libmuslc architecture: 'aarch64' (from KernelSel4Arch 'aarch64')
+-- Detecting cached version of: musllibc
+-- Found Git: /opt/homebrew/bin/git (found version "2.56.0")
+--   Not found cache entry for musllibc - will build from source
+-- Found Nanopb: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/nanopb
+-- Configuring done (10.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu
+exit: 0

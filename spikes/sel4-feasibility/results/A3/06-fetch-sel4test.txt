@@ -1,0 +1,9 @@
+OK projects/musllibc b0005f86fecbd6d0257b15363a5b013446914265
+OK tools/nanopb cad3c18ef15a663e30e3e43e3a752b66378adec1
+OK projects/seL4_libs 262a34dcb2f3285be01df9e5404d911132d567a6
+OK tools/seL4 6493e0c6fab360eb81a8115a49c9ca7bc280c48a
+OK projects/sel4_projects_libs b9137c0d905ce966a02b1c9a0c6c0e4beb48223b
+OK projects/sel4runtime 86489cf6efab9f314964e79468c036e9035394c7
+OK projects/sel4test f27e4f4cdd020ef9b37f15ded76a3b38477761f0
+OK projects/util_libs ef49a397b7044fc38b609a99a8c6265a97913b8e
+done: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace

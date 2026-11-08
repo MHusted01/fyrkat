@@ -1,0 +1,3 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2 -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel build/image.elf
+
+[boot-image] marker 'TEST_PASS' NOT seen after 40.20s (accel=tcg cpu=cortex-a57 smp=1 gic=2)

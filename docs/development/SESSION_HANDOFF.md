@@ -1,77 +1,89 @@
 # Session handoff
 
 A snapshot for the next session, not a source of truth. [ADRs](../adr/README.md) and Git win
-over it. It records approvals and grants none. The authoritative record of the owner's S1 decisions is
-the last entries in the [spike plan's Amendments](../research/sel4-spike-plan.md#amendments).
+over it. It records approvals and grants none. The owner's S1 decisions are in the last entries of the
+[spike plan's Amendments](../research/sel4-spike-plan.md#amendments).
 
 ## Snapshot
 
 - **Date:** 2026-11-08.
-- **Written from:** branch `spike/s1-prerequisites` (PR 6), before the PR is merged. Read `git log` and
-  `gh pr view 6` for what happened after. [Measured: git]
-- **Merged:** PR 5 (`AGENTS.md` research policy) as `a79c847` on `main`, by squash. PRs 1, 3 and 4
-  are merged and 2 is closed. [Measured: `gh pr list --state all`]
-- **CI:** the three required checks passed on PR 5 and on earlier PR 6 heads. They are re-run on each
-  push. [Measured: `gh pr checks`]
+- **Merged to `main`:** PR 5 (`AGENTS.md` research policy, `a79c847`) and PR 6 (S1 prerequisites, C1/C2
+  methods, decision package and owner decisions, `4fb92a1`). [Measured: `gh pr list --state all`]
+- **Local branch, not pushed:** `spike/s1-workspace`, from `4fb92a1`. It holds the spike workspace,
+  `build.sh`, the A3 scripts, and the A1 and A3 results. **No push or PR was authorized for it.**
+  [Measured: git]
 - **Commits:** carry a `Signed-off-by` line and a signature header. GitHub's "verified" display was not
-  checked, and branch protection does not require signatures. [Measured: `git cat-file`, GitHub API]
+  checked, and branch protection does not require signatures.
 
 ## Milestone status
 
-**M0 is complete.** **S1 is planned and not started: nothing has been installed, built or run.** M1
-cannot be finalized before ADR 0004 is decided. ADR statuses: 0001 Part A Provisional, Part B
-Withdrawn. 0002 and 0003 Provisional. 0004 Proposed. None is Accepted. The spike plan is approved for
-the text at `46a90fa`.
+**M0 complete. S1 is in progress: A1 Pass, A3 Fail.** ADR statuses are unchanged: 0001 Part A
+Provisional, Part B Withdrawn; 0002 and 0003 Provisional; 0004 Proposed. None is Accepted.
 
-## Owner decisions of 2026-11-08 (recorded in the plan's Amendments)
+| Experiment | Outcome | Record |
+|---|---|---|
+| A1 build on this Mac | **Pass**, label U | [A1](../../spikes/sel4-feasibility/results/A1.md) |
+| A3 EL1 and HVF | **Fail** by the plan's clause, label U. **Owner to confirm** | [A3](../../spikes/sel4-feasibility/results/A3.md) |
+| A2a, A4 | Not started. The plan's A3 Fail row says "Stop and report" | |
 
-- Approved: decisions 1 to 7, with choices 1a (W1 and W2 both carry the C1 criterion), 1b (the timing
-  kernel is a measurement-only configuration outside the A2 matrix) and 1c (K0 is
-  `AARCH64_verified.cmake`). Approved: P1 (rust-sel4 `v6.0.0`, `nightly-2026-08-21`) and P2 (the
-  850-cycle wording correction).
-- Decision 8 is authorized **conditionally**: A1, A3, A4 (Sonnet) and A2a (Opus). Conditions: the
-  final independent review of PR 6 passes, PR 6 is merged, only Tier 1 is installed, and each
-  experiment's entry criteria are confirmed first.
-- P3 deferred to Stage D. P4 declined. P5 deferred to the A5 design gate. **A5, the comparator, and
-  Tiers 2 and 3 are not authorized.**
+## The decisive finding
 
-## Answers recorded after the final review
+Unmodified non-hypervisor seL4 17.0.0 **does not boot under HVF on this Apple M2 Pro**, with 1 or 4
+vCPUs: the guest reports 8-bit ASIDs (`ID_AA64MMFR0_EL1.ASIDBits = 0`), and the kernel requires 16-bit.
+The same image boots under TCG (Cortex-A57). The hypervisor-mode kernel needs EL2, and this host reports
+"Nested virtualization not supported". Any kernel change that would get past it is Class 3 under the
+plan. Per the plan this **reopens ADR 0002** and Stage C does not run. Also: `sel4-kernel-loader` v6.0.0
+on AArch64 supports only EL2 entry, and HVF cannot emulate GICv2.
 
-- **`bindgen`:** the owner approved 0.72.1 as locked at `v6.0.0` (the tree locked at `c819c27`). The
-  0.73.2 first written in decision 3 was the `main` version.
-- **Member crates:** the owner approved member-crate `Cargo.toml` files under
-  `spikes/sel4-feasibility/` only, each listed in the A1 results. `.cargo/config.toml` and `build.rs`
-  still stop and ask.
-- **Two C2 method changes from the final review** (explicit zero in F3, untyped reset before every
-  timed phase) make the method stricter and change no criterion.
-- **The A5 question** (class D or Investigate) stays open to the A5 design gate. Choosing Investigate
-  where class D applies would itself need an Amendment.
-- **If pip must build `pyyaml` or `pyfdt` from source,** their build tools are not on the approved
-  list: the work stops and asks.
+## Authorizations in force
 
-## Blockers and conflicts
+Source: the owner's messages of 2026-11-08 in the working session, recorded in the plan's Amendments.
 
-- **None between this file, Git and the ADRs.**
-- Follow-up from M0: a base-controlled `pull_request_target` version of the security-sensitive paths
-  check. [Documented: `m0-acceptance.md`, Known limits]
-- CI runners have QEMU 8.2.2. The spike plan pins 11.1.3 from Homebrew. [Measured: `m0-acceptance.md`]
+- Decisions 1 to 7 and P1, P2 approved. Decision 8 (A1, A3, A4 with Sonnet, A2a with Opus) authorized
+  conditionally. P3 deferred to Stage D, P4 declined, P5 deferred to the A5 design gate.
+- Owner answers: `bindgen` 0.72.1 as locked at `v6.0.0`; member-crate `Cargo.toml` files inside the spike
+  workspace; `setuptools`, `wheel` (and `packaging`) hash-pinned in the venv; Python 3.12.16.
+- Merging PRs 5 and 6 after review and CI: used.
+- **Not authorized:** A5, the comparator, Tiers 2 and 3 (so no `x86_64-elf-gcc`, which A4's x86-64 half
+  needs), pushing `spike/s1-workspace`, any kernel change, relaxing any criterion.
+
+## Installed and changed on this machine (Tier 1, recorded in A1)
+
+Homebrew `aarch64-elf-gcc` 16.2.0 and `aarch64-elf-binutils` 2.47 (installed with
+`--ignore-dependencies` to avoid an `lz4` upgrade), and `brew pin` on qemu, cmake, ninja, dtc, lz4 and the
+two new formulas. Rustup `nightly-2026-08-21` (approved components, target `aarch64-unknown-none`). A
+hash-pinned venv in `spikes/sel4-feasibility/.venv`. Gitignored under `external/`: seL4, rust-sel4, the
+sel4test project set and a locally built protoc 3.20.3.
+
+## Open items for the owner
+
+1. **Confirm or contest A3 Fail**, and decide what it means for ADR 0002 and the plan. The plan names no
+   path that keeps HVF and unmodified seL4 on this host. Other Apple chips were not tested.
+2. **Review agent-made spike tooling that was not individually approved:** `tools/cpio` (a GNU-cpio
+   stand-in), `build-protoc.sh` (protoc 3.20.3 built from source at a pinned commit; this replaced the
+   conditionally approved `protobuf` 7.36.2 override, which was not used), and `--ignore-dependencies`.
+3. **`cargo deny`:** the loader's tree has one unmaintained-crate advisory (`RUSTSEC-2024-0449`,
+   `unsafe-libyaml`, in a host-side tool) and first-party "wildcard" bans. The policy was not weakened.
+4. **Push `spike/s1-workspace` and open a PR?** Not authorized yet.
+5. Still open: the A5 question (class D or Investigate), and the M0 follow-up of a base-controlled
+   `pull_request_target` check. CI runners have QEMU 8.2.2 against the spike's pinned 11.1.3.
 
 ## Verified results
 
-| Check | Commit | Result |
-|---|---|---|
-| `cargo xtask check` | PR 6 head when written | "check: all 12 steps passed". macOS arm64, local |
-| Independent reviews of PR 6 | `7833442` to `d61562c` | Five passes. The last two said NOT MERGE-READY (2 High, 4 Medium, 8 Low; then 2 Medium, 5 Low), all text fixes. **A final confirmation is required before merging PR 6** |
+| Check | Result |
+|---|---|
+| `cargo xtask check` on `spike/s1-workspace` | "check: all 12 steps passed" |
+| A1 `build.sh`, two clean builds | kernel, loader and root task byte-identical; image differs only by QEMU's random `rng-seed` and `kaslr-seed` in the embedded device tree |
+| A3 | see the table above and the A3 record |
 
-**Not verified:** `cargo xtask boot` locally; whether GCC 16, CMake 4 or Python 3.15 work with seL4
-17.0.0 (that is an A1 finding); GitHub's "verified" status of commits.
+**Not verified:** `cargo xtask boot` locally; CI on the new branch (not pushed); any seL4 run on a
+host other than this M2 Pro; whether sel4test passes under TCG (started only).
 
 ## Next actions
 
-1. Final confirmation of the PR 6 fixes, then merge PR 6 if it passes with no unresolved material finding.
-2. Create the approved spike workspace files, install Tier 1 with the recorded pins and the Homebrew
-   guards in decision 7, and run A1 following the approach order in decision 8. Raw evidence under
-   `spikes/sel4-feasibility/results/`. Stop with a report. Then A3, A4 and A2a.
+1. The owner rules on A3 and ADR 0002. The plan says stop and report.
+2. If the plan continues, A4's AArch64 half could run under TCG without Tier 2. Its x86-64 half needs
+   `x86_64-elf-gcc`, which is not approved. A2a (Opus) needs A1's preprocessed kernel, which exists.
 3. Anything outside the approved scope stops and asks.
 
 ## Context not recorded elsewhere

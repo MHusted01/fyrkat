@@ -1,0 +1,353 @@
+# build-sel4test.sh 1 (local protoc, cpio shim) 2026-11-08T01:40:55Z
+loading initial cache file /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4test/settings.cmake
+-- Set platform details from PLATFORM=qemu-arm-virt
+--   KernelPlatform: qemu-arm-virt
+-- Setting from flags KernelSel4Arch: aarch64
+-- Found seL4: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/kernel
+-- ARM_CPU not set, defaulting to cortex-a53
+-- Extracting device tree from QEMU
+-- ARM_CPU not set, defaulting to cortex-a53
+-- Extracting device tree from QEMU
+-- The C compiler identification is GNU 16.2.0
+-- The CXX compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/homebrew/bin/aarch64-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found elfloader-tool: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/seL4/elfloader-tool
+-- /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu/kernel/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- CPIO test cpio_reproducible_flag PASSED
+-- Found musllibc: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/musllibc
+-- Found util_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/util_libs
+-- Found seL4_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/seL4_libs
+-- Found sel4_projects_libs: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4_projects_libs
+-- Found sel4runtime: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4runtime
+-- Performing Test compiler_arch_test
+-- Performing Test compiler_arch_test - Success
+-- libmuslc architecture: 'aarch64' (from KernelSel4Arch 'aarch64')
+-- Detecting cached version of: musllibc
+-- Found Git: /opt/homebrew/bin/git (found version "2.56.0")
+--   Found valid cache entry for musllibc
+-- Found Nanopb: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/nanopb
+-- Configuring done (1.9s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu
+[1/304] Creating C input file for preprocessor
+[2/304] Creating C input file for preprocessor
+[3/304] Generate dummy headers for prune compilation
+[4/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime_crt_obj.dir/crt/sel4_arch/aarch64/crti.S.obj
+[5/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime_crt_obj.dir/crt/sel4_arch/aarch64/crtn.S.obj
+[6/304] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[7/304] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[8/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime_crt_obj.dir/crt/sel4_arch/aarch64/crt0.S.obj
+[9/304] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[10/304] Generating generated/invocations_all.json
+[11/304] Generating include/sel4/shared_types.pbf
+[12/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime_crt_obj.dir/crt/sel4_arch/aarch64/sel4_crt0.S.obj
+[13/304] Building C object apps/sel4test-driver/util_libs/libcpio/CMakeFiles/cpio.dir/src/cpio.c.obj
+[14/304] Generating simulate
+[15/304] Generating launch_gdb
+[16/304] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[17/304] Generate invocation header gen_headers/arch/api/invocation.h
+[18/304] Generate invocation header gen_headers/api/invocation.h
+[19/304] Generate syscall invocations
+[20/304] Creating C input file for preprocessor
+[21/304] Generating from /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[22/304] Linking C static library apps/sel4test-driver/util_libs/libcpio/libcpio.a
+[23/304] Generating from /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/build-1cpu/libsel4/include/sel4/shared_types.pbf
+[24/304] Building C object kernel/CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[25/304] Generating ../../../lib/crt0.o, ../../../lib/crti.o, ../../../lib/crtn.o
+[26/304] Using cache musllibc build
+[27/304] Generating generated/arch/object/structures.bf.pbf
+[28/304] Generate sel4_client.h
+[29/304] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[30/304] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[31/304] Generate syscall.h
+[32/304] Generate invocation header include/sel4/invocation.h
+[33/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/xml.c.obj
+[34/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/arch/arm/stack.c.obj
+[35/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_addresses.c.obj
+[36/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/zf_log.c.obj
+[37/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/cbor64.c.obj
+[38/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/list.c.obj
+[39/304] Building C object apps/sel4test-driver/util_libs/libutils/CMakeFiles/utils.dir/src/debug.c.obj
+[40/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt.c.obj
+[41/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_empty_tree.c.obj
+[42/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_overlay.c.obj
+[43/304] Building C object libsel4/CMakeFiles/sel4.dir/src/sel4_bootinfo.c.obj
+[44/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/alloc.c.obj
+[45/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/identity.c.obj
+[46/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/stack.c.obj
+[47/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/caps.c.obj
+[48/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/backtrace.c.obj
+[49/304] Linking C static library apps/sel4test-driver/util_libs/libutils/libutils.a
+[50/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/bootinfo.c.obj
+[51/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/printf.c.obj
+[52/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/register_dump.c.obj
+[53/304] Building C object apps/sel4test-driver/seL4_libs/libsel4debug/CMakeFiles/sel4debug.dir/src/trace.c.obj
+[54/304] Linking C static library libsel4/libsel4.a
+[55/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_strerror.c.obj
+[56/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_rw.c.obj
+[57/304] Building C object apps/sel4test-driver/seL4_libs/libsel4vka/CMakeFiles/sel4vka.dir/src/null-vka.c.obj
+[58/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_sw.c.obj
+[59/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_wip.c.obj
+[60/304] Concatenating C files
+[61/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdt_ro.c.obj
+[62/304] Building C object apps/sel4test-driver/seL4_libs/libsel4vka/CMakeFiles/sel4vka.dir/src/debug-vka.c.obj
+[63/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4debug/libsel4debug.a
+[64/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/crt/sel4_arch/aarch64/crti.S.obj
+[65/304] Creating C input file for preprocessor
+[66/304] Building C object apps/sel4test-driver/util_libs/libfdt/CMakeFiles/fdt.dir/fdtget.c.obj
+[67/304] Building C object apps/sel4test-driver/seL4_libs/libsel4vspace/CMakeFiles/sel4vspace.dir/src/sel4_arch/aarch64/mapping.c.obj
+[68/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/crt/sel4_arch/aarch64/crtn.S.obj
+[69/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/crt/sel4_arch/aarch64/crt0.S.obj
+[70/304] Building C object apps/sel4test-driver/seL4_libs/libsel4vspace/CMakeFiles/sel4vspace.dir/src/arch/arm/mapping.c.obj
+[71/304] Building ASM object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/crt/sel4_arch/aarch64/sel4_crt0.S.obj
+[72/304] Building C object apps/sel4test-driver/seL4_libs/libsel4simple/CMakeFiles/sel4simple.dir/src/simple.c.obj
+[73/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4vka/libsel4vka.a
+[74/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/init.c.obj
+[75/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/memset.c.obj
+[76/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/crt1.c.obj
+[77/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/memcpy.c.obj
+[78/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/start.c.obj
+[79/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/vsyscall.c.obj
+[80/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/start_root.c.obj
+[81/304] Building C object apps/sel4test-driver/sel4runtime/CMakeFiles/sel4runtime.dir/src/env.c.obj
+[82/304] Building C object kernel/CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[83/304] Building C object apps/sel4test-driver/seL4_libs/libsel4vspace/CMakeFiles/sel4vspace.dir/src/vspace.c.obj
+[84/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/io.c.obj
+[85/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/plat/qemu-arm-virt/chardev.c.obj
+[86/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/delay.c.obj
+[87/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/dma330.c.obj
+[88/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/plat/qemu-arm-virt/serial.c.obj
+[89/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/serial.c.obj
+[90/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/local_time_manager.c.obj
+[91/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/fdt.c.obj
+[92/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/clock.c.obj
+[93/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/generic_timer.c.obj
+[94/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/tqueue.c.obj
+[95/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/i2c_bitbang.c.obj
+[96/304] Generating kernel_all_pp_prune.c
+[97/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/i2c.c.obj
+[98/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4vspace/libsel4vspace.a
+[99/304] Linking C static library apps/sel4test-driver/util_libs/libfdt/libfdt.a
+[100/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4simple/libsel4simple.a
+[101/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/irqchip/gic.c.obj
+[102/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/irqchip/gicv3.c.obj
+[103/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/irqchip/omap3.c.obj
+[104/304] Linking C static library apps/sel4test-driver/sel4runtime/libsel4runtime.a
+[105/304] Building C object apps/sel4test-driver/util_libs/libplatsupport/CMakeFiles/platsupport.dir/src/arch/arm/irqchip/tegra.c.obj
+[106/304] Building C object apps/sel4test-driver/util_libs/libelf/CMakeFiles/elf.dir/src/elf32.c.obj
+[107/304] Building C object apps/sel4test-driver/seL4_libs/libsel4simple-default/CMakeFiles/sel4simple-default.dir/src/arch/arm/default.c.obj
+[108/304] Building C object apps/sel4test-driver/util_libs/libelf/CMakeFiles/elf.dir/src/elf64.c.obj
+[109/304] Building C object apps/sel4test-driver/seL4_libs/libsel4simple-default/CMakeFiles/sel4simple-default.dir/src/libsel4simple-default.c.obj
+[110/304] Building C object apps/sel4test-driver/util_libs/libelf/CMakeFiles/elf.dir/src/elf.c.obj
+[111/304] Building ASM object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/sel4_arch/aarch64/crt0.S.obj
+[112/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/arch/arm/device.c.obj
+[113/304] Linking C static library apps/sel4test-driver/util_libs/libplatsupport/libplatsupport.a
+[114/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/arch/arm/io_port_ops.c.obj
+[115/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/bootinfo.c.obj
+[116/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/arch/arm/pmem.c.obj
+[117/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4simple-default/libsel4simple-default.a
+[118/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/common.c.obj
+[119/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/CMakeFiles/nanopb.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/nanopb/pb_encode.c.obj
+[120/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/iommu_dma.c.obj
+[121/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/CMakeFiles/nanopb.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/nanopb/pb_common.c.obj
+[122/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/serial.c.obj
+[123/304] Linking C static library apps/sel4test-driver/util_libs/libelf/libelf.a
+[124/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/CMakeFiles/nanopb.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/tools/nanopb/pb_decode.c.obj
+[125/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/device.c.obj
+[126/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/io.c.obj
+[127/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/timer.c.obj
+[128/304] Generating from generated/arch/object/structures.bf.pbf
+[129/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/sel4_arch/aarch64/arch.c.obj
+[130/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/profile.c.obj
+[131/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/slab.c.obj
+[132/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/stack.c.obj
+[133/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/strerror.c.obj
+[134/304] Building C object apps/sel4test-driver/seL4_libs/libsel4platsupport/CMakeFiles/sel4platsupport.dir/src/irq.c.obj
+[135/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/elf.c.obj
+[136/304] Creating C input file for preprocessor
+[137/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/irq_server/irq_server.c.obj
+[138/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/time_server/client.c.obj
+[139/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4platsupport/libsel4platsupport.a
+[140/304] Building C object kernel/CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[141/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/mapping.c.obj
+[142/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/CMakeFiles/sel4nanopb.dir/src/common.c.obj
+[143/304] Linking C static library apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/libnanopb.a
+[144/304] Generating generated/sel4/shared_types.bf.pbf
+[145/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/page_dma.c.obj
+[146/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/vspace/bootstrap.c.obj
+[147/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/thread.c.obj
+[148/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/process.c.obj
+[149/304] Linking C static library apps/sel4test-driver/sel4_projects_libs/libsel4nanopb/libsel4nanopb.a
+[150/304] Building C object apps/sel4test-driver/seL4_libs/libsel4sync/CMakeFiles/sel4sync.dir/src/recursive_mutex.c.obj
+[151/304] Building C object apps/sel4test-driver/seL4_libs/libsel4utils/CMakeFiles/sel4utils.dir/src/vspace/vspace.c.obj
+[152/304] Building C object apps/sel4test-driver/seL4_libs/libsel4serialserver/CMakeFiles/sel4serialserver.dir/src/clientapi.c.obj
+[153/304] Building C object apps/sel4test-driver/seL4_libs/libsel4serialserver/CMakeFiles/sel4serialserver.dir/src/parentapi.c.obj
+[154/304] Generating from generated/sel4/shared_types.bf.pbf
+[155/304] Building C object apps/sel4test-driver/seL4_libs/libsel4serialserver/CMakeFiles/sel4serialserver.dir/src/server.c.obj
+[156/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/allocman.c.obj
+[157/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4sync/libsel4sync.a
+[158/304] Creating C input file for preprocessor
+[159/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/cspace/single_level.c.obj
+[160/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4utils/libsel4utils.a
+[161/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/dual_pool.c.obj
+[162/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/k_r_malloc.c.obj
+[163/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/cspace/simple1level.c.obj
+[164/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/cspace/two_level.c.obj
+[165/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/fixed_pool.c.obj
+[166/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/malloc.c.obj
+[167/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/bootstrap.c.obj
+[168/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4serialserver/libsel4serialserver.a
+[169/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/virtual_pool.c.obj
+[170/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/sys_exit.c.obj
+[171/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/mspace/vspace_pool.c.obj
+[172/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/utspace/twinkle.c.obj
+[173/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/utspace/split.c.obj
+[174/304] Creating C input file for preprocessor
+[175/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/sys_thread.c.obj
+[176/304] Building C object apps/sel4test-driver/seL4_libs/libsel4allocman/CMakeFiles/sel4allocman.dir/src/vka.c.obj
+[177/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/sys_io.c.obj
+[178/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/sys_yield.c.obj
+[179/304] Building C object kernel/CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[180/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/vsyscall.c.obj
+[181/304] Building C object apps/sel4test-driver/seL4_libs/libsel4muslcsys/CMakeFiles/sel4muslcsys.dir/src/sys_morecore.c.obj
+[182/304] Generating linker.lds_pp
+[183/304] Building C object kernel/CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[184/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4allocman/libsel4allocman.a
+[185/304] Generating kernel_all.i
+[186/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4muslcsys/libsel4muslcsys.a
+[187/304] Generating circular_includes_valid
+[188/304] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[189/304] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[190/304] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[191/304] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[192/304] Running C++ protocol buffer compiler using nanopb plugin on /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/projects/sel4_projects_libs/libsel4rpc/rpc.proto
+[193/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4rpc/CMakeFiles/sel4rpc.dir/rpc.pb.c.obj
+[194/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/benchmark_api.c.obj
+[195/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4rpc/CMakeFiles/sel4rpc.dir/src/client.c.obj
+[196/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/breakpoints.c.obj
+[197/304] Building C object apps/sel4test-driver/seL4_libs/libsel4test/CMakeFiles/sel4test.dir/src/testutil.c.obj
+[198/304] Building C object apps/sel4test-driver/sel4_projects_libs/libsel4rpc/CMakeFiles/sel4rpc.dir/src/server.c.obj
+[199/304] Building C object apps/sel4test-driver/libsel4testsupport/CMakeFiles/sel4testsupport.dir/src/testreporter.c.obj
+[200/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/arch/arm/arch.c.obj
+[201/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/main.c.obj
+[202/304] Linking C static library apps/sel4test-driver/sel4_projects_libs/libsel4rpc/libsel4rpc.a
+[203/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/binding.c.obj
+[204/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/cnodeops.c.obj
+[205/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4test/libsel4test.a
+[206/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/cspace.c.obj
+[207/304] Building C object apps/sel4test-driver/seL4_libs/libsel4serialserver/CMakeFiles/sel4serialserver_tests.dir/src/test.c.obj
+[208/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/helpers.c.obj
+[209/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/endpoints.c.obj
+[210/304] Linking C static library apps/sel4test-driver/libsel4testsupport/libsel4testsupport.a
+[211/304] Linking C static library apps/sel4test-driver/seL4_libs/libsel4serialserver/libsel4serialserver_tests.a
+[212/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/cache.c.obj
+[213/304] Building CXX object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/domains.cxx.obj
+[214/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/fpu.c.obj
+[215/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/inc_untyped.c.obj
+[216/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/iopt.c.obj
+[217/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/frames.c.obj
+[218/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/faults.c.obj
+[219/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/ioports.c.obj
+[220/304] Building ASM object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/regressions.S.obj
+[221/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/interrupt.c.obj
+[222/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/pagetables.c.obj
+[223/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/ipc.c.obj
+[224/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/ipc_rights.c.obj
+[225/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/multicore.c.obj
+[226/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/nbwait.c.obj
+[227/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/preempt.c.obj
+[228/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/regressions.c.obj
+[229/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/smc.c.obj
+[230/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/vcpu.c.obj
+[231/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/threads.c.obj
+[232/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/serial_server.c.obj
+[233/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/trivial.c.obj
+[234/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/sync.c.obj
+[235/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/tls.c.obj
+[236/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/tlb.c.obj
+[237/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/vspace.c.obj
+[238/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/schedcontext.c.obj
+[239/304] Building C object apps/sel4test-driver/sel4test-tests/CMakeFiles/sel4test-tests.dir/src/tests/scheduler.c.obj
+[240/304] Linking CXX executable apps/sel4test-driver/sel4test-tests/sel4test-tests
+[241/304] Generate CPIO archive archive.o
+[242/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/arch/arm/arch.c.obj
+[243/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/tests/smmu.c.obj
+[244/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/tests/interrupt.c.obj
+[245/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/tests/timer.c.obj
+[246/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/timer.c.obj
+[247/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/testtypes.c.obj
+[248/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/tests/syscall.c.obj
+[249/304] Building C object apps/sel4test-driver/CMakeFiles/sel4test-driver.dir/src/main.c.obj
+[250/304] Linking C executable apps/sel4test-driver/sel4test-driver
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: apps/sel4test-driver/sel4test-driver has a LOAD segment with RWX permissions
+[251/304] Building C object kernel/CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[252/304] Linking C executable kernel/kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel/kernel.elf has a LOAD segment with RWX permissions
+[253/304] Generating kernel.elf
+[254/304] Generating rootserver
+[255/304] Generate CPIO archive archive.o
+[256/304] Generating gen_headers/image_start_addr.h, gen_headers/platform_info.h
+[257/304] Generating linker.lds_pp
+[258/304] Generating gen_headers/devices_gen.h
+[259/304] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu-hyp.S.obj
+[260/304] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/traps.S.obj
+[261/304] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/crt0.S.obj
+[262/304] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu.S.obj
+[263/304] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/psci_asm.S.obj
+[264/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/structures.c.obj
+[265/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/debug.c.obj
+[266/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/smp.c.obj
+[267/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/cpuid.c.obj
+[268/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/mmu.c.obj
+[269/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-imx6.c.obj
+[270/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/cpuid.c.obj
+[271/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/scu.c.obj
+[272/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-psci.c.obj
+[273/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-spin-table.c.obj
+[274/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-zynq7000.c.obj
+[275/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/smp_boot.c.obj
+[276/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/psci.c.obj
+[277/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/defaults.c.obj
+[278/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/sys_boot.c.obj
+[279/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf32.c.obj
+[280/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf64.c.obj
+[281/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf.c.obj
+[282/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/common.c.obj
+[283/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/smp/common.c.obj
+[284/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/timer/arm_generic_timer.c.obj
+[285/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/8250-uart.c.obj
+[286/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/common.c.obj
+[287/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/bcm-uart.c.obj
+[288/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/driver.c.obj
+[289/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/exynos-uart.c.obj
+[290/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/meson-uart.c.obj
+[291/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-uart.c.obj
+[292/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-lpuart.c.obj
+[293/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/msm-uart.c.obj
+[294/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/pl011-uart.c.obj
+[295/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/xilinx-uart.c.obj
+[296/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/stm32mp2-uart.c.obj
+[297/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/fdt.c.obj
+[298/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/string.c.obj
+[299/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/printf.c.obj
+[300/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/hash.c.obj
+[301/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_md5.c.obj
+[302/304] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_sha256.c.obj
+[303/304] Linking C executable elfloader/elfloader
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: elfloader/elfloader has a LOAD segment with RWX permissions
+[304/304] Generating ../../images/sel4test-driver-image-arm-qemu-arm-virt
+total 6632
+-rwxr-xr-x@ 1 marcushusted  staff  3391632 Nov  8 02:41 sel4test-driver-image-arm-qemu-arm-virt
+./build-sel4test.sh 1  17.08s user 8.28s system 333% cpu 7.605 total
+exit: 0

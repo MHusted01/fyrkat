@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+"""A minimal GNU-cpio stand-in for the sel4test build on macOS (spike code, stdlib only).
+
+macOS ships bsdcpio, which lacks the GNU options seL4's cmake-tool uses. This implements only that
+subset: `cpio [--quiet] [--reproducible] [--owner=U:G] [--append] -o|--create -H newc [--file=PATH]`,
+reading file names from stdin and writing a newc archive to PATH or stdout. Anything else is an error.
+"""
+import os
+import sys
+
+TRAILER = b"TRAILER!!!"
+
+
+def entry(name: bytes, ino: int, mode: int, uid: int, gid: int, mtime: int, data: bytes) -> bytes:
+    fields = (ino, mode, uid, gid, 1, mtime, len(data), 0, 0, 0, 0, len(name) + 1, 0)
+    head = b"070701" + b"".join(b"%08X" % f for f in fields)
+    blob = head + name + b"\0"
+    blob += b"\0" * (-len(blob) % 4)
+    blob += data
+    blob += b"\0" * (-len(data) % 4)
+    return blob
+
+
+def main(argv: list[str]) -> int:
+    path: str | None = None
+    append = create = reproducible = False
+    owner: tuple[int, int] | None = None
+    it = iter(argv)
+    for arg in it:
+        if arg in ("-o", "--create"):
+            create = True
+        elif arg == "--append":
+            append = True
+        elif arg == "--quiet":
+            pass
+        elif arg == "--reproducible":
+            reproducible = True
+        elif arg == "-H":
+            if next(it, None) != "newc":
+                print("cpio shim: only -H newc is supported", file=sys.stderr)
+                return 2
+        elif arg.startswith("--file="):
+            path = arg.split("=", 1)[1]
+        elif arg.startswith("--owner="):
+            u, g = arg.split("=", 1)[1].lstrip("+").split(":")
+            owner = (int(u.lstrip("+")), int(g.lstrip("+")))
+        else:
+            print(f"cpio shim: unsupported argument {arg!r}", file=sys.stderr)
+            return 2
+    if not create:
+        print("cpio shim: only creation (-o) is supported", file=sys.stderr)
+        return 2
+
+    old = b""
+    if append and path and os.path.exists(path):
+        with open(path, "rb") as fh:
+            old = fh.read()
+        cut = old.rfind(b"070701")
+        if cut < 0 or TRAILER not in old[cut:cut + 200]:
+            print("cpio shim: existing archive has no trailer", file=sys.stderr)
+            return 2
+        old = old[:cut]
+
+    out = old
+    ino = 1
+    for line in sys.stdin.read().splitlines():
+        name = line.rstrip("\n")
+        if not name:
+            continue
+        st = os.stat(name)
+        with open(name, "rb") as fh:
+            data = fh.read()
+        uid, gid = owner if owner else (st.st_uid, st.st_gid)
+        out += entry(name.encode(), ino, st.st_mode, uid, gid, int(st.st_mtime), data)
+        ino += 1
+    out += entry(TRAILER, 0, 0, 0, 0, 0, b"")
+    # The archive length is padded to 512 bytes, as GNU cpio does.
+    out += b"\0" * (-len(out) % 512)
+    if path:
+        with open(path, "wb") as fh:
+            fh.write(out)
+    else:
+        sys.stdout.buffer.write(out)
+    _ = reproducible  # accepted for compatibility: entries are already deterministic
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

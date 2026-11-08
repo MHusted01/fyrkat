@@ -1,0 +1,14 @@
+# protoc 3.20.3 local build 2026-11-08T01:39:08Z
+-- Performing Test protobuf_HAVE_BUILTIN_ATOMICS - Success
+-- Configuring done (4.6s)
+-- Generating done (0.6s)
+-- Build files have been written to: /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/protoc-build
+[169/174] Building CXX object CMakeFiles/libprotoc.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/protobuf-3.20.3/src/google/protobuf/compiler/python/python_pyi_generator.cc.o
+[170/174] Building CXX object CMakeFiles/libprotoc.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/protobuf-3.20.3/src/google/protobuf/compiler/js/js_generator.cc.o
+[171/174] Building CXX object CMakeFiles/libprotoc.dir/Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/protobuf-3.20.3/src/google/protobuf/compiler/php/php_generator.cc.o
+[172/174] Linking CXX static library libprotoc.a
+[173/174] Linking CXX executable protoc-3.20.3.0
+[174/174] Creating executable symlink protoc
+ninja -C ../protoc-build protoc 2>&1  126.89s user 13.35s system 878% cpu 15.961 total
+tail -6  0.00s user 0.00s system 0% cpu 15.961 total
+exit: 0
