@@ -945,3 +945,173 @@ outcome is changed.** The source of every row except "Rerun result" is the owner
 | F18 | Retain the original raw evidence and the local backup. Implement a narrowly scoped **local** safeguard against accidentally pushing the unsanitized branch or its original commits. Do not delete the backup, rewrite history, or modify global Git configuration | Done as deviation D16: a local, untracked pre-push hook behind a local `core.hooksPath`. The backup, the branch and the history are untouched, and global Git configuration is unchanged |
 | Next steps | After the rerun: run the complete repository checks and the evidence verifier, update the evidence and deviations documentation, request a final independent delta review, push the reviewed corrections to PR 8 and verify CI on the final remote head. **Merge PR 8 only if** the reviewer explicitly returns MERGE-READY, all required checks pass, the evidence verifier passes, and no material finding remains. If any condition fails, stop and report. After merging, report the final `main` commit and stop for the next architectural decision | The conditional merge authorization from the earlier entry stands under these conditions |
 | Stop condition | **Stays in force** for everything else: A2a, A4, A5, the comparator, new tool installations and kernel changes are not authorized | |
+
+### 2026-11-08: Owner direction after the merge of pull request 8
+
+Recorded after pull request 8 was merged as `07c35e2`. **No criterion is changed, no outcome is relabelled,
+and no ADR is accepted.** The source of every row is the owner's message of 2026-11-08 in the working
+session, except where a row says it is a request or a proposal.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A1 rerun | **Accepted as Pass (label U), limited to the tested build-reproducibility criterion.** The changed root-task hash must stay associated with its dependency lock. No runtime or behavioural validation is claimed | Supersedes the "not yet accepted" status in the entry on the A1 rerun above (that entry is not edited). The original A1 result and evidence are unchanged |
+| A3 | **A3 Fail (label U) is confirmed under the original criteria.** Decision rule 2 applies to the tested HVF-specific hypothesis. A3 is not relabelled and its acceptance criteria are not weakened | No change to A3. It repeats the earlier ruling without widening it |
+| ADR 0002 | **AArch64-first stays provisional**, with QEMU TCG as the initial local development backend. Document that unmodified seL4 17.0.0 did not boot under HVF on the tested M2 Pro configuration, and that this does not establish incompatibility on every Apple Silicon host | Recorded in [ADR 0002](../adr/0002-initial-cpu-architecture.md), which stays Provisional |
+| ADR 0004 | **seL4-first stays a provisional working hypothesis**, not an Accepted architecture decision. The broader hypothesis is distinguished from the failed HVF-specific configuration | Recorded in [ADR 0004](../adr/0004-kernel-foundation.md), which stays Proposed |
+| Toolchain | `nightly-2026-08-21` stays approved **for S1 only**. The long-term toolchain policy stays unresolved | No change |
+| A5 and Class 3 | **A5 and any Class 3 kernel change stay blocked** | No change |
+| Documentation | A narrowly scoped update to ADR 0002, ADR 0004, these Amendments, the roadmap and the handoff, preserving the ADRs' actual statuses and the original experiment outcomes | Done on a local branch. It is not pushed and not merged: new changes need explicit authorization |
+| Review | Use a focused independent review for the documentation changes, then report the review outcome and the proposed experiment. Do not merge or push new changes without explicit authorization | The review is requested by the owner and is reported separately. Its findings are the reviewer's, not owner decisions |
+| Deviations D1 to D16 | **Request:** a concise disposition matrix: each deviation's risk, whether it was already explicitly approved, and whether further owner approval is required. Blanket approval is not to be inferred | A proposal by the agent, for the owner's decisions. **Nothing is approved by it** |
+| Next experiment | **Request:** propose one bounded experiment to boot the existing Rust root task under QEMU TCG, with success criteria, expected artifacts and stop conditions. **Do not execute it yet** | A proposal only. Not authorized |
+| Objective | The objective is to reach a working Rust user-space component on seL4 as quickly as the evidence and the approved security constraints permit. Completed research is not to be reopened, and the planning phase is not to be extended unnecessarily | Guides the proposals. It grants no authority and changes no criterion |
+| Stop condition | A2a, A4, A5, the comparator, new tooling and kernel modification are **not authorized** | In force |
+
+### 2026-11-08: Owner decisions on the documentation PR, six deviations, PR 9 and E1 Route II
+
+Recorded from the owner's later message of 2026-11-08 in the working session, which answered the requests in the entry
+above. **No criterion is changed, no outcome is relabelled and no ADR is accepted.** Nothing here is a blanket approval
+of future deviations. The disposition-matrix draft the owner refers to was not preserved in the repository, so the
+limits below are those in [deviations.md](../../spikes/sel4-feasibility/results/deviations.md) and in the owner's words.
+
+**Provenance of the E1 specification.** The E1 proposal the owner chose is section 2 of a session draft (`s1-proposals.md`,
+"Revised after the independent review", written on 2026-11-08 in the scratchpad of an earlier session, outside Git). The parts of
+it that apply to Route II are **quoted verbatim at the end of this entry as the baseline for "without weakening"**. The
+specification above that quotation applies the baseline to Route II. Its differences from the baseline are these, and each one
+states a fact or makes a check stricter, none makes one weaker: (1) the Route I items do not apply; (2) the boot banner is named
+as two strings and `badge = 0x…` as `0x1337`, which the source fixes; (3) the Fail clause also names a loader exception or panic and
+an abort reported by the loader or QEMU, which is how the failure in A3 log 02 appeared; (4) Investigate also covers any unmet
+Pass condition, not only a missing marker; (5) "diagnostic boot" and "approach" are defined; (6) stop condition (g), a
+configuration that differs from the table, is added; (7) the loader's hash may differ from A1's, a disclosure [Inferred]; (8) the
+build recipe is the proposal's "a variant of `build.sh`", written as a separate script so that `build.sh` is unchanged; (9) the
+consequence, the artifact list and the "does not mean" list carry additions, and stop (a) omits the elfloader, which belongs to
+Route I. All of these are stricter or inapplicable, and "three clean boots" is read as "three boots of the same image, each from a
+fresh QEMU start". **If the
+specification and the quotation ever disagree, the stricter reading governs.**
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| Documentation update | Commit and push the update on `docs/s1-direction-record` after the independent reviewer checks the eight LOW wording edits made after the previous READY verdict. Address material findings, preserve every experiment outcome and ADR status, run `cargo xtask check` and the evidence verifier, use signed, DCO-compliant commits and open a PR. **Merge: conditionally authorized**, only after an explicit MERGE-READY verdict on the final head and all required CI checks pass | The update is the five files of the previous entry plus `deviations.md` (the owner asked for the D3 wording to be corrected) and this entry. If any condition fails, stop and report |
+| PR 9 | **Do not merge and do not change dependencies yet.** Investigate the two high-severity `protobuf` alerts: affected dependency paths, whether the S1 tooling exercises the vulnerable code, and whether a compatible `protobuf<4` remediation exists. Report a concrete recommendation. Passing CI is not proof of compatibility | Investigation only. The report is made to the owner and records no decision here |
+| D2 | **Approved for the isolated S1 research scope only.** The existing locally built `protoc` 3.20.3 is accepted for the historical evidence, with its missing source-archive hash documented | The missing hash stays documented. The approval covers the existing evidence only, not building other tools or any other use of this one |
+| D3 | **Approved for S1 only:** the binutils install and the `--ignore-dependencies` option. Wording that implies broader prior authorization is to be corrected | Corrected in `deviations.md`: decisions 2 and 4 name only `aarch64-elf-gcc`, and none of the earlier decisions named the install option |
+| D7 | **Approved for S1 only:** the additional `packaging` dependency, within the isolated Python environment | `setuptools` and `wheel` were already approved |
+| D9 | **Approved:** the existing experimental `boot-image.py` and ID-register probe tooling, **including narrowly scoped reuse for E1** | No other new use is covered |
+| D10 | **Approved for S1 research only:** the `GPL-2.0-only` loader. **No production licensing decision may be inferred** | The spike-local `deny.toml` is unchanged |
+| D14(b) | **Approved as experimental evidence tooling:** the sanitizer and the verifier. Independent verification of their correctness continues | The reviewer keeps checking them. New output, such as E1's, counts as evidence only after that check. Evidence already reviewed (A1, A1 rerun, A3) keeps its status |
+| Other deviations | Not addressed by this decision. D1, D5, D6, D8, D12, D14 (a, c, d), D15 and D16 stay exactly as `deviations.md` records them: this entry adds no approval to them (the approvals and owner requests that file already records for D5, D6 and D16 are unchanged), and the others stay not individually approved. D4, D11 and D13 stay settled as recorded | No change |
+| E1 | **Route II chosen** and the plan Amendment below authorized. **E1 runs only after the documentation PR is merged.** Success criteria, three boots, sanitized evidence and stop conditions are used **without weakening**. No change to kernel, loader or root-task source; no new tool; no unrelated dependency change. If E1 needs an unapproved configuration, a source change, a tool installation or a broader architectural change, stop and report | Specified in the next section |
+| Restrictions | A2a, A4, A5, the comparator and Class 3 kernel modifications **stay blocked**. After E1: record the results, request independent review, and **do not proceed to another experiment** | In force |
+
+#### E1 specification (authorized by the owner's Route II decision; runs only after the documentation PR is merged)
+
+**Purpose.** Show whether a hypervisor-enabled seL4 17.0.0, the pinned Rust loader and the existing Rust root task boot and
+run to `TEST_PASS` on a software-emulated (TCG) AArch64 machine. **Functional validation only, label U.**
+
+**Why this configuration.** The Rust loader enters the kernel at EL2 and has no AArch64 path to EL1 [Documented: rust-sel4
+loader source and [A3](../../spikes/sel4-feasibility/results/A3.md), the finding "`sel4-kernel-loader` v6.0.0 supports only EL2 on AArch64"]. Under TCG with `virtualization=on` the A1
+image (a kernel built without hypervisor support) took an instruction abort at `0xffffffffc0000000`, the non-hypervisor
+kernel's high entry address [Measured: A3 log 02, where the loader's EL2 exception handler printed it]. The kernel and the loader
+must therefore match, and the A1 binaries cannot be used [Inferred].
+
+**Configuration "E1-H" (an experiment-only configuration).** It is **not** a row of the [Configurations](#configurations)
+table, adds no cell to A2 and does not change K1, which stays "no hypervisor support". It is not a Class 1, 2 or 3 change
+because the kernel source is unmodified; it is a build option.
+
+| Input | Value |
+|---|---|
+| Kernel | seL4 17.0.0, commit `62e345c240a15671484530b4e6e069ce266c28d7`, unmodified. A1's CMake options **except** `-DKernelArmHypervisorSupport=ON`: `KernelPlatform=qemu-arm-virt`, `KernelVerificationBuild=OFF`, `ARM_CPU=cortex-a57`, 1 node, non-MCS, cross prefix `aarch64-elf-` |
+| Loader and `add-payload` | rust-sel4 `v6.0.0` (`c819c27b076130cba9821c4555f23773e4b0bffd`), unchanged source, built from its own lock, as in A1. The loader's build reads the kernel install directory, so **its hash may also differ from A1's [Inferred]**; the loader's hash must stay tied to this configuration |
+| Root task | The unchanged `crates/root-task` source and the unchanged `Cargo.lock` of the A1 rerun, rebuilt against the E1-H kernel prefix. **Its hash is expected to differ from A1's [Inferred]** and must stay tied to this configuration and lock |
+| Toolchain, host | `nightly-2026-08-21` (approved for S1 only); the frozen Homebrew tools; Apple M2 Pro; QEMU 11.1.3 |
+| Build recipe | A new spike-local script derived from `build.sh`, differing only in the hypervisor option and in writing to a separate build directory so that the existing `build/` outputs are not removed. `build.sh` itself is not changed. The script will be recorded as a new deviation in `deviations.md` when it is written |
+| Run | `qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M`, through the existing `boot-image.py --virt`, marker `TEST_PASS`, 120 s timeout, **three boots** of the same image |
+
+**Success (Pass, label U, functional only).** All four of the baseline's criteria, applied to Route II:
+
+1. **Inputs.** The kernel is built from the pinned source with the configuration in the table above, the root task is built from the
+   same source and the approved lock, and no kernel, loader or root-task source was changed.
+2. **Serial output** contains, in order: the seL4 boot banner (the strings `Bootstrapping kernel` and `Booting all finished,
+   dropped to user space` [Documented: seL4 `boot.c`; Measured: A3 log 33]), `Hello, World!`, `badge = 0x1337`, `TEST_PASS`. The
+   `badge` line prints the expected constant *before* the assertion, so only `TEST_PASS` shows that the assertion held.
+3. **3 of 3 boots pass** with no positive failure observation (a kernel fault or halt message, a loader exception or panic, or a
+   root-task panic) before the marker, **and identical output apart from timing and addresses**.
+4. **Evidence:** sanitized logs, a manifest entry and verifier checks for the hashes and markers.
+
+**Outcomes (the plan's rules).** *Pass* = 1 to 4. *Fail* = an observed kernel fault or halt message, a loader exception or panic, an
+instruction or data abort reported by seL4, the loader or QEMU, or a root-task panic or assertion failure, with unmodified inputs.
+*Investigate* = no Fail observation, but `TEST_PASS` is not seen in all three boots within the timeout, or any other Pass condition is
+unmet. *Blocked* = three distinct, documented approaches fail to reach a first boot; the plan treats Blocked as Fail. An *approach* is a
+documented way of reaching a first boot that stays inside the table above; anything that would change the table is a stop and report,
+not an approach. Unless a Fail clause holds, or the Kernel modification policy makes the need a Fail (a Class 3 change), a stop
+before three approaches have been tried, including stop (g) below, is recorded as *Investigate*: it is non-passing and is not
+resolved without the owner's authorization. A Fail is never downgraded. E1 lists **no Conditional clause**. The consequence of a Fail,
+Investigate or Blocked E1 is set here: report and stop.
+It falsifies the broader hypothesis only under [decision rule 2](#the-hypothesis-is-falsified-if-any-of-these-occurs), that is, if
+passing needs a Class 3 change or a Class 2 change the owner does not approve.
+
+**Stop and report if** (the baseline's list, plus the one marked): (a) a kernel, loader or root-task source change is needed; (b) any
+tool or dependency not already installed or pinned is needed; (d) three distinct documented approaches reach no first boot (Blocked);
+(e) a positive failure observation: one diagnostic boot, then stop, where a diagnostic boot is one extra boot of the same image
+through the unchanged `boot-image.py` with its serial output kept (a change to the harness or extra QEMU flags is not covered by D9
+and is a stop and report); (f) anything about authority is unclear; **and, added, (g) the configuration differs from the table
+above.** (The baseline's item (c) concerns Route I only.) Logs are sanitized before anything is published. Nothing is pushed or merged.
+
+**Expected artifacts.** `spikes/sel4-feasibility/results/E1.md` with the outcome, label, the plan commit SHA `46a90fa` and the commit
+that adds this specification, commits, toolchain versions, host, the kernel configuration stored as a file, the exact commands, and
+the limitations and unresolved risks; sanitized logs of the build and the three boots; a hash table (kernel, loader, root task and
+image); the spike-local build files; new verifier checks and a manifest entry (authorized by E1 and subject to D14(b)'s continuing
+independent verification); deviation rows for the new spike code; an Amendment entry recording the result; a handoff update; and
+an independent review request.
+
+**A Pass does not mean:** hardware validation, performance, SMP, HVF, formal or verified-configuration assurance, a test of the
+broader hypothesis, evidence about any configuration other than E1-H, or progress on A2a, A4 or A5. An emulator pass is not evidence
+about hardware.
+
+#### The baseline for "without weakening": the owner-chosen proposal, quoted verbatim
+
+Section 2 of the draft `s1-proposals.md` ("Revised after the independent review"), from the session scratchpad of the earlier
+session of 2026-11-08, which is outside Git and may be deleted. The parts below are the common section and Route II. Route I is
+not quoted because the owner did not choose it. **If this entry and the quotation ever disagree, the stricter reading governs.**
+
+> ### Route II (needs an Amendment): a hypervisor-enabled kernel with the Rust loader
+>
+> - rust-sel4's own default (`default = el2`, hypervisor on, `virtualization=on`). It needs no CMake glue: a variant of `build.sh`.
+> - **New configuration.** The plan's matrix (K0 to K4, X1) has no hypervisor-enabled, unverified `qemu-arm-virt` configuration, so an Amendment must add one first. (K1 itself is listed as running under HVF; Route I runs its configuration under TCG, which needs no new configuration.) It is a build-option
+>   change with no source change, but it is not K1.
+> - **The root task must be rebuilt** against that configuration's `libsel4` (the object-type numbers depend on the hypervisor option [Inferred]), from the same source and lock.
+>   So it does not boot "the existing binary", only the existing source.
+> - **A point in its favour [Inferred].** The plan *expects* K1 to be a class B configuration difference from K0, partly "because the hypervisor option differs from K0" (plan, Inferred). K0's include file sets
+>   `KernelArmHypervisorSupport ON` [Documented]. With HVF out and TCG as the backend, EL2 is available, so a hypervisor-enabled kernel would remove that one difference. Others remain (platform `tx2`,
+>   `KernelVerificationBuild ON`, printing off, 16 domains), and the kernel would still be label U. That is a decision for the owner, not for this proposal.
+> - Likely the faster route to a first boot. It is a different thing to test than K1.
+>
+> ### Common to both routes
+>
+> **Run.** QEMU 11.1.3, `-machine virt,secure=off,gic-version=2 -accel tcg -cpu cortex-a57 -smp 1 -m 1024M -nographic` (Route II adds `,virtualization=on`), through the existing
+> `boot-image.py`, marker `TEST_PASS`, timeout 120 s. Three clean boots.
+>
+> **Success criteria (fixed before the run; label U; functional only).**
+>
+> 1. **Inputs:** the kernel is built from the pinned source with its recorded configuration (Route I: `gen_config.json` equal to A1's), the root task is built from the same source and the approved
+>    lock (Route I: its stripped payload equals `aarch64-elf-strip` of `64fcc25c…`), and no kernel, loader, elfloader or root-task source was changed.
+> 2. **Serial output** contains, in order: the seL4 boot banner, `Hello, World!`, `badge = 0x…`, `TEST_PASS`. The `badge` line prints the expected constant *before* the assertion, so only
+>    `TEST_PASS` shows that the assertion held.
+> 3. **3 of 3 boots pass** with no positive failure observation (a kernel fault or halt message, or a root-task panic) before the marker, and identical output apart from timing and addresses.
+> 4. **Evidence:** sanitized logs, a manifest entry and verifier checks for the hashes and markers.
+>
+> **Outcomes (the plan's rules).** *Pass* = 1 to 4. *Fail* = an observed kernel fault, halt message or root-task panic with unmodified inputs. *Investigate* = no marker and no positive failure
+> observation. *Blocked* = three distinct, documented approaches fail to reach a first boot; the plan treats Blocked as Fail. The consequence of Fail or Blocked is set here: report and stop; it
+> falsifies the broader hypothesis only under the plan's decision rule 2, that is, if passing needs a Class 3 change or a Class 2 change the owner does not approve.
+>
+> **What a Pass does not mean:** not hardware validation, not performance, not SMP, not HVF, not verified-configuration assurance, not a test of the broader hypothesis, and no progress on A2a, A4 or A5.
+>
+> **Expected artifacts:** `results/E1.md`; sanitized logs of the build and the three boots; a hash table; the spike-local build files; new verifier checks; deviation rows for the new spike code; an Amendment entry recording the result; a handoff update.
+>
+> **Stop conditions (all countable).** Stop and report if: (a) a kernel, loader, elfloader or root-task source change is needed; (b) any tool or dependency not already installed or pinned is needed;
+> (c) Route I: the rebuilt kernel's `gen_config.json` differs from A1's; (d) three distinct documented approaches reach no first boot (Blocked); (e) a positive failure observation: one diagnostic boot, then stop;
+> (f) anything about authority is unclear. Logs are sanitized before anything is published. Nothing is pushed or merged.
+>
+> **Agent recommendation [Inferred; the owner decides].** Route II. Neither route boots the existing *binaries* (both rebuild the kernel; Route II also rebuilds the root task from the same source and lock), so that
+> advantage of Route I is gone. Route II is rust-sel4's own default, needs no new build glue, and has the fewest unknowns on the way to a first boot, which is the owner's stated objective. Its cost is one Amendment adding
+> the configuration. Choose Route I instead if the plan's configuration matrix must not grow.
