@@ -1,0 +1,18 @@
+#
+# Copyright 2023, Colias Group, LLC
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Adapted from seL4/rust-root-task-demo c13bdae64a860dfe1d3064717f4096e63bb7dff2 (crates/example).
+#
+
+[package]
+name = "s1-root-task"
+version = "0.1.0"
+edition = "2024"
+license = "BSD-2-Clause"
+publish = false
+
+[dependencies]
+sel4 = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }
+sel4-root-task = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }
