@@ -36,17 +36,20 @@ version and checksum, in the approved rust-sel4 lock (0 differences); exactly th
 removals differ from the original spike lock, and all git and path packages are identical; the rerun's compile
 log shows `cc v1.10.0`, `log v0.4.34`, `pest_stack_guard v1.0.0` and `psm v0.1.24`
 ([03](A1-rerun/03-build-rerun1.txt)). The original lock is kept unchanged (SHA-256 `c92d1dca…`, also in Git at
-`b563904`). The corrected lock has 79 packages against 81, and 51 changed lines.
+`b563904`). The corrected lock has 79 packages against 81, and 51 changed lines: 16 of them are the `s1-root-task` block moving to its sorted position, with no package changed. File 02 is a condensed record written after the commands were run (cargo's output is summarized); its diff is the real diff.
 
 ## Environment
 
 Unchanged from A1 [Measured: [01](A1-rerun/01-preflight.txt)]: seL4 `62e345c`, rust-sel4 `c819c27`, nightly
 `nightly-2026-08-21` with Tier 1 components only, the same Homebrew inventory (386 formulae, sorted-list
-SHA-256 `58168eca…`, equal to A1's recorded after-state), and the same pins. Nothing was installed.
+SHA-256 `58168eca…`, equal to A1's recorded after-state), and the same source pins (seL4, rust-sel4). The Homebrew-pins
+section of 01 is empty: nothing was captured there. The Homebrew pins, the Command Line Tools / libclang version and the macOS
+build were **not re-recorded** at the rerun. A check made afterwards found them equal to A1's, but that check is not part of the
+evidence. Nothing was installed.
 
 ## Results
 
-| Output | Original A1 run | Rerun, build 1 (38.5 s) | Rerun, build 2 (39.4 s) |
+| Output | Original A1 run | Rerun, build 1 (39.4 s) | Rerun, build 2 (38.5 s) |
 |---|---|---|---|
 | `kernel.elf` | `95891911d0bed9e4…` | `95891911d0bed9e4…` | `95891911d0bed9e4…` |
 | `sel4-kernel-loader.elf` | `8be9d6df5e569b1c…` | `8be9d6df5e569b1c…` | `8be9d6df5e569b1c…` |
@@ -69,8 +72,8 @@ Full hashes: [build 1](A1-rerun/04-sums-rerun1.txt), [build 2](A1-rerun/06-sums-
 1. **Root task, `s1-root-task.elf`:** 65,552 bytes originally and 65,568 now. All sections have the same size
    except `.strtab` (17,274 to 17,287 bytes). The loaded sections that differ are `.rodata` (763 of 6,835 bytes)
    and `.text` (18 of 19,180 bytes). There are 4,795 instruction words in both, and **8 differ**, every one an
-   `adr` or `add` that computes the address of a constant in `.rodata`. `.data`, `.eh_frame`, `.eh_frame_hdr`
-   and `.tbss` are byte-identical.
+   `adr` or `add` that computes the address of a constant in `.rodata`. `.data`, `.eh_frame` and `.eh_frame_hdr`
+   are byte-identical.
 2. **The cause of the shifted addresses** [Measured, then Inferred]. Both binaries embed the path of the
    generated `invocations.rs` of `sel4-sys` in a panic-location string, and the path contains Cargo's hashed
    build-script directory name: `3d413dfeda2b8c15` in the original, `315641f36d34bbc3` in the rerun, which are

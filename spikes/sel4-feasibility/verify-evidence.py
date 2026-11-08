@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Re-check the A1 and A3 conclusions against the sanitized public evidence in results/.
 
-    verify-evidence.py [--results DIR]
+    verify-evidence.py [--results DIR] [--lock FILE]
 
-It reads only the sanitized files (never results-raw/), so anyone with a clone can run it. It checks
+It reads the sanitized files (never results-raw/) and the spike's Cargo.lock, so anyone with a clone can run it. It checks
 that the measurements the records rely on are present and consistent, that the manifest's hashes match
 the files, and that no home path remains. The privacy check looks for any home-directory path under the macOS or
 Linux users root, an encoded scratch-directory name, and the running user's own home path and host name. It checks the
@@ -137,7 +137,12 @@ def main() -> int:
           and "instruction words: 4795 and 4795; differing: 8" in cmp_text
           and ".rodata: 763, .text: 18, ELF header e_shoff: 1" in cmp_text
           and "control: add-payload on the original inputs reproduces the original image: yes" in cmp_text
-          and cmp_text.count("device-tree properties that differ: kaslr-seed, rng-seed") == 2)
+          and len(re.findall(r"(?m)device-tree properties that differ: kaslr-seed, rng-seed$", cmp_text)) == 2)
+    wanted = ("Compiling cc v1.10.0", "Compiling log v0.4.34", "Compiling psm v0.1.24", "Compiling pest_stack_guard v1.0.0")
+    unwanted = ("cc v1.11.0", "log v0.4.35", "psm v0.1.32", "pest_stack_guard v1.0.1", "ar_archive_writer", "object v0.39.1")
+    logs = [read(res, f"A1-rerun/{n}") for n in ("03-build-rerun1.txt", "05-build-rerun2.txt")]
+    check("A1 rerun: both build logs compiled the approved crate versions and none of the six original ones",
+          all(all(w in lg for w in wanted) and not any(u in lg for u in unwanted) for lg in logs))
     corr = read(res, "A1-rerun/02-lock-correction.txt")
     m = re.search(r"original: (\w{64})\s+corrected: (\w{64})", corr)
     actual = hashlib.sha256(lock_path.read_bytes()).hexdigest() if lock_path.is_file() else ""

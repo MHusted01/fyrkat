@@ -49,7 +49,7 @@ approved (deviation D13). The owner chose to restore the approved versions. Four
 identical to the original. The root task is identical across the rerun's two builds but differs from the
 original (`a7c6be9a…` to `64fcc25c…`): 8 of 4,795 instruction words differ, all address computations, because
 Cargo's hashed build-script directory name, embedded in a panic-location string, depends on the dependency
-set. All 782 differing image bytes outside the device-tree seeds are root-task bytes. **A root-task hash is a
+set (inferred: Cargo's behaviour, measured only as a one-variable change of the lock). All 782 differing image bytes outside the device-tree seeds are root-task bytes. **A root-task hash is a
 function of the lock file, so name the lock when quoting one.** No behavioural test exists, because the A1
 image has never booted. The original lock and original build outputs are kept locally in the gitignored
 `spikes/sel4-feasibility/external/a1-original-build/`, and the lock is in Git at `b563904`.
@@ -100,7 +100,7 @@ Source: the owner's messages in this conversation, and the plan's 2026-11-08 Ame
 | Command | Tree | Result |
 |---|---|---|
 | `cargo xtask check` | before the commit that holds this file | "check: all 12 steps passed", macOS arm64 |
-| `spikes/sel4-feasibility/verify-evidence.py` | same | 39 of 39 passed, including checks against the repository's `Cargo.lock`. Mutation-tested: injected faults in the config, privacy, manifest and rerun checks were all caught |
+| `spikes/sel4-feasibility/verify-evidence.py` | same | 40 of 40 passed, including checks against the repository's `Cargo.lock`. Mutation-tested: injected faults in the config, privacy, manifest and rerun checks were all caught |
 | A1 rerun | corrected lock | two clean builds, 38.5 s and 39.4 s. See `A1-rerun.md` |
 | Local push safeguard | this clone | 14 crafted cases and 3 `git push --dry-run` cases behaved as intended (see D16) |
 
@@ -124,14 +124,14 @@ boots under any machine setting; cross-path and cross-machine reproducibility.
 - **A local safeguard now guards that history** (deviation D16): this clone's local config sets
   `core.hooksPath` to the untracked `.git/fyrkat-hooks/`, whose `pre-push` refuses the five unsanitized commits
   and any `local-only/*` ref, then runs the global pre-push hook unchanged. Global Git configuration was not
-  modified. `git push --no-verify` bypasses it. Undo: `git config --local --unset core.hooksPath && rm -rf
+  modified. It checks commit ancestry and ref names only: `git push --no-verify`, rewritten copies of the commits, pushes of raw tree or blob objects and other clones bypass it. Undo: `git config --local --unset core.hooksPath && rm -rf
   .git/fyrkat-hooks`. A fresh clone does not have it.
 - The preserved original A1 run (binaries, lock) is in `spikes/sel4-feasibility/external/a1-original-build/`,
   and the rerun's first build in `external/a1-rerun-build1/`. Both are gitignored. The root-task ELF embeds the
   builder's absolute build path, so **never publish a root-task binary**, only its hash.
 - The sanitizer reads the user, home and host names from the machine it runs on. Rerun it only there. It fails
   closed on an unterminated tap warning, and writes nothing unless every file sanitizes.
-- Stale local branches `spike/s1-prerequisites` and `docs/agents-research-section` are merged and can go.
+- Local branches `spike/s1-prerequisites` and `docs/agents-research-section` belong to squash-merged PRs, so Git does not list them as merged. They can go once the owner agrees.
 - A global pre-commit hook outside this repo prints "Broken pipe" noise on commit. Commits still succeed.
 - Never put the home path or user name in PR text, docs or logs. Sanitize with `sanitize-evidence.py` first.
 - The `reviewer` and `researcher` agents have Bash, so "read-only" is not enforced. Check `git status` after

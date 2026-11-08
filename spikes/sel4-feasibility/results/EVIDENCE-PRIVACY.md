@@ -53,12 +53,13 @@ spikes/sel4-feasibility/verify-evidence.py        # re-check the conclusions fro
   public copy came from.
 - [`A1/04-brew-drift-summary.txt`](A1/04-brew-drift-summary.txt) replaces the full before/after inventory
   comparison: it records the counts, the two added formulae, and the hashes of both full lists.
-- `verify-evidence.py` runs 39 checks on the public copies and on the repository's `Cargo.lock`: the A1 build hashes (three outputs identical, the
+- `verify-evidence.py` runs 40 checks on the public copies and on the repository's `Cargo.lock`: the A1 build hashes (three outputs identical, the
   image different), the device-tree seed cause, the `add-payload` determinism, the loader defect numbers, the
   `cargo deny` results and the advisory path, the tool and compiler versions, the A3 boot results under HVF and
   TCG, the ID-register probe (ASIDBits 2 under TCG, 0 under HVF), the pins, the recorded kernel configuration of the two sel4test builds and the PSCI conduit in their device
-  trees (A3 41 and 42), that the manifest hashes match and the manifest lists exactly the files under `A1/` and
-  `A3/`, and that no home path, user name, host name or scratch path remains. The privacy check does not
+  trees (A3 41 and 42), the A1 rerun (its hashes, the byte accounting against the original run, the compile-log crate
+  versions and the repository's `Cargo.lock`), that the manifest hashes match and the manifest lists exactly the files under
+  `A1/`, `A1-rerun/` and `A3/`, and that no home path, user name, host name or scratch path remains. The privacy check does not
   depend on who runs it: it looks for any macOS or Linux home-directory path, an encoded scratch-directory
   name, and the running user's own home path and host name. It checks the running user's name only when that name has at
   least six characters and is not a common service name, so it cannot prove that another person's name is absent:

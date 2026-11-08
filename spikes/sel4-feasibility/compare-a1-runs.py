@@ -17,7 +17,8 @@ difference is stated, not just noticed:
    with the new image (expected: only device-tree seed bytes);
 4. the two rerun images against each other (expected: only device-tree seed bytes).
 
-Needs aarch64-elf-objcopy, aarch64-elf-objdump and dtc on PATH. Spike code, stdlib only. Exit code 0 when
+Needs aarch64-elf-readelf, aarch64-elf-objcopy, aarch64-elf-objdump and dtc on PATH. It reads the preserved
+outputs in place and writes only to --work (or a temporary directory). Spike code, stdlib only. Exit code 0 when
 every difference is accounted for.
 """
 import argparse

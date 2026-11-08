@@ -1,5 +1,7 @@
 # Lockfile correction for the A1 rerun, 2026-11-08T14:23:20Z
 # Owner decision 2026-11-08: F2 option 2, restore the six crates.io versions approved in rust-sel4 v6.0.0 (c819c27).
+# Note: a condensed record written after the commands were run. Cargo's own 'note:' lines are omitted, and the preflight (01) was
+# taken after this change, so it already saw the corrected lock. The diff at the end is the real diff.
 # Commands, as run in spikes/sel4-feasibility with RUSTUP_TOOLCHAIN=nightly-2026-08-21 RUSTUP_AUTO_INSTALL=0:
 cargo update --offline -p cc --precise 1.10.0           -> Downgrading cc v1.11.0 -> v1.10.0
 cargo update --offline -p log --precise 0.4.34          -> Downgrading log v0.4.35 -> v0.4.34
