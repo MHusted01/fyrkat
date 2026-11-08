@@ -126,7 +126,7 @@ Notes:
   outside timing, the region is unmapped and on seL4 its frames are revoked. **Before every timed
   phase, F1 included,** the pager performs a throwaway retype from the untyped it will use and keeps
   that object until the phase ends. That forces any untyped reset, which can clear a large region
-  (untypeds handed over at boot start fully free [Documented: seL4 `boot.c`, `untyped.c`]), to happen
+  (untypeds handed over at boot start with their free index at the end, so the first retype resets and clears the whole untyped [Documented: seL4 `boot.c`, `untyped.c`]), to happen
   outside timing, so that none falls inside a timed batch. On Linux the harness calls `munmap`, and
   the file's pages stay resident.
 - **F1 to F3** have 32 batches each. A fresh mapping is used for each workload and each run, so F2

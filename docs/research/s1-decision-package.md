@@ -88,7 +88,7 @@ falsify the hypothesis.
   both patches and seed its lock from upstream. The upstream lock names five git origins besides
   rust-sel4 itself, all under `github.com/coliasgroup`: `dafny`, `hashbrown`, `offset-allocator`,
   `ring` and `rust-embedded-fat` [Measured]. The approval therefore covers **these six git origins**
-  (rust-sel4 and those five) and `bindgen` with the system libclang. **Version corrected on 2026-11-08:** `v6.0.0` locks `bindgen` 0.72.1 [Documented: `crates/sel4/sys/Cargo.toml` and `Cargo.lock` at `c819c27`]. The 0.73.2 first written here is the version on rust-sel4 `main`. The approval is for the dependency tree locked at `c819c27`, and the owner re-confirms the version before A1's first cargo build.
+  (rust-sel4 and those five) and `bindgen` with the system libclang. **Version corrected on 2026-11-08:** `v6.0.0` locks `bindgen` 0.72.1 [Documented: `crates/sel4/sys/Cargo.toml` and `Cargo.lock` at `c819c27`]. The 0.73.2 first written here is the version on rust-sel4 `main`. The owner approved 0.72.1 as locked at `c819c27` on 2026-11-08, and member-crate manifests inside the spike workspace (see the plan's correction entry).
 - **Building:** the loader and `sel4-kernel-loader-add-payload` are built from a checkout of
   rust-sel4 at the pin, under `external/`, with its own lock (`--locked`). The spike root task lives
   in the spike workspace, with a seeded lock and the replicated patches. Builds in that checkout set `RUSTUP_TOOLCHAIN=nightly-2026-08-21` and `RUSTUP_AUTO_INSTALL=0`: its own `rust-toolchain.toml` lists more components and eleven targets, which rustup would otherwise install, including Tier 2 and Tier 3 targets.
@@ -125,7 +125,7 @@ falsify the hypothesis.
   `Cargo.toml` (its own `[workspace]` root), `Cargo.lock`, `rust-toolchain.toml` (the Tier 1
   nightly), and `deny.toml`, the spike-local policy that decision 3 needs. The root workspace, its
   `rust-toolchain.toml` and the root `deny.toml` are unchanged.
-- **Member crates.** The `Cargo.toml` of each member crate the spike creates (the demo has one, `crates/example`) is also a gated file. It is listed in the A1 results, and the owner confirms it with the bindgen version.
+- **Member crates.** The `Cargo.toml` of each member crate the spike creates (the demo has one, `crates/example`) is also a gated file. The owner approved these on 2026-11-08, inside the spike workspace only, each listed in the A1 results.
 - **Other gated files are not included.** A rust-sel4 workspace may also need a `.cargo/config.toml`
   or a `build.rs` [Inferred]. AGENTS.md gates both at any depth. If A1 needs one, the work stops and
   asks, and this approval does not cover it.
@@ -152,7 +152,7 @@ falsify the hypothesis.
 
 - **Recommend:** this is stricter than "record versions", because the review showed that installing
   a cross compiler pulls in libraries and could move other tools. Before A1:
-  1. Set `HOMEBREW_NO_AUTO_UPDATE=1`, `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1` and `HOMEBREW_NO_INSTALL_UPGRADE=1` in the spike
+  1. Set `HOMEBREW_NO_AUTO_UPDATE=1`, `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1` and `HOMEBREW_NO_INSTALL_UPGRADE=1` (which only stops the named formula being upgraded, so the real control is pin-and-record: compare `brew list --versions` before and after) in the spike
      scripts.
   2. `brew pin` QEMU (a plan-pinned input at 11.1.3, currently **not** pinned [Measured]), the cross
      GCC and its binutils, CMake, Ninja, `dtc` and any already-installed library that the install would upgrade (`lz4` is outdated and has about 80 dependents, including QEMU [Measured: `brew`, 2026-11-08]). `brew pin` freezes an installed formula against

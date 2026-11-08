@@ -35,16 +35,19 @@ the text at `46a90fa`.
 - P3 deferred to Stage D. P4 declined. P5 deferred to the A5 design gate. **A5, the comparator, and
   Tiers 2 and 3 are not authorized.**
 
-## Open items for the owner
+## Answers recorded after the final review
 
-- **`bindgen` version.** The approval named 0.73.2, which is the version on rust-sel4 `main`. The
-  approved `v6.0.0` locks 0.72.1. The Amendments read the approval as the tree locked at `c819c27` and
-  ask the owner to re-confirm. **A1 runs no cargo build until this is answered.**
-- **Member-crate `Cargo.toml`.** The root-task member crate's manifest is a gated file that decision 5
-  did not name. It is listed in the A1 results, and the owner confirms it with the bindgen version.
+- **`bindgen`:** the owner approved 0.72.1 as locked at `v6.0.0` (the tree locked at `c819c27`). The
+  0.73.2 first written in decision 3 was the `main` version.
+- **Member crates:** the owner approved member-crate `Cargo.toml` files under
+  `spikes/sel4-feasibility/` only, each listed in the A1 results. `.cargo/config.toml` and `build.rs`
+  still stop and ask.
 - **Two C2 method changes from the final review** (explicit zero in F3, untyped reset before every
-  timed phase). They make the method stricter and change no criterion. They are in the Amendments.
-- **The A5 question** (class D or Investigate) stays open to the A5 design gate.
+  timed phase) make the method stricter and change no criterion.
+- **The A5 question** (class D or Investigate) stays open to the A5 design gate. Choosing Investigate
+  where class D applies would itself need an Amendment.
+- **If pip must build `pyyaml` or `pyfdt` from source,** their build tools are not on the approved
+  list: the work stops and asks.
 
 ## Blockers and conflicts
 
@@ -58,14 +61,14 @@ the text at `46a90fa`.
 | Check | Commit | Result |
 |---|---|---|
 | `cargo xtask check` | PR 6 head when written | "check: all 12 steps passed". macOS arm64, local |
-| Independent reviews of PR 6 | `7833442` to `b2095d4` | Four passes. The last found 2 High, 4 Medium, 8 Low and said NOT MERGE-READY. All were text fixes, now applied. **A re-review of the fixes is required before merging PR 6** |
+| Independent reviews of PR 6 | `7833442` to `b2095d4` | Five passes. The last two said NOT MERGE-READY (2 High, 4 Medium, 8 Low; then 2 Medium, 5 Low), all text fixes. **A final confirmation is required before merging PR 6** |
 
 **Not verified:** `cargo xtask boot` locally; whether GCC 16, CMake 4 or Python 3.15 work with seL4
 17.0.0 (that is an A1 finding); GitHub's "verified" status of commits.
 
 ## Next actions
 
-1. Re-review of the PR 6 fixes, then merge PR 6 if it passes with no unresolved material finding.
+1. Final confirmation of the PR 6 fixes, then merge PR 6 if it passes with no unresolved material finding.
 2. Create the approved spike workspace files, install Tier 1 with the recorded pins and the Homebrew
    guards in decision 7, and run A1 following the approach order in decision 8. Raw evidence under
    `spikes/sel4-feasibility/results/`. Stop with a report. Then A3, A4 and A2a.
