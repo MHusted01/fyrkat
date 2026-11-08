@@ -4,6 +4,11 @@ target/
 # Pinned developer tools installed by `cargo xtask tools`
 /.tools/
 
+# Spike: fetched trees (seL4 and its patches, tools, images), build output and the Python venv
+/spikes/sel4-feasibility/external/
+/spikes/sel4-feasibility/build/
+/spikes/sel4-feasibility/.venv/
+
 # Per-developer Claude Code state
 /.claude/settings.local.json
 /CLAUDE.local.md

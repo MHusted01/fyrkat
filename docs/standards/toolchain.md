@@ -22,7 +22,12 @@ implies no architecture decision; ADR 0002 and ADR 0003 decide the real targets.
 The product builds with stable only. A nightly compiler may be used for analysis tools that
 require it, such as Miri, and only when pinned by date (for example `nightly-2026-11-01`),
 installed on demand, and never used to produce a shipped artefact. No analysis tool needs it
-today, so no nightly is configured.
+today, so no nightly is configured at the repository root.
+
+A spike under `spikes/` may use a nightly compiler that its own `rust-toolchain.toml` pins by date,
+when a dependency requires it. Nothing outside `spikes/` may use it, and no shipped artefact may be
+built with it. A spike that needs nightly records which features force it. The owner approved this
+rule on 2026-11-08 (decision 6 of the S1 decision package).
 
 ## Updating the Rust toolchain
 

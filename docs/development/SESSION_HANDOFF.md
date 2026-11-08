@@ -1,119 +1,83 @@
 # Session handoff
 
 A snapshot for the next session, not a source of truth. [ADRs](../adr/README.md) and Git win
-over it. It records approvals and grants none. The previous handoff named branch
-`m0/post-merge-record` and HEAD `ae054be`. Both are stale, and the file is replaced entirely.
+over it. It records approvals and grants none. The authoritative record of the owner's S1 decisions is
+the last entries in the [spike plan's Amendments](../research/sel4-spike-plan.md#amendments).
 
 ## Snapshot
 
-- **Date:** 2026-11-07.
-- **Written from:** branch `m0/complete`, on top of `aa8e40ff9b694f7c0c4942b7f83b14e577d78df4`
-  (PR 3, which equalled `main` when this file was generated). This file is committed by the follow-up
-  PR that also marks M0 complete. **Once that PR is merged, `main` is its squash commit, so the SHA is not
-  written here. Check it with `git log -1 origin/main`.**
-- **Upstream:** `m0/complete` was local until the PR was opened. [Measured: `git branch -vv`]
-- **Remote:** `main` was its only branch when generated. [Measured: `git ls-remote --heads origin`]
-- **Pull requests:** PR 1 (M0 foundation) and PR 3 (merged-state record) are MERGED, and the
-  follow-up PR that carries this file was opened afterwards. PR 2
-  (throwaway failing check) is CLOSED. [Measured: `gh pr list --state all`]
-- **CI on `main`:** run 42415395227 on `aa8e40f` succeeded. `boot (ubuntu arm64)` and `check and boot
-  (ubuntu x86-64)` passed. `security-sensitive paths` was skipped. [Measured: `gh run view`]
+- **Date:** 2026-11-08.
+- **Written from:** branch `spike/s1-prerequisites` (PR 6), before the PR is merged. Read `git log` and
+  `gh pr view 6` for what happened after. [Measured: git]
+- **Merged:** PR 5 (`AGENTS.md` research policy) as `a79c847` on `main`, by squash. PRs 1, 3 and 4
+  are merged and 2 is closed. [Measured: `gh pr list --state all`]
+- **CI:** the three required checks passed on PR 5 and on earlier PR 6 heads. They are re-run on each
+  push. [Measured: `gh pr checks`]
+- **Commits:** carry a `Signed-off-by` line and a signature header. GitHub's "verified" display was not
+  checked, and branch protection does not require signatures. [Measured: `git cat-file`, GitHub API]
 
 ## Milestone status
 
-**M0 Engineering foundation is complete.** The owner declared it complete on 2026-11-07, on the
-evidence in the [acceptance record](m0-acceptance.md) and accepting its documented limits. Once the
-follow-up PR is merged, `docs/roadmap.md` on `main` says so. [Documented]
+**M0 is complete.** **S1 is planned and not started: nothing has been installed, built or run.** M1
+cannot be finalized before ADR 0004 is decided. ADR statuses: 0001 Part A Provisional, Part B
+Withdrawn. 0002 and 0003 Provisional. 0004 Proposed. None is Accepted. The spike plan is approved for
+the text at `46a90fa`.
 
-| Exit criterion | Status in the acceptance record |
-|---|---|
-| Fresh clone passes `cargo xtask check` | Done (12 of 12 steps, macOS arm64) |
-| CI on a real PR, failing change blocked | Done (PR 1 passed, PR 2 blocked) |
-| Direct push to `main` rejected, protections via API | Done by equivalent test. `main` itself was not push-tested, by owner decision |
-| ADRs 0001 to 0003 ruled on, spike plan approved | Done. Plan approved at `46a90fa`, which does not authorize execution |
-| Claude Code configuration confirmed in a real session | Done, with limits. Workspace-trust prompt not tested |
-| Adversarial review complete | Done. Two `reviewer` passes, findings fixed or listed as known limits |
+## Owner decisions of 2026-11-08 (recorded in the plan's Amendments)
 
-S1 (kernel foundation spike) is planned and not started. M1 cannot be finalized before ADR 0004 is decided.
+- Approved: decisions 1 to 7, with choices 1a (W1 and W2 both carry the C1 criterion), 1b (the timing
+  kernel is a measurement-only configuration outside the A2 matrix) and 1c (K0 is
+  `AARCH64_verified.cmake`). Approved: P1 (rust-sel4 `v6.0.0`, `nightly-2026-08-21`) and P2 (the
+  850-cycle wording correction).
+- Decision 8 is authorized **conditionally**: A1, A3, A4 (Sonnet) and A2a (Opus). Conditions: the
+  final independent review of PR 6 passes, PR 6 is merged, only Tier 1 is installed, and each
+  experiment's entry criteria are confirmed first.
+- P3 deferred to Stage D. P4 declined. P5 deferred to the A5 design gate. **A5, the comparator, and
+  Tiers 2 and 3 are not authorized.**
 
-## Completed since the last handoff
+## Answers recorded after the final review
 
-- PR 3 was merged as `aa8e40f`: the "Merged state" and "Workflow skills" sections of the acceptance
-  record, and the previous handoff. [Measured: `git show --stat`]
-- The owner declared M0 complete. The follow-up PR records it in the roadmap and the acceptance record.
-
-## Authorizations in force
-
-- **Spike plan approval** (plan and criteria only): the plan's Amendments, "Owner approval of the plan".
-- **Owner decisions on K4, x86-64 assurance and patch separation:** the same Amendments and the plan text.
-- **M0 declared complete:** by the owner on 2026-11-07. Source, once merged: `docs/roadmap.md` and the
-  acceptance record. The owner also authorized the follow-up PR that records it, and its merge.
-- **Merge of PRs 1 and 3:** both merged on the owner's authorization. See the acceptance record.
-- **Not authorized:** spike execution of any kind, including installing the pinned nightly or any other
-  spike tool. Class 3 kernel changes, including K4. Relaxing any criterion. Accepting any ADR. Any push,
-  PR or GitHub change not named above.
-
-## Pending approvals
-
-- Authorizing spike execution, which also needs the C1 and C2 method files committed first.
-- Installing the pinned spike toolchain or any other new tool.
-- Deciding ADR 0004. No ADR is Accepted.
-- The `pull_request_target` follow-up for sensitive paths, which touches `.github/`.
+- **`bindgen`:** the owner approved 0.72.1 as locked at `v6.0.0` (the tree locked at `c819c27`). The
+  0.73.2 first written in decision 3 was the `main` version.
+- **Member crates:** the owner approved member-crate `Cargo.toml` files under
+  `spikes/sel4-feasibility/` only, each listed in the A1 results. `.cargo/config.toml` and `build.rs`
+  still stop and ask.
+- **Two C2 method changes from the final review** (explicit zero in F3, untyped reset before every
+  timed phase) make the method stricter and change no criterion.
+- **The A5 question** (class D or Investigate) stays open to the A5 design gate. Choosing Investigate
+  where class D applies would itself need an Amendment.
+- **If pip must build `pyyaml` or `pyfdt` from source,** their build tools are not on the approved
+  list: the work stops and asks.
 
 ## Blockers and conflicts
 
-- **None between this file, Git and the ADRs** when the follow-up PR is merged. `/fyrkat-resume` checks it.
-- **Blocked:** spike Stage A, because execution is not authorized. The C1 and C2 method files do not
-  exist. [Measured: `find` for files named `*method*` found none]
-- **Decision wait:** M1 waits on ADR 0004 and therefore on the spike.
-- **Known limits** (from the acceptance record, not re-tested): the sensitive-paths job is only a
-  notice. With one maintainer, GitHub cannot require a second approver. `docs/standards/toolchain.md`
-  still exempts QEMU, EDK2, shellcheck and actionlint from pinning. CI has QEMU 8.2.2, and the spike
-  pins 11.1.3.
-
-## Uncommitted changes
-
-When generated, the working tree held three edits: the roadmap, the acceptance record, and this file.
-All three are committed by the follow-up PR. After it merges, the working tree should be clean.
+- **None between this file, Git and the ADRs.**
+- Follow-up from M0: a base-controlled `pull_request_target` version of the security-sensitive paths
+  check. [Documented: `m0-acceptance.md`, Known limits]
+- CI runners have QEMU 8.2.2. The spike plan pins 11.1.3 from Homebrew. [Measured: `m0-acceptance.md`]
 
 ## Verified results
 
 | Check | Commit | Result |
 |---|---|---|
-| `cargo xtask check` | `aa8e40f` plus the uncommitted edits to `roadmap.md` and `m0-acceptance.md` | "check: all 12 steps passed". 46 of 46 tests. Hook tests 80 passed, 0 failed. Sensitive-paths tests 28 passed, 0 failed. cargo-deny, rustdoc, shellcheck, actionlint, markdown links and spike isolation PASS. Ran on macOS arm64 |
-| `gh run view 42415395227` | `aa8e40f` | success. Jobs as in the Snapshot |
-| `gh pr list --state all`, `git ls-remote --heads origin` | `aa8e40f` | PRs 1 and 3 MERGED, PR 2 CLOSED. `origin/main` equals local HEAD |
-| ADR `Status:` lines (grep) | `aa8e40f` | 0001 Part A Provisional, Part B Withdrawn. 0002 and 0003 Provisional. 0004 Proposed |
-| Spike plan `Status:` line | `aa8e40f` | Approved for the text at `46a90fa`. Does not authorize running any experiment |
+| `cargo xtask check` | PR 6 head when written | "check: all 12 steps passed". macOS arm64, local |
+| Independent reviews of PR 6 | `7833442` to `d61562c` | Five passes. The last two said NOT MERGE-READY (2 High, 4 Medium, 8 Low; then 2 Medium, 5 Low), all text fixes. **A final confirmation is required before merging PR 6** |
 
-The `check` run did not include this handoff file, which was written after it. It does not change code.
-
-**Not verified:**
-
-- Branch protection on `main`. It was last read back after PR 1 (see the acceptance record) and not
-  rechecked after PR 3. Linux CI results are the CI runs above, not a local run.
-- The `Amendments` text of the spike plan was not re-read in full. Only its tail and Status line were.
-- Whether the spike prerequisites are still missing (pinned nightly, cross GCC, a pinned rust-sel4
-  commit). Not rechecked.
-- Debian firmware paths. The workspace-trust prompt in an interactive session.
-- Commit signatures: `git log --format=%G?` prints `E` locally, because no allowed-signers file is
-  configured. GitHub's verification of `aa8e40f` was not queried.
+**Not verified:** `cargo xtask boot` locally; whether GCC 16, CMake 4 or Python 3.15 work with seL4
+17.0.0 (that is an A1 finding); GitHub's "verified" status of commits.
 
 ## Next actions
 
-1. Run `git status -sb` and `git log -1 origin/main`. Expect a clean tree on `main`.
-2. **Authorized, no execution:** draft the list of tools the plan needs, pin the rust-sel4 commit in a
-   document, and draft the C1 and C2 method files. Do not install or run anything.
-3. **Needs approval:** authorize spike Stage A, and any tool installation, before starting it.
-4. **Needs approval:** the `pull_request_target` follow-up, which touches `.github/`.
+1. Final confirmation of the PR 6 fixes, then merge PR 6 if it passes with no unresolved material finding.
+2. Create the approved spike workspace files, install Tier 1 with the recorded pins and the Homebrew
+   guards in decision 7, and run A1 following the approach order in decision 8. Raw evidence under
+   `spikes/sel4-feasibility/results/`. Stop with a report. Then A3, A4 and A2a.
+3. Anything outside the approved scope stops and asks.
 
 ## Context not recorded elsewhere
 
-- Start a fresh session at the repository root and run `/fyrkat-resume`. Use Sonnet for routine work and
-  stop at the end of each stage, per the spike plan's model policy.
-- Session memory is stored per launch directory and does not carry over between sessions.
-- The previous handoff recorded that the permission prompt refused two Bash calls: `gh api .../protection`
-  and a compound command containing `HEAD^{tree}`. Another compound command with a shell variable was
-  refused in this session. The cause is not investigated. Simpler calls ran.
-- The HongMeng, TickTock and Sculpt PDFs used in the research are gone. Their titles are in
-  `docs/research/sel4-adversarial-review.md`.
+- The owner's goal is a secure, modern, high-performance, AI-native OS that does not stop at existing
+  solutions. The `AGENTS.md` research section records the working rules.
+- The `reviewer` and `researcher` agents have Bash. A read-only rule is not enforced. Check `git status`
+  after they run.
+- Start a fresh session at the repository root and run `/fyrkat-resume`.
