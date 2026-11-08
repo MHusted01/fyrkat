@@ -87,6 +87,40 @@ those documents.
 ## Reconsideration criteria
 
 The hypothesis is falsifiable. The [spike plan](../research/sel4-spike-plan.md), whose
-criteria the owner approved on 2026-11-07 at commit `46a90fa` (execution is not yet
-authorized), defines the falsification rules, the kernel modification policy, and the criteria that
-reopen this decision if the hypothesis survives.
+criteria the owner approved on 2026-11-07 at commit `46a90fa` (execution was authorized
+conditionally on 2026-11-08, and S1 is stopped at the A3 gate, apart from one bounded experiment, E1, that the plan's
+Amendments authorize only after the documentation pull request that records it is merged), defines the falsification rules, the
+kernel modification policy, and the criteria that reopen this decision if the hypothesis survives.
+
+## Update 2026-11-08: spike S1 evidence and owner direction
+
+This update records evidence and an owner direction. **The status stays Proposed, the Decision above is
+still "None yet", and seL4 is not decided.** The original text is unchanged except for the one
+sentence above that said execution was not authorized.
+
+**Two hypotheses must be kept apart.**
+
+| | Statement | Evidence so far | Standing |
+|---|---|---|---|
+| **HVF-specific** | Unmodified seL4 boots and runs natively under HVF on the primary development machine | A3 ran on one Apple M2 Pro: the kernel halts at its 16-bit ASID check, and a real SMP kernel stops in the elfloader [Measured, label U]. A3 is a **Fail** by its original criteria | **Falsified for the tested configuration.** The owner ruled that decision rule 2 of the plan applies, because passing would need a prohibited Class 3 kernel change under the currently available options. Not generalized to other hosts |
+| **Broader working hypothesis** | The one at the top of this ADR: unmodified seL4 with Rust user-space services is a stronger foundation than a custom Rust kernel | Not falsified by A3, and not supported by it either. A1 and its rerun are Pass (label U), limited to build reproducibility. A separate sel4test kernel (GICv3, Cortex-A53) passes the sel4test suite under TCG, as a control. The A1 kernel and root task have not booted | **Retained by the owner as a provisional working hypothesis.** Not an Accepted architecture decision |
+
+**What the evidence does and does not show.**
+
+- A1 (build on the Mac) is a **Pass, label U**. A rerun with the corrected dependency lock is also a
+  **Pass, label U**, accepted by the owner and **limited to the tested build-reproducibility criterion**:
+  two clean builds give an identical kernel, loader and root task, and the boot image differs only by
+  QEMU's random device-tree seeds. The root-task hash changed between the two locks, so **a root-task
+  hash must name the lock that produced it** [Measured; see the A1 rerun record].
+- **No runtime or behavioural validation exists** for the Rust root task. The A1 image has never booted
+  [Measured]. Nothing here claims otherwise.
+- Not yet run: A2a, A4, A5, Stage B (B1 to B4) and Stage D (the comparison with a custom kernel).
+  Stage C does not run under the A3 Fail consequence in the plan. The results not yet obtained could
+  still falsify or support the broader hypothesis.
+
+**Constraints that stay in force.** A5 is blocked. Any Class 3 kernel change is blocked, and this
+ADR does not accept one. The Rust nightly `nightly-2026-08-21` is approved **for the isolated S1
+experiment only**: A1 triggered the plan's consequence "user space requires nightly Rust: reopens the
+toolchain policy", and the long-term toolchain policy is **unresolved**.
+
+See [ADR 0002](0002-initial-cpu-architecture.md) for the CPU-architecture side of the same direction.

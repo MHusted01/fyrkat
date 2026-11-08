@@ -53,14 +53,26 @@ Exit criteria:
 
 ## S1: Kernel foundation spike
 
-**Status: in progress, stopped at the A3 gate.** It is defined by the [spike plan](research/sel4-spike-plan.md),
+**Status: in progress, stopped at the A3 gate, apart from the bounded experiment E1 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
-A3, A4 and the A2a interpretation conditionally on 2026-11-08. A1 ran and passed (label U). A3 ran and failed
-(label U) for unmodified seL4 under HVF on one Apple M2 Pro, and the owner confirmed it. By the owner's ruling,
-decision rule 2 applies to that configuration, and the A3 Fail reopens the architecture question in
-[ADR 0002](adr/0002-initial-cpu-architecture.md). A2a, A4 and A5 have not started, and **resuming execution is
-not authorized.** Records: the plan's Amendments and `spikes/sel4-feasibility/results/`. No ADR is Accepted.
+A3, A4 and the A2a interpretation conditionally on 2026-11-08.
 
+- **A1** ran and passed (label U), and a rerun with the approved dependency lock also passed (label U). The owner
+  accepted the rerun **limited to build reproducibility**. No runtime validation exists: the A1 image has never
+  booted.
+- **A3** ran and failed (label U) for unmodified seL4 under HVF on one Apple M2 Pro, and the owner confirmed it.
+  Decision rule 2 applies to that **HVF-specific** configuration. It does not establish incompatibility on every
+  Apple Silicon host, and it does not reject seL4 on TCG.
+- **Direction (owner, 2026-11-08):** [ADR 0002](adr/0002-initial-cpu-architecture.md) keeps AArch64-first as a
+  provisional direction, with QEMU TCG as the initial local backend. [ADR 0004](adr/0004-kernel-foundation.md)
+  keeps seL4-first as a provisional **working hypothesis**. Neither ADR is Accepted.
+- **Blocked:** A5 and any Class 3 kernel change. A2a, A4 and the comparator are not authorized. The nightly
+  toolchain is approved for S1 only.
+- **Next (owner, 2026-11-08):** one bounded experiment, **E1**, to run the Rust root task on a hypervisor-enabled seL4
+  17.0.0 with the pinned Rust loader under QEMU TCG (Route II). It is authorized to start **only after the documentation
+  pull request that records it is merged**, is functional validation only (label U), and is specified in the plan's
+  [Amendments entry of the E1 decision](research/sel4-spike-plan.md#2026-11-08-owner-decisions-on-the-documentation-pr-six-deviations-pr-9-and-e1-route-ii).
+  Nothing further is authorized after it.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 

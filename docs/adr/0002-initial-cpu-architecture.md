@@ -25,7 +25,8 @@ eventually: x86-64 for desktop and gaming hardware, and Arm for efficient laptop
 ## Decision
 
 1. **AArch64 is the first development target**, on QEMU `virt`, using HVF locally and
-   emulation in CI.
+   emulation in CI. *Amended by the owner on 2026-11-08: the initial local development
+   backend is QEMU TCG. See [Update 2026-11-08](#update-2026-11-08-spike-s1-result-and-owner-direction).*
 2. **x86-64 is a required second architecture.** Its boot path builds and boots in CI
    from M1. The full kernel port lands before any ABI freeze, and no later than the end
    of M3.
@@ -115,6 +116,62 @@ irreversible commitment may be made until the spike reports.
   optional A5-x86 DMA test there. This does not remove x86-64 as a required second
   architecture, and no AArch64 result implies anything about x86-64 assurance. [Documented,
   spike plan draft]
+
+## Update 2026-11-08: spike S1 result and owner direction
+
+This update records a result and an owner direction. **The status stays Provisional. This ADR is
+not Accepted.** Nothing above is deleted. Where an earlier statement is now contradicted, this section
+says so.
+
+**Result [Measured; label U].** Experiment A3 of the [spike plan](../research/sel4-spike-plan.md) ran
+unmodified, non-hypervisor seL4 17.0.0 (`qemu-arm-virt`, AArch64, GICv3) under QEMU 11.1.3 with HVF on
+one Apple M2 Pro (macOS 27.2). With 1 vCPU the kernel halts during initialisation, because the guest
+that HVF presents reports 8-bit ASIDs and the kernel requires 16-bit ones. The same sel4test image
+passes the sel4test suite under TCG (124 passed, 59 disabled); that is a different build from the A1
+kernel, which has not booted. A real 4-node SMP kernel stops earlier, in the
+elfloader's PSCI step, under both HVF and TCG, and has not booted anywhere. HVF refuses nested
+virtualization. A3 is a **Fail** by its original criteria, and the owner confirmed it. Details:
+[A3 result](../../spikes/sel4-feasibility/results/A3.md).
+
+**Scope of that result.** One host, one QEMU build and one macOS build were measured. It does **not**
+establish incompatibility on every Apple Silicon host, and no other chip was tested [Inferred: the
+cause may lie in the chip, in Hypervisor.framework or in QEMU, and was not separated]. Removing the
+check, or changing the kernel to manage 8-bit hardware ASIDs, would be a Class 3 change under the
+plan's kernel modification policy, which is not available. The hypervisor-mode kernel avoids the check
+but needs EL2 [Documented: seL4 source], which HVF does not give a guest here [Measured].
+
+**Effect on the open conflict above.** The first open conflict said the main argument for AArch64
+first (native execution) would fall away if EL1 builds did not work under HVF. Unmodified seL4 17.0.0
+did not boot through QEMU 11.1.3's HVF accelerator on the tested configuration [Measured]. Whether
+that means native execution of seL4 is unavailable on this Mac more generally is [Inferred]: only that
+one path was measured.
+
+**Owner direction (2026-11-08).**
+
+1. **AArch64-first is retained as the provisional direction.**
+2. **QEMU TCG is the initial local development backend.**
+3. **TCG must not be represented as equivalent to hardware acceleration or to physical hardware
+   validation.** Nothing may be reported as if it were. (Consequence drawn by this ADR, not stated by the
+   owner [Inferred]: TCG results are functional only, and TCG timings are not performance measurements.)
+
+Unchanged from the original Decision, and not part of the owner direction above: emulation is the CI
+backend.
+
+**Consequences for the requirements [Inferred].**
+
+- Requirement 1 (correct behaviour testable on the development machine) can be met under TCG.
+- Requirement 2 (performance measurable) is **not** met on this machine for seL4: TCG timings are not
+  performance measurements, and the section "Performance consequences" above assumed HVF, which
+  failed for seL4 on the tested configuration. Performance needs other hardware.
+- Requirement 3 (concurrency bugs early) is **unproven**: no SMP kernel has booted anywhere yet.
+- The hardware path (requirement 5) and open question 1 are unchanged.
+- [Inferred] Two earlier statements are not revisited by this update, and the owner has not revisited them. The
+  Alternatives rationale for not choosing x86-64 first said this machine could never run it natively;
+  that now also holds for unmodified seL4 on AArch64 under HVF here. The Risks bullet on slow AArch64
+  emulation now bears on the main local loop for seL4.
+
+**Reconsideration criterion 5 has occurred** (the spike produced a result its plan lists as reopening
+this ADR). The owner's response is the direction above. The remaining reconsideration criteria stand.
 
 ## Reconsideration criteria
 

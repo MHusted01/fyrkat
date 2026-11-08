@@ -1,138 +1,130 @@
 # Session handoff
 
 A snapshot for the next session, not a source of truth. [ADRs](../adr/README.md) and Git win over it.
-It records approvals and grants none. The owner's S1 decisions are in the last entries of the
+It records approvals and grants none. Owner decisions are in the last entries of the
 [spike plan's Amendments](../research/sel4-spike-plan.md#amendments).
-
-**Written before PR 8 was merged.** Whether it has merged depends on a final independent review that this file
-cannot know. Run `gh pr view 8` and `git log -3 main` first. If PR 8 has merged, this file is on `main` and the
-"Open PR" lines below are history.
 
 ## Snapshot
 
-- **Date:** 2026-11-08.
-- **Branch:** `spike/s1-workspace-sanitized`. `main` was `4fb92a1` when this was written. Check
-  `git log main..HEAD` and `git status -sb` for the live state.
-- **PR 8:** open when this was written. All three required checks (`check and boot (ubuntu x86-64)`, `boot
-  (ubuntu arm64)`, `security-sensitive paths`) passed on `d1b0f46`. **CI on any later head is not recorded
-  here**: run `gh pr checks 8`.
-- **Other PRs:** 1, 3, 4, 5, 6 merged. 2 and 7 closed. PR 7 held the same work with unredacted logs.
-- **Remote branches:** `main` and the PR 8 branch.
+- **Date:** 2026-11-08. This file ships in the documentation pull request, so it names no PR number or head
+  SHA of its own: read them from Git and `gh`. Branch `docs/s1-direction-record`, branched from `origin/main` at `07c35e2`
+  (PR 8, merged). Local `main` is stale (`4fb92a1`): use `origin/main`.
+- **Open Dependabot PR #9** (`protobuf` 3.20.3 to 5.29.6 in the spike's `requirements.txt`) is **not to be merged**. [Measured: `gh`]
 
 ## Milestone status
 
-- **M0:** complete (owner declaration 2026-11-07, `docs/roadmap.md`).
-- **S1 (roadmap exit: the owner decides ADR 0004; M1 cannot be finalized before it):** in progress and
-  **stopped at the A3 gate**. Nothing else is decided.
-
-| Experiment | Outcome | Record |
-|---|---|---|
-| A1 build on this Mac | **Pass**, label U. Accepted by the owner | `spikes/sel4-feasibility/results/A1.md` |
-| A1 rerun, corrected `Cargo.lock` | The criterion **holds again** (label U). Kernel and loader identical to the original, **root task differs**, accounted for byte by byte. A separate result that replaces nothing | The owner has not yet accepted or rejected this rerun. `results/A1-rerun.md` |
-| A3 EL1 and HVF | **Fail**, label U, for unmodified non-hypervisor seL4 17.0.0 under HVF on one Apple M2 Pro. Re-confirmed by the owner. The mislabeled "4 vCPU" image is not valid SMP evidence | `results/A3.md` |
-| A2a, A4, A5 | Not started | |
-
-- **ADR statuses:** 0001 Part A Provisional, Part B Withdrawn. 0002 and 0003 Provisional. 0004 Proposed. None
-  is Accepted. No ADR text was edited. [Measured: ADR Status lines]
-- **Owner rulings in the Amendments:** decision rule 2 **applies to the tested HVF configuration** and is
-  **not** generalized to TCG or other hardware. AArch64-first stays a provisional direction and seL4-first a
-  working hypothesis, subject to the reopened architecture decision. QEMU TCG is acceptable for early
-  development and testing and is not equivalent to hardware acceleration or to physical validation. The
-  nightly Rust trigger was acknowledged for this experiment only, and the long-term toolchain policy is
-  **unresolved**.
-
-## The A1 rerun in one paragraph
-
-The spike `Cargo.lock` was the demo's newer lock and resolved six crates.io versions that the owner had not
-approved (deviation D13). The owner chose to restore the approved versions. Four offline `cargo update
---precise` commands did that, and nothing else in the lock changed. Rerun result: kernel and loader hashes are
-identical to the original. The root task is identical across the rerun's two builds but differs from the
-original (`a7c6be9a…` to `64fcc25c…`): 8 of 4,795 instruction words differ, all address computations, because
-Cargo's hashed build-script directory name, embedded in a panic-location string, depends on the dependency
-set (inferred: Cargo's behaviour, measured only as a one-variable change of the lock). All 782 differing image bytes outside the device-tree seeds are root-task bytes. **A root-task hash is a
-function of the lock file, so name the lock when quoting one.** No behavioural test exists, because the A1
-image has never booted. The original lock and original build outputs are kept locally in the gitignored
-`spikes/sel4-feasibility/external/a1-original-build/`, and the lock is in Git at `b563904`.
-
-## Independent reviews of PR 8
-
-Two reviews returned NOT MERGE-READY (F1 to F7, then F2 plus N1 and N2). The owner ruled on every finding
-that needed a decision, and the corrections are in the PR. F2, the only one that needed new work, is resolved
-by the rerun above. **A third, final delta review covers the rerun and the changes after `d1b0f46`.** Read
-`gh pr view 8` and the review result before relying on any statement here that it passed. The conditional
-merge authorization applies only if the reviewer explicitly returns MERGE-READY, all required checks pass on
-the final head, the evidence verifier passes, and no material finding remains.
+- **M0:** complete (owner, 2026-11-07). **S1** (exit: the owner decides ADR 0004; M1 cannot be finalized before it):
+  in progress, stopped at the A3 gate except for E1 below. ADRs: 0001 Part A Provisional, Part B Withdrawn; 0002 and 0003
+  Provisional; 0004 Proposed. **None is Accepted.** [Measured: Status lines]
+- A1 Pass (U). A1 rerun, approved lock: Pass (U), **owner-accepted limited to build reproducibility**; kernel and loader
+  hashes equal the original, **the root-task hash differs and must stay tied to its lock**; no runtime validation (the A1
+  image has never booted). A3 Fail (U) for unmodified seL4 17.0.0 under HVF on one M2 Pro; decision rule 2 applies to
+  that HVF-specific hypothesis only. A2a, A4, A5: not started. [Source: Amendments 2026-11-08]
 
 ## Authorizations in force
 
-Source: the owner's messages in this conversation, and the plan's 2026-11-08 Amendments.
+Source: the owner's messages in this conversation and the plan's last two Amendments entries.
+- **Documentation PR:** commit (signed, DCO), push, open a PR, and **merge only after an explicit MERGE-READY verdict on the
+  final head and all required CI checks pass.** If any condition fails: stop and report.
+- **Deviations approved for the isolated S1 research scope only (not a precedent):** D2, D3, D7, D9 (including narrowly
+  scoped reuse for E1), D10 (the `GPL-2.0-only` loader; no production licensing inference), D14(b). Everything else in
+  `results/deviations.md` is as recorded there.
+- **E1 Route II** (a hypervisor-enabled seL4 17.0.0 with the pinned Rust loader and the existing root task, under QEMU TCG)
+  is authorized **only after the documentation PR is merged**, as specified in the plan's last Amendments entry. It is
+  functional validation only. After it: record the results, request independent review, **do not start another experiment.**
+- **PR 9 investigation:** read-only. No merge, no dependency change.
+- **Not authorized:** A2a, A4, A5, the comparator, Class 3 kernel modifications; any kernel, loader or root-task source change;
+  any new tool or global installation; unrelated dependency changes; merging or touching PR 9; a GitHub Support request;
+  reopening completed research; another experiment after E1.
 
-- **Used:** merging PRs 5 and 6; pushing the spike branch and opening PR 7; the narrow replacement of PR 7
-  and its branch; opening PR 8; pushing corrections to PR 8; restoring the six lock-file versions; one A1 rerun;
-  a local push safeguard.
-- **Conditional, may be unused:** merging PR 8, on the conditions above.
-- **Still in force:** the A3 stop condition. Decisions 1 to 7, P1 and P2 are approved. P3 deferred, P4
-  declined, P5 deferred to the A5 design gate.
-- **Not authorized:** A2a, A4, A5, the comparator, Tiers 2 and 3, any kernel change, further tool installs,
-  any further experiment or rerun, any architecture change, relaxing a criterion, another history rewrite or
-  force-push, and a GitHub Support request (the owner declined for now).
+## Pending items
 
-## Pending approvals (all the owner's)
+1. **The documentation PR** (merge conditions above). E1 starts only after it merges.
+2. **PR 9 (investigated, the owner has not decided).** Two open high alerts on `spikes/sel4-feasibility/requirements.txt`:
+   GHSA-8qvm-5x2c-j2w7 (fixed in 4.25.8) and GHSA-7gcm-g887-7qv7 (fixed in 5.29.6). PR 9 changes only the `protobuf` pin and its
+   hashes. [Measured unless marked.]
+   - **No `<4` fix exists:** PyPI has no `protobuf` 3.x release after 3.20.3, and both advisories cover all of 3.x.
+   - **Pin conflict:** `sel4-deps` 0.9.0 declares `protobuf<4,>=3.19`. A dependency-resolving install of 5.29.6 with `sel4-deps`
+     is refused (`ResolutionImpossible`, dry run). The project's documented install is `--require-hashes --no-deps`
+     ([A1](../../spikes/sel4-feasibility/results/A1.md)); a dry run of that with PR 9's `protobuf` stanza reports "Would install
+     protobuf-5.29.6", so pip would not enforce the pin, and `pip check` would then flag the conflict [Inferred: not run after a
+     real install]. An earlier version of this file said pip would refuse; that was wrong for the documented command.
+   - **Exercised?** `protobuf` is required only by `sel4-deps` and is used only by nanopb's generator in the sel4test build (A3);
+     the A1 build and E1 do not use it (no `google.protobuf` import under `external/seL4`). **GHSA-8qvm-5x2c-j2w7 (CVE-2025-4565,
+     pure-Python parsing of binary data): that code path is exercised** in the sel4test build, because the installed runtime is the
+     pure-Python 3.20.3 wheel and the generator parses `protoc`'s output with it, but only for one pinned file,
+     `libsel4rpc/rpc.proto`, produced by the locally built `protoc`. **GHSA-7gcm-g887-7qv7 (CVE-2026-0994, `json_format`):
+     not exercised**; there is no `json_format` use in nanopb or seL4 sources. Both are recursion-depth denial of service on
+     untrusted input, and S1's inputs are pinned and trusted [Inferred], so neither is exploitable through S1.
+   - **Compatible?** In scratch copies (nothing in the repository or the venv changed), nanopb's output for `rpc.proto` is
+     byte-identical under 3.20.3 (pure Python, the venv's Python 3.12) and under 5.29.6 (upb), with the same `protoc` 3.20.3. It was
+     checked with Python 3.12.16 outside the venv (that interpreter also has another `protobuf` in its own site-packages; a separate
+     check with the same interpreter and `PYTHONPATH` printed `google.protobuf.__version__` 5.29.6, output not kept) and with Python 3.15.0, both identical. One input only: the rest of sel4test's use
+     is untested, and 5.29.6 inside the real venv was not run. The scratch work downloaded the 5.29.6 wheel (its hash is in PR 9's
+     list) and ran it, only in the session scratchpad.
+   - The recommendation is reported to the owner, who decides. Passing CI is not evidence here.
+3. **Deviations this decision did not touch:** D1, D5, D6, D8, D12, D14 (a, c, d), D15, D16 stay as `results/deviations.md`
+   records them (approvals and owner requests already recorded there for D5, D6 and D16 are unchanged). Settled: D4, D11
+   (one-time), D13.
+4. Long-term toolchain policy (`nightly-2026-08-21` is approved for S1 only); the A5 question (class D or Investigate);
+   whether the ADR texts need more change; whether to delete the stale local branches.
 
-1. **The next architectural decision**, after the A3 Fail with decision rule 2: what it means for the text of
-   ADR 0002 and ADR 0004 (no ADR was edited), and which bounded experiment or analysis comes next.
-2. The long-term toolchain policy (nightly Rust).
-3. Review of the tooling deviations in `results/deviations.md` (D1 to D16). Only rows marked owner-approved
-   are approved. The `cargo deny` note (`RUSTSEC-2024-0449`, host-side only, policy unchanged) is part of it.
-4. The A5 question (class D or Investigate), open to the A5 design gate.
+## E1: what to do when it is time (plan Amendments, last entry)
+
+- It needs a **new spike-local build script** derived from `build.sh`, differing only in `-DKernelArmHypervisorSupport=ON` and
+  a separate build directory (`build.sh` removes `build/`, which holds the A1 rerun's outputs, so do not run it for E1). Record
+  the script as a new deviation in `deviations.md` when it is written. The root task is rebuilt unchanged against the new
+  kernel prefix, and the loader's hash may differ from A1's as well.
+- Run through `boot-image.py --virt` with QEMU 11.1.3, TCG, Cortex-A57, 1 vCPU, marker `TEST_PASS`, 120 s (pass it: the harness
+  default is 30 s), three boots. Pass needs the two seL4 banner strings, `Hello, World!`, `badge = 0x1337` and `TEST_PASS` in
+  order, three times, with no kernel fault, halt, loader exception or root-task panic, **and identical output apart from timing
+  and addresses**. The evidence needs sanitized logs (build and boots), a manifest entry and verifier checks.
+- Stop and report on any source change, any tool or dependency not already installed or pinned, a configuration difference,
+  three failed approaches to a first boot, anything unclear about authority, or a fault (one diagnostic boot of the same image
+  through the unchanged harness, then stop). Nothing is pushed or merged.
+- The verifier needs E1 checks added (authorized by E1, subject to D14(b)'s continuing independent verification). The plan's
+  Amendments entry has the full specification and the verbatim baseline; read it before starting.
 
 ## Blockers and conflicts
 
-- **The A3 stop condition** blocks everything after A1 and the rerun.
-- **Remaining privacy exposure.** `refs/pull/7/head` resolves to `c99300d`, and the original commits stay
-  fetchable by SHA from the public repository, and in clones or forks made while public. This is not erasure.
-  `main` never held it. [Measured: `git ls-remote`, `gh api`]
-- Earlier open items: a base-controlled `pull_request_target` check (`m0-acceptance.md`); CI runners use QEMU
-  8.2.2 against the spike's pinned 11.1.3.
+- The A3 stop condition blocks everything except what the owner has named above. **PR 9's fix conflicts with the `sel4-deps`
+  `<4` pin.**
+- **Privacy exposure remains:** `refs/pull/7/head` still resolves to `c99300d`; the original commits are fetchable by SHA
+  from the public repo. Not erasure. `main` never held them. [Measured]
+- Open items: the `RUSTSEC-2024-0449` note (host-side only, policy unchanged); a base-controlled `pull_request_target`
+  check (`m0-acceptance.md`); CI uses QEMU 8.2.2 against the spike's pinned 11.1.3.
 
 ## Verified results
 
-| Command | Tree | Result |
+| Command | State | Result |
 |---|---|---|
-| `cargo xtask check` | before the commit that holds this file | "check: all 12 steps passed", macOS arm64 |
-| `spikes/sel4-feasibility/verify-evidence.py` | same | 40 of 40 passed, including checks against the repository's `Cargo.lock`. Mutation-tested: injected faults in the config, privacy, manifest and rerun checks were all caught |
-| A1 rerun | corrected lock | two clean builds, 38.5 s and 39.4 s. See `A1-rerun.md` |
-| Local push safeguard | this clone | crafted-input cases (the sanitized branch, `main`, a deletion, empty input, the local-only ref, each of the five original commits, commits built on them) and real `git push --dry-run` cases behaved as intended, re-tested after the last hook edit (see D16) |
+| `cargo xtask check` | `07c35e2` + the uncommitted update, before the final review edits | "check: all 12 steps passed" |
+| `spikes/sel4-feasibility/verify-evidence.py` | same | 40 of 40 checks passed |
 
-**Not verified:** CI on any head after `d1b0f46`; `cargo xtask boot` locally; any seL4 run on a host other
-than this M2 Pro; whether either root task runs (the A1 image has never booted); whether the 4-node SMP kernel
-boots under any machine setting; cross-path and cross-machine reproducibility.
+**Not verified:** `cargo xtask boot`; whether either root task runs; whether the E1-H image builds or boots; a real install of
+PR 9's pin and `pip check` afterwards; nanopb inputs other than `rpc.proto`. The scratch commands for the PR 9 findings are not
+in the repository. Re-run both commands on the final head before the merge.
 
 ## Next actions
 
-1. Run `gh pr view 8`, `gh pr checks 8` and `git log -3 main` to see whether PR 8 merged.
-2. **Needs the owner:** the architectural decision above. Nothing further runs until then.
-3. **Authorized now:** read-only checks and answering questions. Nothing that runs an experiment, installs a
-   tool, changes the lock file or changes Git state beyond what the owner asks.
+1. Independent review of this update, then fix, commit (signed, DCO), push, open the PR, and merge only on the conditions above.
+2. Report the PR 9 investigation to the owner.
+3. After the merge, and only then, run E1 within its Amendment, record the results, request independent review, and stop.
 
 ## Context not recorded elsewhere
 
-- **Unsanitized history is kept locally** on branch `local-only/s1-workspace-unsanitized` (no upstream),
-  retained on the owner's instruction. **Never push it.** Raw logs are in the gitignored
-  `spikes/sel4-feasibility/results-raw/`, and a backup `fyrkat-s1-raw-evidence-2026-11-08.tar.gz` (SHA-256
-  `768af917…`) sits next to the repository directory.
-- **A local safeguard now guards that history** (deviation D16): this clone's local config sets
-  `core.hooksPath` to the untracked `.git/fyrkat-hooks/`, whose `pre-push` refuses the five unsanitized commits
-  and any `local-only/*` ref, then runs the global pre-push hook unchanged. Global Git configuration was not
-  modified. It checks commit ancestry and ref names only: `git push --no-verify`, rewritten copies of the commits, pushes of raw tree or blob objects and other clones bypass it. Undo: `git config --local --unset core.hooksPath && rm -rf
-  .git/fyrkat-hooks`. A fresh clone does not have it.
-- The preserved original A1 run (binaries, lock) is in `spikes/sel4-feasibility/external/a1-original-build/`,
-  and the rerun's first build in `external/a1-rerun-build1/`. Both are gitignored. The root-task ELF embeds the
-  builder's absolute build path, so **never publish a root-task binary**, only its hash.
-- The sanitizer reads the user, home and host names from the machine it runs on. Rerun it only there. It fails
-  closed on an unterminated tap warning, and writes nothing unless every file sanitizes.
-- Local branches `spike/s1-prerequisites` and `docs/agents-research-section` belong to squash-merged PRs, so Git does not list them as merged. They can go once the owner agrees.
-- A global pre-commit hook outside this repo prints "Broken pipe" noise on commit. Commits still succeed.
-- Never put the home path or user name in PR text, docs or logs. Sanitize with `sanitize-evidence.py` first.
-- The `reviewer` and `researcher` agents have Bash, so "read-only" is not enforced. Check `git status` after
-  they run. Start a fresh session at the repository root and run `/fyrkat-resume`.
+- **Unsanitized history** is on `local-only/s1-workspace-unsanitized` (at `81a2ca7`, `pushremote=no_push_remote`), retained on
+  the owner's instruction, with raw logs in the gitignored `spikes/sel4-feasibility/results-raw/` and a backup
+  `fyrkat-s1-raw-evidence-2026-11-08.tar.gz` (SHA-256 `768af917…`) beside the repository. **Never push it.**
+- **Local safeguard (D16):** local `core.hooksPath` is `.git/fyrkat-hooks/`; its `pre-push` refuses the five unsanitized
+  commits and `local-only/*`, then runs the global hook. Ancestry and ref names only; `--no-verify`, rewritten copies and
+  other clones bypass it. Undo: `git config --local --unset core.hooksPath && rm -rf .git/fyrkat-hooks`.
+- The original A1 run and lock are kept in gitignored `spikes/sel4-feasibility/external/a1-original-build/` (rerun build 1 in
+  `a1-rerun-build1/`). A root-task ELF embeds the build path: **publish hashes, never the binary.**
+- The disposition-matrix draft and the E1 proposal were never committed. Both survive only in an earlier session's scratchpad
+  (`s1-proposals.md`), which may be deleted. The plan's Amendments entry on E1 Route II quotes the chosen proposal verbatim as
+  the baseline for "without weakening" and lists its differences.
+- A project hook mistakes shell commands mentioning the ADR directory for writes: use the Edit or Read tool for ADRs. For
+  privacy scans, use `git ls-files` rather than `grep -r`, so ignored directories are not read. Local branches `spike/s1-prerequisites`,
+  `docs/agents-research-section`, `spike/s1-workspace-sanitized` belong to squash-merged PRs. The `reviewer` and
+  `researcher` agents have Bash: check `git status` after they run. Start with `/fyrkat-resume`.
