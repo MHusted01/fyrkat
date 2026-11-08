@@ -1,0 +1,20 @@
+aarch64-elf-binutils 2.47
+aarch64-elf-gcc 16.2.0
+cmake 4.4.5
+cpio 2.15
+dtc 1.8.1
+git 2.56.0_2
+gmp 6.3.0
+isl 0.28
+libarchive 3.8.11
+libmpc 1.4.1
+lz4 1.10.0
+mpfr 4.2.2
+ninja 1.13.2
+protobuf 36.2
+python@3.12 3.12.16
+python@3.15 3.15.2
+qemu 11.1.3
+xz 5.8.4
+zstd 1.5.7_1
+# 367 further formulae omitted: not needed to reproduce A1 or A3. SHA-256 of the full sorted list: 58168eca0de89d39d7095636260102397f7a147d832cafcc0608b262b58cca8a

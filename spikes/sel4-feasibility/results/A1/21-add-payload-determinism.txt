@@ -1,0 +1,5 @@
+# add-payload determinism on fixed inputs, 2026-11-08T02:13:12Z
+bb9bb79ef77026c25d2eef984a5c1162d159c77089dd7dd5eec7ef562df0c234  /tmp/img-a.elf
+bb9bb79ef77026c25d2eef984a5c1162d159c77089dd7dd5eec7ef562df0c234  /tmp/img-b.elf
+bb9bb79ef77026c25d2eef984a5c1162d159c77089dd7dd5eec7ef562df0c234  /tmp/img-c.elf
+bb9bb79ef77026c25d2eef984a5c1162d159c77089dd7dd5eec7ef562df0c234  build/image.elf

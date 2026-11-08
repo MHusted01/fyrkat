@@ -1,0 +1,55 @@
+# A1 baseline, 2026-11-08T01:13:48Z
+## git
+4fb92a19c2e467abd5f847be93bc800b5abf95a1
+spike/s1-workspace
+## host
+ProductName:		macOS
+ProductVersion:		27.2
+BuildVersion:		26B123
+arm64
+Apple M2 Pro
+17179869184
+## brew version
+Homebrew 7.0.12-192-g3ccfa1d0
+## brew list --versions (before)
+cmake 4.4.5
+cpio 2.15
+dtc 1.8.1
+git 2.56.0_2
+gmp 6.3.0
+isl 0.28
+libarchive 3.8.11
+libmpc 1.4.1
+lz4 1.10.0
+mpfr 4.2.2
+ninja 1.13.2
+protobuf 36.2
+python@3.12 3.12.16
+python@3.15 3.15.2
+qemu 11.1.3
+xz 5.8.4
+zstd 1.5.7_1
+# 367 further formulae omitted: not needed to reproduce A1 or A3. SHA-256 of the full sorted list: 7d472e3d6de42ccee61475a9bda1647df4f508d1009db4c861e67d21df026a79
+## brew pinned (before)
+## tools
+cmake: /opt/homebrew/bin/cmake
+ninja: /opt/homebrew/bin/ninja
+dtc: /opt/homebrew/bin/dtc
+xmllint: /usr/bin/xmllint
+protoc: /opt/homebrew/bin/protoc
+xxd: /usr/bin/xxd
+qemu-system-aarch64: /opt/homebrew/bin/qemu-system-aarch64
+python3: <HOME>/.local/bin/python3
+rustup: /opt/homebrew/opt/rustup/bin/rustup
+cargo: /opt/homebrew/opt/rustup/bin/cargo
+cmake version 4.4.5
+1.13.2
+Version: DTC 1.8.1
+QEMU emulator version 11.1.3
+Python 3.15.0
+rustup 1.29.2 (2026-10-21)
+stable-aarch64-apple-darwin (default)
+1.88-aarch64-apple-darwin
+1.99.1-aarch64-apple-darwin (active)
+## aarch64-elf-gcc present?
+absent

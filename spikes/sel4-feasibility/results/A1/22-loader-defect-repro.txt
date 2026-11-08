@@ -1,0 +1,12 @@
+# Loader defect reproduction: build WITHOUT AR/RANLIB for the cc crate, scratch target dir, 2026-11-08T02:13:12Z
+   Compiling thiserror v2.0.21
+   Compiling thiserror-impl v2.0.21
+warning: sel4-kernel-loader@0.1.0: ranlib: warning: archive member '8b052ef1bf87ad35-exception_handler.o' not a mach-o file
+warning: linker stderr: rust-lld: cannot find entry symbol _start; not setting start address
+warning: `sel4-kernel-loader` (bin "sel4-kernel-loader") generated 1 warning
+    Finished `release` profile [optimized] target(s) in 13.87s
+size: 5896
+  Entry point address:               0x0
+## with AR/RANLIB (the shipped loader):
+size: 63200
+  Entry point address:               0x4027d7c8

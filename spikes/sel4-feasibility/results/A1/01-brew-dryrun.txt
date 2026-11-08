@@ -1,0 +1,11 @@
+[Homebrew tap-trust warning omitted: it listed unrelated third-party taps]
+
+Warning: `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set: not checking for outdated
+dependents or dependents with broken linkage!
+==> Would install 1 formula:
+aarch64-elf-gcc 16.2.0
+==> Downloading https://ghcr.io/v2/homebrew/core/aarch64-elf-gcc/manifests/16.2.0
+==> Would install 1 dependency for aarch64-elf-gcc:
+aarch64-elf-binutils 2.47
+==> Would upgrade 1 dependency for aarch64-elf-gcc:
+lz4 1.10.0 -> 1.11.0

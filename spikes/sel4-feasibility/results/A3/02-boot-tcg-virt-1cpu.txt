@@ -1,0 +1,76 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel build/image.elf
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x40000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x40000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x40279000..0x404c5770
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffffffffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ffc8000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fdc8000,
+        v_entry: 0x213668,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ffc6000,
+            size: 0x1eec,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x40000000 (filesz = 0x239000, memsz = 0x2c980)
+seL4 kernel loader | DEBUG      0x7ffc8000 (filesz = 0x3118, memsz = 0x3118)
+seL4 kernel loader | DEBUG      0x7ffdb118 (filesz = 0x4aec, memsz = 0x4aec)
+seL4 kernel loader | DEBUG      0x7ffefc08 (filesz = 0x10048, memsz = 0x10)
+seL4 kernel loader | DEBUG      0x7ffc6000 (filesz = 0x1eec, memsz = 0x1eec)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+!!! Exception:
+Vector table index: Synchronous EL1h
+ESR: 0x0000000086000004
+FSR: 0xffffffffc0000000
+TPIDR_EL1: 0x0000000000000000
+X0: 0x0000000000000000
+X1: 0x0000000000000000
+X2: 0x0000000000000000
+X3: 0x0000000000000000
+X4: 0x0000000000000000
+X5: 0x0000000000000000
+X6: 0x0000000000000000
+X7: 0x0000000000000000
+X8: 0x0000000000000000
+X9: 0x0000000000000000
+X10: 0x0000000000000000
+X11: 0x0000000000000000
+X12: 0x0000000000000000
+X13: 0x0000000000000000
+X14: 0x0000000000000000
+X15: 0x0000000000000000
+X16: 0x0000000000000000
+X17: 0x0000000000000000
+X18: 0x0000000000000000
+X19: 0x0000000000000000
+X20: 0x0000000000000000
+X21: 0x0000000000000000
+X22: 0x0000000000000000
+X23: 0x0000000000000000
+X24: 0x0000000000000000
+X25: 0x0000000000000000
+X26: 0x0000000000000000
+X27: 0x0000000000000000
+X28: 0x0000000000000000
+X29: 0x0000000000000000
+X30: 0x0000000000000000
+X31: 0x0000000000000000
+
+
+[boot-image] marker 'TEST_PASS' NOT seen after 40.04s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)

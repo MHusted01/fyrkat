@@ -1,0 +1,11 @@
+[Homebrew tap listing omitted: it named unrelated third-party taps]
+Warning: `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set: not checking for outdated
+dependents or dependents with broken linkage!
+==> Would install 1 formula:
+aarch64-elf-gcc 16.2.0
+==> Downloading https://ghcr.io/v2/homebrew/core/aarch64-elf-gcc/manifests/16.2.0
+Already downloaded: <HOME>/Library/Caches/Homebrew/downloads/083cdf09ca971bfa7b41765469e9c9f69dcd99020b2a3d3f4503f35e78a2828f--aarch64-elf-gcc-16.2.0.bottle_manifest.json
+==> Would install 1 dependency for aarch64-elf-gcc:
+aarch64-elf-binutils 2.47
+==> Would upgrade 1 dependency for aarch64-elf-gcc:
+lz4 1.10.0 -> 1.11.0

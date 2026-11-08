@@ -1,0 +1,26 @@
+Warning: `--ignore-dependencies` is an unsupported Homebrew developer option!
+Adjust your PATH to put any preferred versions of applications earlier in the
+PATH rather than using this unsupported option!
+
+
+
+Warning: `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set: not checking for outdated
+dependents or dependents with broken linkage!
+==> Downloading bottle manifests
+✔︎ Bottle Manifest aarch64-elf-binutils (2.47)
+==> Fetching downloads for: aarch64-elf-binutils
+✔︎ Bottle aarch64-elf-binutils (2.47)
+==> Pouring aarch64-elf-binutils--2.47.arm64_golden_gate.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/aarch64-elf-binutils/2.47: 247 files, 25.9MB
+Warning: `--ignore-dependencies` is an unsupported Homebrew developer option!
+Adjust your PATH to put any preferred versions of applications earlier in the
+PATH rather than using this unsupported option!
+
+
+
+Warning: `$HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` is set: not checking for outdated
+dependents or dependents with broken linkage!
+==> Fetching downloads for: aarch64-elf-gcc
+✔︎ Bottle aarch64-elf-gcc (16.2.0)
+==> Pouring aarch64-elf-gcc--16.2.0.arm64_golden_gate.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/aarch64-elf-gcc/16.2.0: 694 files, 233.7MB

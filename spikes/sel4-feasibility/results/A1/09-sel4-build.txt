@@ -1,0 +1,163 @@
+# ninja build 2026-11-08T01:19:31Z
+ninja: Entering directory `build/sel4'
+[1/44] Generate dummy headers for prune compilation
+[2/44] Creating C input file for preprocessor
+[3/44] Creating C input file for preprocessor
+[4/44] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[5/44] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[6/44] Generating include/sel4/shared_types.pbf
+[7/44] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[8/44] Generating generated/invocations_all.json
+[9/44] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[10/44] Generate invocation header gen_headers/arch/api/invocation.h
+[11/44] Generate invocation header gen_headers/api/invocation.h
+[12/44] Generating from <REPO>/spikes/sel4-feasibility/build/sel4/libsel4/include/sel4/shared_types.pbf
+[13/44] Generating from <REPO>/spikes/sel4-feasibility/build/sel4/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[14/44] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[15/44] Generate invocation header include/sel4/invocation.h
+[16/44] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[17/44] Generate syscall.h
+[18/44] Generate syscall invocations
+[19/44] Creating C input file for preprocessor
+[20/44] Building C object CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[21/44] Concatenating C files
+[22/44] Generating generated/arch/object/structures.bf.pbf
+[23/44] Creating C input file for preprocessor
+[24/44] Building C object CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[25/44] Generating kernel_all_pp_prune.c
+[26/44] Generating from generated/arch/object/structures.bf.pbf
+[27/44] Creating C input file for preprocessor
+[28/44] Building C object CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[29/44] Generating generated/sel4/shared_types.bf.pbf
+[30/44] Generating from generated/sel4/shared_types.bf.pbf
+[31/44] Creating C input file for preprocessor
+[32/44] Creating C input file for preprocessor
+[33/44] Building C object CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[34/44] Generating linker.lds_pp
+[35/44] Generate sel4_client.h
+[36/44] Building C object CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[37/44] Generating kernel_all.i
+[38/44] Generating circular_includes_valid
+[39/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[40/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[41/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[42/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[43/44] Building C object CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[44/44] Linking C executable kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel.elf has a LOAD segment with RWX permissions
+ninja -C build/sel4 all  3.59s user 0.70s system 137% cpu 3.133 total
+exit: 0
+# ninja install
+ninja: Entering directory `build/sel4'
+[0/1] Install the project...
+-- Install configuration: "None"
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/bin/kernel.elf
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/benchmark_utilisation_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/bootinfo_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/bootinfo.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/config.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/errors.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/benchmark_track_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/benchmark_tracepoints_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/syscalls_master.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/debug_assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/syscalls_mcs.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/macros.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/functions.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/virtual_client.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/simple_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/api
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/api/syscall.xsd
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/api/syscall.xml
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces/object-api.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a53.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a76.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a8.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a72.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a57.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a35.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a15.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a55.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a7.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a9.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces/object-api-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces/object-api-sel4-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/plat
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/plat/api
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/plat/api/constants.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/mode
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/mode/types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/shared_types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/shared_types_gen.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/syscall.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/interfaces/sel4_client.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/arch/invocation.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/sel4_arch/types_gen.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/kernel
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/kernel/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/kernel/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/sel4/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/include/autoconf.h
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/src
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/libsel4/src/sel4_bootinfo.c
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/support/kernel.dtb
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/support/platform_gen.yaml
+-- Installing: <REPO>/spikes/sel4-feasibility/build/sel4-install/support/platform_gen.json
+exit: 0

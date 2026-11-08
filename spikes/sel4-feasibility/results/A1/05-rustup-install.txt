@@ -1,0 +1,22 @@
+info: syncing channel updates for nightly-2026-08-21-aarch64-apple-darwin
+info: latest update on 2026-08-21 for version 1.100.0-nightly (8925ea358 2026-08-20)
+info: downloading 7 components
+
+  nightly-2026-08-21-aarch64-apple-darwin installed - rustc 1.100.0-nightly (8925ea358 2026-08-20)
+
+info: self-update is disabled for this build of rustup
+info: any updates to rustup will need to be fetched with your system package manager
+rustc 1.100.0-nightly (8925ea358 2026-08-20)
+binary: rustc
+commit-hash: 8925ea358a0f265ca61026aadc7ecc506c545cbe
+commit-date: 2026-08-20
+host: aarch64-apple-darwin
+release: 1.100.0-nightly
+LLVM version: 23.1.0
+cargo-aarch64-apple-darwin
+llvm-tools-aarch64-apple-darwin
+rust-src
+rust-std-aarch64-apple-darwin
+rust-std-aarch64-unknown-none
+rustc-aarch64-apple-darwin
+rustc-dev-aarch64-apple-darwin

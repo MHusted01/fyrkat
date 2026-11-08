@@ -1,0 +1,7 @@
+aarch64-elf-binutils
+aarch64-elf-gcc
+cmake
+dtc
+lz4
+ninja
+qemu
