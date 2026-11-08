@@ -890,3 +890,17 @@ owner's messages of 2026-11-08 in the working session.
 | Evidence integrity | `verify-evidence.py` re-checks 29 conclusions from the public copies alone and passed from a clean checkout. A1 and A3 outcomes, measurements and methodology are unchanged | The A1 Pass and A3 Fail stand as recorded |
 | **Remaining exposure** | The original commits may still be retrievable through GitHub's retained references for pull request 7, by commit SHA, and from existing clones or forks. Pull request 7's edit history may show its original text. **This is not a claim of complete erasure** | Removing retained references needs a GitHub Support request, which is the owner's decision |
 | Stop condition | Unchanged. A4, A2a, A5, kernel modifications, further tool installs and any architecture change remain unauthorized | |
+
+### 2026-11-08: Owner re-confirmation of A3, and the owner's direction on ADR 0002
+
+Recorded after the correction entry above and after PR 8 reached `24634be`. It changes **no criterion**,
+relaxes nothing and edits no ADR. The source is the owner's message of 2026-11-08 in the working session.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A3 | **Re-confirmed as Fail (label U)** for the tested configuration: unmodified non-hypervisor seL4 17.0.0 under HVF on the owner's Apple M2 Pro, 1 vCPU. The owner's condition: the mislabeled "4 vCPU" image **must not be presented as valid SMP evidence** (it was a single-node kernel run with QEMU `-smp 4`; a real 4-node SMP kernel stops earlier, in the elfloader, under HVF and TCG) | Supersedes the earlier "requested again" status. The A3 outcome stands as recorded in [A3](../../spikes/sel4-feasibility/results/A3.md) |
+| ADR 0002 direction | **AArch64-first is retained as a provisional direction**, and **seL4-first as a working hypothesis**. QEMU TCG is acceptable for early development and testing, but **must not be represented as equivalent to hardware acceleration or to physical hardware validation** | An owner decision recorded here. **ADR 0002 and ADR 0004 are not edited, and neither is Accepted.** ADR 0002 stays Provisional and ADR 0004 stays Proposed. The A3 Fail has not been resolved into an ADR change; any edit to either ADR needs its own owner-approved change |
+| Push | The owner authorized pushing `24634be` alone to PR 8's branch. That was done, and the three required checks passed on it | Authorization used |
+| Review and merge | The owner authorized one focused independent review of PR 8, fixes to material findings within PR 8's scope, and a **conditional** merge of PR 8: only if the review explicitly returns MERGE-READY, all required checks pass on the final head, the evidence verifier passes, and no unresolved material security or correctness finding remains. If any condition fails, nothing is merged | Conditional authorization. Merging is not otherwise authorized |
+| Stop condition | **Stays in force.** A2a, A4, A5, the comparator, new tool installations, kernel modifications and any criterion change are not authorized. S1 execution does not resume automatically after the merge | The next experiment needs its own authorization |
+| PR 7 | No GitHub Support request at this time | Retained references stay as recorded in the privacy entry above |
