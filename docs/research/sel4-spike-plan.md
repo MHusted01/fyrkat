@@ -847,3 +847,18 @@ is changed.**
 | C2 untyped reset | A retype from an untyped with no children resets it, and boot untypeds start with their free index at the end, so the first retype resets and clears the whole untyped [Documented: seL4 `boot.c` and `untyped.c`]. The pager does a throwaway retype before every timed phase, F1 included | Removes a hidden cost from the first timed batch |
 | Rust builds | Builds in the rust-sel4 checkout set `RUSTUP_TOOLCHAIN=nightly-2026-08-21` and `RUSTUP_AUTO_INSTALL=0`, so that rustup does not install the checkout's extra targets (Tier 2 and 3 are not approved) | Enforces the Tier 1 limit |
 | Homebrew | The install sets `HOMEBREW_NO_INSTALL_UPGRADE=1`, which only stops the named formula being upgraded. The control is pin-and-record: `brew list --versions` is compared before and after, and a dependency upgrade that cannot be prevented is recorded and reported | Enforces decision 7 |
+
+### 2026-11-08: Owner confirmation of the A1 and A3 outcomes
+
+Recorded after the experiments ran. It changes **no criterion** and relaxes nothing. The source is the
+owner's message of 2026-11-08 in the working session.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A1 | Accepted as **Pass**, label U, with its documented reproducibility limitation (two clean builds on one machine and path, and a boot image that differs only by QEMU's random device-tree seeds). Record: [A1](../../spikes/sel4-feasibility/results/A1.md) | The A1 outcome stands |
+| A3 | **Confirmed as Fail** under the approved plan, on the reported evidence: unmodified non-hypervisor seL4 does not boot under HVF with 1 or 4 vCPUs on the Apple M2 Pro because the guest reports 8-bit ASIDs. Record: [A3](../../spikes/sel4-feasibility/results/A3.md) | The A3 outcome stands. The Consequences row applies: it reopens the ADR 0002 architecture question, Stage C does not run, and work stops |
+| Meaning of the A3 Fail | It reopens the architecture question in ADR 0002 (native execution on the Mac). **It does not automatically reject seL4 as Fyrkat's kernel candidate** | ADR 0002 and ADR 0004 are not edited by this entry |
+| Push | The owner authorized pushing `spike/s1-workspace` and opening a pull request, after a focused independent review. **Merging is not authorized** | Preserves the evidence |
+| Tooling deviations | To be documented as deviations requiring review. The message is **not retroactive blanket approval**. Record: [deviations](../../spikes/sel4-feasibility/results/deviations.md) | Nothing in that record is approved |
+| `cargo deny` advisory | To be investigated for the dependency path and impact without weakening the policy or introducing a replacement | Path recorded in [A1 evidence 19](../../spikes/sel4-feasibility/results/A1/19-unsafe-libyaml-path.txt) |
+| Stop condition | **Stays in force.** A4, A2a, A5, kernel modifications and additional tool installations are not authorized | The next step is an architecture decision by the owner |
