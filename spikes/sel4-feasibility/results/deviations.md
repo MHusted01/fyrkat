@@ -76,7 +76,7 @@ dependency configurations:
 
 After the change every registry package of the corrected lock is, with the same version and checksum, in the approved lock (0 differences),
 and only these six entries differ from the original spike lock [Measured]. The rerun changed the root-task binary (the kernel and loader are
-identical) because a hashed build-script directory name embedded in the binary depends on the dependency set; see
+identical) because a hashed build-script directory name embedded in the binary depends on the dependency set [Inferred: Cargo's behaviour, not tested in isolation]; see
 [A1-rerun](A1-rerun.md) for the byte-level account and its limits. The options list that was here before the decision (approve as they were, restore all six, restore only `log`) was removed from this file; it is in Git at `d1b0f46`. The Amendments record only the chosen option 2.
 
 ## Privacy note

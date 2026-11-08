@@ -28,7 +28,7 @@ cannot know. Run `gh pr view 8` and `git log -3 main` first. If PR 8 has merged,
 | Experiment | Outcome | Record |
 |---|---|---|
 | A1 build on this Mac | **Pass**, label U. Accepted by the owner | `spikes/sel4-feasibility/results/A1.md` |
-| A1 rerun, corrected `Cargo.lock` | The criterion **holds again** (label U). Kernel and loader identical to the original, **root task differs**, accounted for byte by byte. A separate result that replaces nothing | `results/A1-rerun.md` |
+| A1 rerun, corrected `Cargo.lock` | The criterion **holds again** (label U). Kernel and loader identical to the original, **root task differs**, accounted for byte by byte. A separate result that replaces nothing | The owner has not yet accepted or rejected this rerun. `results/A1-rerun.md` |
 | A3 EL1 and HVF | **Fail**, label U, for unmodified non-hypervisor seL4 17.0.0 under HVF on one Apple M2 Pro. Re-confirmed by the owner. The mislabeled "4 vCPU" image is not valid SMP evidence | `results/A3.md` |
 | A2a, A4, A5 | Not started | |
 
@@ -102,7 +102,7 @@ Source: the owner's messages in this conversation, and the plan's 2026-11-08 Ame
 | `cargo xtask check` | before the commit that holds this file | "check: all 12 steps passed", macOS arm64 |
 | `spikes/sel4-feasibility/verify-evidence.py` | same | 40 of 40 passed, including checks against the repository's `Cargo.lock`. Mutation-tested: injected faults in the config, privacy, manifest and rerun checks were all caught |
 | A1 rerun | corrected lock | two clean builds, 38.5 s and 39.4 s. See `A1-rerun.md` |
-| Local push safeguard | this clone | 14 crafted cases and 3 `git push --dry-run` cases behaved as intended (see D16) |
+| Local push safeguard | this clone | crafted-input cases (the sanitized branch, `main`, a deletion, empty input, the local-only ref, each of the five original commits, commits built on them) and real `git push --dry-run` cases behaved as intended, re-tested after the last hook edit (see D16) |
 
 **Not verified:** CI on any head after `d1b0f46`; `cargo xtask boot` locally; any seL4 run on a host other
 than this M2 Pro; whether either root task runs (the A1 image has never booted); whether the 4-node SMP kernel

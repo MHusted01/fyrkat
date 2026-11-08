@@ -36,7 +36,7 @@ version and checksum, in the approved rust-sel4 lock (0 differences); exactly th
 removals differ from the original spike lock, and all git and path packages are identical; the rerun's compile
 log shows `cc v1.10.0`, `log v0.4.34`, `pest_stack_guard v1.0.0` and `psm v0.1.24`
 ([03](A1-rerun/03-build-rerun1.txt)). The original lock is kept unchanged (SHA-256 `c92d1dca…`, also in Git at
-`b563904`). The corrected lock has 79 packages against 81, and 51 changed lines: 16 of them are the `s1-root-task` block moving to its sorted position, with no package changed. File 02 is a condensed record written after the commands were run (cargo's output is summarized); its diff is the real diff.
+`b563904`). The corrected lock has 79 packages against 81, and 51 changed lines: 16 of them are the `s1-root-task` block moving to its sorted position, with no package changed. File 02 is a condensed record written after the commands were run (cargo's output is summarized); its diff is the real diff. The two `# Note` lines at the top of 02 were added in response to the final review; the file is otherwise unchanged, and its earlier version (SHA-256 `879919dd…`) is in Git at `0b84ded`.
 
 ## Environment
 
