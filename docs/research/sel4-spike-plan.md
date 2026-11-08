@@ -847,3 +847,46 @@ is changed.**
 | C2 untyped reset | A retype from an untyped with no children resets it, and boot untypeds start with their free index at the end, so the first retype resets and clears the whole untyped [Documented: seL4 `boot.c` and `untyped.c`]. The pager does a throwaway retype before every timed phase, F1 included | Removes a hidden cost from the first timed batch |
 | Rust builds | Builds in the rust-sel4 checkout set `RUSTUP_TOOLCHAIN=nightly-2026-08-21` and `RUSTUP_AUTO_INSTALL=0`, so that rustup does not install the checkout's extra targets (Tier 2 and 3 are not approved) | Enforces the Tier 1 limit |
 | Homebrew | The install sets `HOMEBREW_NO_INSTALL_UPGRADE=1`, which only stops the named formula being upgraded. The control is pin-and-record: `brew list --versions` is compared before and after, and a dependency upgrade that cannot be prevented is recorded and reported | Enforces decision 7 |
+
+### 2026-11-08: Owner confirmation of the A1 and A3 outcomes
+
+Recorded after the experiments ran. It changes **no criterion** and relaxes nothing. The source is the
+owner's message of 2026-11-08 in the working session.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A1 | Accepted as **Pass**, label U, with its documented reproducibility limitation (two clean builds on one machine and path, and a boot image that differs only by QEMU's random device-tree seeds). Record: [A1](../../spikes/sel4-feasibility/results/A1.md) | The A1 outcome stands |
+| A3 | **Confirmed as Fail** under the approved plan, on the reported evidence: unmodified non-hypervisor seL4 does not boot under HVF with 1 or 4 vCPUs on the Apple M2 Pro because the guest reports 8-bit ASIDs. Record: [A3](../../spikes/sel4-feasibility/results/A3.md) | The A3 outcome stands. The Consequences row applies: it reopens the ADR 0002 architecture question, Stage C does not run, and work stops |
+| Meaning of the A3 Fail | It reopens the architecture question in ADR 0002 (native execution on the Mac). **It does not automatically reject seL4 as Fyrkat's kernel candidate** | ADR 0002 and ADR 0004 are not edited by this entry |
+| Push | The owner authorized pushing `spike/s1-workspace` and opening a pull request, after a focused independent review. **Merging is not authorized** | Preserves the evidence |
+| Tooling deviations | To be documented as deviations requiring review. The message is **not retroactive blanket approval**. Record: [deviations](../../spikes/sel4-feasibility/results/deviations.md) | Nothing in that record is approved |
+| `cargo deny` advisory | To be investigated for the dependency path and impact without weakening the policy or introducing a replacement | Path recorded in [A1 evidence 19](../../spikes/sel4-feasibility/results/A1/19-unsafe-libyaml-path.txt) |
+| Stop condition | **Stays in force.** A4, A2a, A5, kernel modifications and additional tool installations are not authorized | The next step is an architecture decision by the owner |
+
+### 2026-11-08: Record of earlier owner answers, and corrections after the evidence review
+
+Recorded before the pull request for the A1 and A3 results. **No criterion is changed.** An independent
+review of the results found that some owner answers given in the working session were in no Amendment, and
+that parts of the A3 record were wrong. This entry records them. It does not edit the entries above.
+
+| Item | Record | Effect |
+|---|---|---|
+| Python environment | During A1 the owner approved Homebrew Python 3.12.16 for the spike venv, and `setuptools` and `wheel` installed there only, pinned by version and SHA-256, in answer to a question that also proposed building `pyfdt` with `--no-build-isolation` (the build method was the agent's proposal). `packaging` was not named: it is `wheel`'s own dependency | Tier 1 detail. `packaging` is listed as a deviation |
+| `protobuf` | During A3 the owner conditionally approved `protobuf` 7.36.2 in the spike venv only, with exact version and SHA-256 pinning, **only if** no compatible pinned protoc existed on Apple Silicon without Rosetta or a system install, and **only if** the override was isolated to nanopb. The second condition held: no other consumer imports `protobuf`. The first was **not tested as written**: the agent built protoc 3.20.3 locally from a pinned commit, a new tool the owner has not individually approved, and whether that counts as a practical compatible protoc is for the owner. **The override was not used** | The `sel4-deps` pin is intact. protoc 3.20.3 is listed as a deviation |
+| Clarification | The earlier row "Nothing in that record is approved", for the deviations file, means that file is not itself an approval. It lists rows that record specific owner answers (marked owner-approved there) beside rows that are not approved | Wording only |
+| Correction to the A3 record | The first A3 record said the kernel failed the ASID check under HVF "with 1 and 4 vCPUs". The "4 vCPU" image was a single-node kernel run with QEMU `-smp 4`. A repeat with a real 4-node SMP kernel stops earlier, in the elfloader (`HVC is not supported for PSCI`), under both HVF and TCG, so its ASID check was not reached. The 1-vCPU measurement stands. It was also wrongly recorded that sel4test had only started under TCG: it passed (124 tests, 59 disabled) | The 1-vCPU measurement stands, and **in the agent's assessment the A3 outcome is unchanged**. The owner's confirmation of A3 was given before this correction, and **is requested again** |
+| Correction to the cpio deviation | A custom cpio stand-in was written on the wrong belief that GNU cpio was unavailable. GNU cpio 2.15 was already installed. The stand-in was removed and the builds repeated with GNU cpio | Fewer unapproved tools |
+
+### 2026-11-08: Privacy review, and replacement of the published spike branch
+
+Recorded with the sanitized replacement. **No criterion, outcome or method is changed.** The source is the
+owner's messages of 2026-11-08 in the working session.
+
+| Item | Record | Effect |
+|---|---|---|
+| Finding | The A1 and A3 raw logs were pushed (pull request 7, branch `spike/s1-workspace`) before a privacy review. They held the author's local home path and user name (about 720 times in 26 files), the full Homebrew inventory and three unrelated third-party tap names. No email address, token, key, host name or binary was found. `main` was never affected | Exposure in the old branch only |
+| Owner decision | The owner chose to replace the published history, **narrowly**: only `spike/s1-workspace` and pull request 7, not `main` or any other branch, and no force-push of a protected branch | Authorization, not a blanket one |
+| What was done | Pull request 7 was edited to remove the path, closed with an explanation, and its remote branch deleted. A replacement branch, `spike/s1-workspace-sanitized`, was built from `main` in three commits whose files are byte-identical to the reviewed tree, with the logs replaced by sanitized copies. The raw originals are kept only locally, outside Git. A new pull request was opened with a sanitized description | See [EVIDENCE-PRIVACY](../../spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md) |
+| Evidence integrity | `verify-evidence.py` re-checks 29 conclusions from the public copies alone and passed from a clean checkout. A1 and A3 outcomes, measurements and methodology are unchanged | The A1 Pass and A3 Fail stand as recorded |
+| **Remaining exposure** | The original commits may still be retrievable through GitHub's retained references for pull request 7, by commit SHA, and from existing clones or forks. Pull request 7's edit history may show its original text. **This is not a claim of complete erasure** | Removing retained references needs a GitHub Support request, which is the owner's decision |
+| Stop condition | Unchanged. A4, A2a, A5, kernel modifications, further tool installs and any architecture change remain unauthorized | |
