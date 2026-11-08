@@ -1,0 +1,39 @@
+# A1 rerun preflight, 2026-11-08T14:23:18Z
+# Purpose: confirm the environment is the one A1 ran in, before the rerun with the corrected Cargo.lock.
+## repository
+HEAD d1b0f46072eb5ae6722afda579d8c2a692f85030
+branch spike/s1-workspace-sanitized
+## pinned inputs (build.sh checks these too)
+seL4 62e345c240a15671484530b4e6e069ce266c28d7
+rust-sel4 c819c27b076130cba9821c4555f23773e4b0bffd
+## toolchain (RUSTUP_TOOLCHAIN=nightly-2026-08-21, RUSTUP_AUTO_INSTALL=0)
+rustc 1.100.0-nightly (8925ea358 2026-08-20)
+cargo 1.100.0-nightly (514c56dd7 2026-08-19)
+stable-aarch64-apple-darwin (default)
+nightly-2026-08-21-aarch64-apple-darwin (active)
+1.88-aarch64-apple-darwin
+1.99.1-aarch64-apple-darwin
+cargo-aarch64-apple-darwin
+llvm-tools-aarch64-apple-darwin
+rust-src
+rust-std-aarch64-apple-darwin
+rust-std-aarch64-unknown-none
+rustc-aarch64-apple-darwin
+rustc-dev-aarch64-apple-darwin
+aarch64-apple-darwin
+aarch64-unknown-none
+## build tools
+cmake version 4.4.5
+1.13.2
+Version: DTC 1.8.1
+QEMU emulator version 11.1.3
+aarch64-elf-gcc (GCC) 16.2.0
+## homebrew pins
+## python venv
+Python 3.12.16
+No broken requirements found.
+## lockfiles
+original spike Cargo.lock (preserved copy)  c92d1dca17247dd9787433822063ddfa2b6b1ff7c29002728f5854b91580df46
+rust-sel4 Cargo.lock (approved)             8b4c4c6ab31a8aa8b325c9d1c9a843574b04a8946100e93b178b7105b2035f47
+spike Cargo.lock before the rerun is the corrected one: 56bd1e3e8a23d5da5d1688712e4b1bddded655ad75f07fc0f2a097f6d09245f7
+## homebrew inventory: 386 formulae, sorted-list sha256 58168eca0de89d39d7095636260102397f7a147d832cafcc0608b262b58cca8a = A1's recorded 'after' hash

@@ -20,10 +20,14 @@ the plan's Amendments). Every other row, and every detail of a row that is not n
 | D10 | The spike-local [`deny.toml`](../deny.toml) keeps `wildcards = "deny"`, evaluates no licences, and allows exactly the six approved git origins | Decision 3. The loader is `BSD-2-Clause AND GPL-2.0-only`, which the root policy would deny | **Owner-approved in principle** (decision 3 and 5). The licence omission is the agent's choice | Edit the file |
 | D11 | The root task [`crates/root-task/src/main.rs`](../crates/root-task/src/main.rs) keeps the demo's three `unwrap()` calls and one `assert_eq!`: line 22 (`.unwrap()` ending the search for a non-device untyped), lines 30 and 31 (`empty_slots.next().unwrap()`, twice) and line 62 (`assert_eq!(observed_badge, badge)`) | It is the approved demo's code, adapted with its BSD-2-Clause attribution kept. AGENTS.md says no `unwrap`, `expect` or `panic!` outside tests, and also that `spikes/` is disposable and isolated. Editing them would change the root-task hash and need a new A1 run, which is not authorized | **Owner-approved one-time exception, 2026-11-08**, for exactly these four sites. It is acceptable because this is disposable, isolated spike code, a test program that prints a result and stops, and nothing outside `spikes/` depends on it. **It does not apply to production kernel or userspace code, or to any future experiment.** Recorded in the plan's Amendments | Replace the four sites and re-run A1 (needs authorization) |
 | D12 | The sel4test control boots use `-cpu cortex-a57`, and the sel4test "clean" builds reuse a cached musllibc from `external/sel4test-workspace/.sel4_cache` | The A1 kernel is built for a Cortex-A57 and the sel4test kernels for a Cortex-A53 (`KernelArmCPU`), which was not varied | Agent's choice. Neither is expected to change the HVF result, which depends on the guest ID registers | Delete `.sel4_cache` and rebuild |
-| D13 | The spike [`Cargo.lock`](../Cargo.lock) is the rust-root-task-demo's lock at `c13bdae` ("Update everything", 2026-11-04) with the package name changed. It resolves **six crates.io versions that are not the ones in the lock the owner approved at rust-sel4 `v6.0.0`** (`c819c27`, "Release 6.0.0", 2026-10-29). Detail below | The owner approved `bindgen` 0.72.1 "as locked at `v6.0.0`" and said versions that appear only in the demo's lock "are not covered, and any such difference stops the work and asks". There is no record that the difference was noticed, that the work stopped, or that the owner was asked | **Not approved. The owner has not decided.** The original lock and the A1 results are preserved unchanged until the owner approves a resolution. Nothing was regenerated and A1 was not re-run | Restore the approved versions (see below), which changes the lock and may change the root-task hash |
+| D13 | The spike `Cargo.lock` was the rust-root-task-demo's lock at `c13bdae` ("Update everything", 2026-11-04) with the package name changed. It resolved **six crates.io versions that were not the ones in the lock the owner approved at rust-sel4 `v6.0.0`** (`c819c27`, "Release 6.0.0", 2026-10-29). Detail below | The owner approved `bindgen` 0.72.1 "as locked at `v6.0.0`" and said versions that appear only in the demo's lock "are not covered, and any such difference stops the work and asks". There is no record that the difference was noticed, that the work stopped, or that the owner was asked | **Resolved by owner decision, 2026-11-08 (option 2): the approved versions were restored** with four offline `cargo update --precise` commands, and A1 was rerun as a separate result ([A1-rerun](A1-rerun.md)). The original lock (SHA-256 `c92d1dca…`, Git `b563904`) and the original A1 evidence and hashes are preserved unchanged | Not applicable. To return to the original configuration, check out `b563904:spikes/sel4-feasibility/Cargo.lock` |
 | D14 | Smaller items found by the independent review: (a) `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` was set during the Homebrew install runs ([01](A1/01-brew-dryrun.txt) to [03](A1/03-brew-install.txt) show its warning); the logs do not show whether other Homebrew variables were set. (b) [`sanitize-evidence.py`](../sanitize-evidence.py) and [`verify-evidence.py`](../verify-evidence.py) are spike code. (c) A3 log [06](A3/06-fetch-sel4test.txt) was produced by an earlier revision of `fetch-sel4test.sh` (`0bbda42`) that did not print "OK kernel", and the logs do not record which script revision made them. (d) A3 [41](A3/41-config-1cpu.txt) and [42](A3/42-config-4cpu.txt) are excerpts extracted from the build directories by a small script that is not in the repository | Disclosure. The extra evidence files were added to support claims that the published logs could not verify | **Not individually approved.** (a) only suppresses a check on installed dependents. (b) and (d) read local files and write text | Delete the files. Re-run the extraction from the gitignored build directories |
+| D15 | [`compare-a1-runs.py`](../compare-a1-runs.py): a read-only comparison of the original A1 outputs with the rerun's. It runs the approved `add-payload` tool on copies, in a temporary directory, to rebuild images for the byte accounting | The owner asked for the differences to be accounted for. A hash comparison alone would not show whether the change is real | **Spike code, not individually approved.** It uses only tools already installed (`aarch64-elf-objcopy`, `-objdump`, `-readelf`, `dtc`) and writes nothing outside its temporary directory | Delete the file. The recorded output `A1-rerun/07` remains |
+| D16 | **A local push safeguard** (the owner's request, 2026-11-08): this clone's local Git config sets `core.hooksPath` to the untracked `.git/fyrkat-hooks/`. Its `pre-push` refuses any push that carries the five unsanitized commits (`e778e29`, `7e763f0`, `f835b21`, `c99300d`, `81a2ca7`) or a ref named `local-only/*`, then runs the global pre-push hook unchanged. Every other hook name delegates to the global hook at run time | The global hooks directory is set in the user's global Git config, so a hook in `.git/hooks` would not run, and `pushremote = no_push_remote` on the local-only branch only stops a bare `git push` from it. **Global Git configuration was not modified** | Owner-requested. Tested with crafted inputs and `git push --dry-run` (the unsanitized branch, an original SHA and a commit built on one are refused; the PR branch passes and still runs the global hook). `git push --no-verify` skips it | `git config --local --unset core.hooksPath && rm -rf .git/fyrkat-hooks` |
 
 ### D13 detail: the six lock-file differences [Measured unless marked]
+
+*This section is the investigation made before the owner's decision, kept as the record of what was known then. Where it says a new A1 run was "not authorized", that has since been authorized and done, see the Resolution below.*
 
 Dependency paths are from `cargo tree --frozen --offline --target all -e normal,build -i CRATE` on the spike workspace. "Approved" is the
 version in `external/rust-sel4/Cargo.lock` at `c819c27`. Release dates are from the crates.io API.
@@ -58,19 +62,23 @@ Costs and unknowns: it edits a gated file (`Cargo.lock`), so it needs the owner'
 [Inferred, not tested], so the A1 root-task hash (`a7c6be9a…`) and the identical-build claim would have to be re-established by a new A1 run,
 which is not authorized; and it moves the lock away from the demo's lock, so the demo's own provenance claim changes.
 
-**Options for the owner.** Each has reasons for and against.
+**Resolution (2026-11-08).** The owner chose option 2 and authorized the four operations and one A1 rerun. Original and corrected
+dependency configurations:
 
-1. *Approve the six versions as they are.* For: A1's results and the root-task hash stay as recorded; five of the six only run at build time, and
-   `log` is a patch bump. Against: the lock then differs from the one the owner approved at `v6.0.0` (the rule at the plan's Amendment of
-   2026-11-08 is that such differences stop the work and ask), the root task is built from a lock the loader does not use, and the build-time crates
-   still run code on the build host.
-2. *Restore the approved versions* (four `cargo update --precise` commands, offline). For: it matches the approval, and the root task would use the
-   same reviewed lock as the loader and `add-payload`. Against: it edits a gated file, whether it changes the root-task bytes is unknown, and A1 would
-   need a new run under its own authorization, so A1's recorded hashes would be replaced.
-3. *Restore only `log`* (the one crate that reaches the target binary) and approve the build-time five as they are. For: it limits the change to the
-   binary's dependency. Against: it leaves a lock that matches neither the approved lock nor the demo's, and it still needs a new A1 run.
+| Crate | Original (A1 run) | Corrected (rerun) | Approved at `v6.0.0` |
+|---|---|---|---|
+| `cc` | 1.11.0 | 1.10.0 | 1.10.0 |
+| `log` | 0.4.35 | 0.4.34 | 0.4.34 |
+| `psm` | 0.1.32 | 0.1.24 | 0.1.24 |
+| `pest_stack_guard` | 1.0.1 | 1.0.0 | 1.0.0 |
+| `ar_archive_writer` | 0.5.3 | removed | absent |
+| `object` | 0.39.1 | removed from this workspace's graph | 0.40.0 |
 
-The agent's recommendation was given to the owner in the session report: option 2. It is not part of this record, and nothing here is decided.
+After the change every registry package of the corrected lock is, with the same version and checksum, in the approved lock (0 differences),
+and only these six entries differ from the original spike lock [Measured]. The rerun changed the root-task binary (the kernel and loader are
+identical) because a hashed build-script directory name embedded in the binary depends on the dependency set; see
+[A1-rerun](A1-rerun.md) for the byte-level account and its limits. The options the owner weighed (approve as they were, restore all six, restore
+only `log`) are recorded in the Amendments of 2026-11-08 by their outcome only.
 
 ## Privacy note
 

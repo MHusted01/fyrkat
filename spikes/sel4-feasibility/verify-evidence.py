@@ -17,6 +17,7 @@ import hashlib
 import re
 import socket
 import sys
+import tomllib
 from pathlib import Path
 
 
@@ -64,7 +65,9 @@ def smp_build_ok(text: str, nodes: str, smp: bool) -> bool:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
-    res = Path(ap.parse_args().results)
+    ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
+    ns = ap.parse_args()
+    res, lock_path = Path(ns.results), Path(ns.lock)
     results: list[tuple[str, bool]] = []
 
     def check(name: str, ok: bool) -> None:
@@ -117,6 +120,42 @@ def main() -> int:
           "62e345c240a15671484530b4e6e069ce266c28d7 == pin OK" in fetch
           and "c819c27b076130cba9821c4555f23773e4b0bffd == pin OK" in fetch)
 
+    # ---- A1 rerun with the corrected lock file (a separate, clearly identified result)
+    r_sum1, r_sum2 = sums(read(res, "A1-rerun/04-sums-rerun1.txt")), sums(read(res, "A1-rerun/06-sums-rerun2.txt"))
+    check("A1 rerun: kernel, loader and root task identical across its two clean builds, image different",
+          set(r_sum1) == names and set(r_sum2) == names
+          and all(r_sum1[n] == r_sum2[n] for n in names - {"image.elf"}) and r_sum1["image.elf"] != r_sum2["image.elf"])
+    check("A1 rerun: kernel and loader equal the original run's; the root task differs from it",
+          r_sum2["kernel.elf"] == s2["kernel.elf"] and r_sum2["sel4-kernel-loader.elf"] == s2["sel4-kernel-loader.elf"]
+          and r_sum2["s1-root-task.elf"] != s2["s1-root-task.elf"])
+    cmp_text = read(res, "A1-rerun/07-comparison-with-original.txt")
+    check("A1 rerun: the comparison used the original hashes recorded in A1/",
+          f"original {s2['s1-root-task.elf'][:16]}" in cmp_text and f"original {s2['image.elf'][:16]}" in cmp_text
+          and f"rerun {r_sum2['s1-root-task.elf'][:16]}" in cmp_text)
+    check("A1 rerun: every byte difference is accounted for (8 address instructions; 782 image bytes; seeds only)",
+          "all differences accounted for: yes" in cmp_text
+          and "instruction words: 4795 and 4795; differing: 8" in cmp_text
+          and ".rodata: 763, .text: 18, ELF header e_shoff: 1" in cmp_text
+          and "control: add-payload on the original inputs reproduces the original image: yes" in cmp_text
+          and cmp_text.count("device-tree properties that differ: kaslr-seed, rng-seed") == 2)
+    corr = read(res, "A1-rerun/02-lock-correction.txt")
+    m = re.search(r"original: (\w{64})\s+corrected: (\w{64})", corr)
+    actual = hashlib.sha256(lock_path.read_bytes()).hexdigest() if lock_path.is_file() else ""
+    check("A1 rerun: the lock file in the repository is the corrected one recorded in the evidence",
+          m is not None and m.group(2) == actual and m.group(1) != actual and m.group(1).startswith("c92d1dca"))
+    pkgs: dict[str, set[str]] = {}
+    if lock_path.is_file():
+        for pkg in tomllib.loads(lock_path.read_text(encoding="utf-8"))["package"]:
+            pkgs.setdefault(pkg["name"], set()).add(pkg["version"])
+    approved = {"cc": {"1.10.0"}, "log": {"0.4.34"}, "psm": {"0.1.24"}, "pest_stack_guard": {"1.0.0"}}
+    check("A1 rerun: the lock file has the four approved versions and neither ar_archive_writer nor object",
+          all(pkgs.get(k) == v for k, v in approved.items()) and "ar_archive_writer" not in pkgs and "object" not in pkgs)
+    pre = read(res, "A1-rerun/01-preflight.txt")
+    drift = read(res, "A1/04-brew-drift-summary.txt")
+    after = re.search(r"'after' list:\s+([0-9a-f]{64})", drift)
+    check("A1 rerun: the Homebrew inventory hash at the rerun equals A1's recorded after-state",
+          after is not None and after.group(1) in pre and "386 formulae" in pre)
+
     # ---- A3
     check("A3 HVF 1 vCPU: kernel halts on the 16-bit ASID check",
           "ERROR: kernel requires 16-bit ASIDs" in read(res, "A3/31-boot-hvf-1cpu.txt"))
@@ -151,9 +190,9 @@ def main() -> int:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A3") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3") for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/ and A3/ (one README note aside)",
+    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/ and A3/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()

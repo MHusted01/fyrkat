@@ -1,6 +1,6 @@
 # Evidence privacy: what is public and how to check it
 
-The logs under [A1/](A1/) and [A3/](A3/) are **sanitized copies**. The unredacted originals ("raw") are kept
+The logs under [A1/](A1/), [A1-rerun/](A1-rerun/) and [A3/](A3/) are **sanitized copies**. The unredacted originals ("raw") are kept
 only on the machine that produced them, in a gitignored directory, and are not published. This note says
 what was removed, what was kept, and how to re-check the conclusions from the public copies alone.
 
@@ -53,7 +53,7 @@ spikes/sel4-feasibility/verify-evidence.py        # re-check the conclusions fro
   public copy came from.
 - [`A1/04-brew-drift-summary.txt`](A1/04-brew-drift-summary.txt) replaces the full before/after inventory
   comparison: it records the counts, the two added formulae, and the hashes of both full lists.
-- `verify-evidence.py` runs 32 checks on the public copies: the A1 build hashes (three outputs identical, the
+- `verify-evidence.py` runs 39 checks on the public copies and on the repository's `Cargo.lock`: the A1 build hashes (three outputs identical, the
   image different), the device-tree seed cause, the `add-payload` determinism, the loader defect numbers, the
   `cargo deny` results and the advisory path, the tool and compiler versions, the A3 boot results under HVF and
   TCG, the ID-register probe (ASIDBits 2 under TCG, 0 under HVF), the pins, the recorded kernel configuration of the two sel4test builds and the PSCI conduit in their device
