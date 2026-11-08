@@ -61,7 +61,7 @@ the text at `46a90fa`.
 | Check | Commit | Result |
 |---|---|---|
 | `cargo xtask check` | PR 6 head when written | "check: all 12 steps passed". macOS arm64, local |
-| Independent reviews of PR 6 | `7833442` to `b2095d4` | Five passes. The last two said NOT MERGE-READY (2 High, 4 Medium, 8 Low; then 2 Medium, 5 Low), all text fixes. **A final confirmation is required before merging PR 6** |
+| Independent reviews of PR 6 | `7833442` to `d61562c` | Five passes. The last two said NOT MERGE-READY (2 High, 4 Medium, 8 Low; then 2 Medium, 5 Low), all text fixes. **A final confirmation is required before merging PR 6** |
 
 **Not verified:** `cargo xtask boot` locally; whether GCC 16, CMake 4 or Python 3.15 work with seL4
 17.0.0 (that is an A1 finding); GitHub's "verified" status of commits.
