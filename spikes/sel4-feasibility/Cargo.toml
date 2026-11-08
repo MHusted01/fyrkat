@@ -1,0 +1,6 @@
+# Spike workspace for the seL4 feasibility spike (S1). Approved by the owner on 2026-11-08 (decision 5).
+# It is its own workspace and nothing outside spikes/ may depend on it.
+
+[workspace]
+resolver = "3"
+members = ["crates/root-task"]

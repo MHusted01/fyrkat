@@ -1,0 +1,28 @@
+# Spike-local cargo-deny policy for spikes/sel4-feasibility/. Decision 3 of the S1 decision package.
+# It allows exactly the git origins the owner approved on 2026-11-08, and crates.io, and nothing else.
+# The root deny.toml is not changed. Licences are not evaluated here: the spike ships nothing, and
+# the loader is BSD-2-Clause AND GPL-2.0-only, which the root policy would deny.
+
+[advisories]
+version = 2
+yanked = "deny"
+ignore = []
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+highlight = "all"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = [
+  "https://github.com/seL4/rust-sel4",
+  "https://github.com/coliasgroup/dafny",
+  "https://github.com/coliasgroup/hashbrown",
+  "https://github.com/coliasgroup/offset-allocator",
+  "https://github.com/coliasgroup/ring",
+  "https://github.com/coliasgroup/rust-embedded-fat",
+]
