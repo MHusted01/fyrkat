@@ -6,10 +6,23 @@ what was removed, what was kept, and how to re-check the conclusions from the pu
 
 ## Status of earlier publication
 
-Before this review, the raw logs were pushed in the commits `e778e29`, `7e763f0`, `f835b21` and `c99300d` of
-branch `spike/s1-workspace` (pull request 7, not merged). **They remain in that history and in GitHub's
-pull-request refs until the owner decides otherwise.** Adding sanitized copies on top does not remove them.
-Nothing was rewritten, force-pushed or deleted. `main` (pull requests 5 and 6) contains none of this.
+**Not erased. Do not read this section as a claim that the exposure is gone.**
+
+1. The raw logs were first pushed in the commits `e778e29`, `7e763f0`, `f835b21` and `c99300d` of branch
+   `spike/s1-workspace`, in pull request 7 (never merged). They held the author's local user name and home
+   path, about 720 times in 26 files.
+2. The owner chose a narrow replacement. Pull request 7 was edited to remove the path and closed, and its
+   remote branch was deleted. A new branch, `spike/s1-workspace-sanitized`, was built from `main` in new
+   commits with sanitized copies of the logs. It is the branch of pull request 8. History **was** rewritten
+   in that sense: the published branch was replaced, and `main` was not touched and was never force-pushed.
+3. **The original commits remain retrievable.** On 2026-11-08, after the replacement, `c99300d` still
+   resolved by SHA through the GitHub API of this public repository, and `refs/pull/7/head` still pointed
+   to it [Measured: `gh api repos/{owner}/{repo}/commits/c99300d`, `git ls-remote origin 'refs/pull/7/*'`].
+   Anyone who knows or guesses the SHA, anyone who cloned or forked while the branch was public, and any
+   cache or mirror may still hold them. Pull request 7's edit history may also show its original text.
+4. Only a GitHub Support request could ask for the retained references to be removed. **The owner decided on
+   2026-11-08 not to make one at this time**, and no result is claimed from one.
+5. `main` (pull requests 5 and 6) contains none of this.
 
 ## What the review found
 
@@ -40,11 +53,14 @@ spikes/sel4-feasibility/verify-evidence.py        # re-check the conclusions fro
   public copy came from.
 - [`A1/04-brew-drift-summary.txt`](A1/04-brew-drift-summary.txt) replaces the full before/after inventory
   comparison: it records the counts, the two added formulae, and the hashes of both full lists.
-- `verify-evidence.py` runs 29 checks on the public copies: the A1 build hashes (three outputs identical, the
+- `verify-evidence.py` runs 32 checks on the public copies: the A1 build hashes (three outputs identical, the
   image different), the device-tree seed cause, the `add-payload` determinism, the loader defect numbers, the
   `cargo deny` results and the advisory path, the tool and compiler versions, the A3 boot results under HVF and
-  TCG, the ID-register probe (ASIDBits 2 under TCG, 0 under HVF), the pins, the manifest hashes, and that no
-  home path, user name, host name or scratch path remains.
+  TCG, the ID-register probe (ASIDBits 2 under TCG, 0 under HVF), the pins, the recorded kernel configuration of the two sel4test builds and the PSCI conduit in their device
+  trees (A3 41 and 42), that the manifest hashes match and the manifest lists exactly the files under `A1/` and
+  `A3/`, and that no home path, user name, host name or scratch path remains. The privacy check does not
+  depend on who runs it: it looks for any macOS or Linux home-directory path (a user directory under the
+  system's users or home root) as well as the running user's own names.
 
 ## Limits
 
@@ -53,4 +69,11 @@ spikes/sel4-feasibility/verify-evidence.py        # re-check the conclusions fro
 - Someone without the raw logs cannot confirm the omitted Homebrew formulae. The recorded hash and the drift
   summary let the owner do so.
 - The sanitizer reads the user, home and host names from the machine it runs on. Run it on the machine that
-  holds the raw logs.
+  holds the raw logs. Its matching is case-insensitive and does not fire inside a longer alphanumeric
+  token, so an unusual name that is glued to other letters or digits would not be redacted, and the
+  verifier's path-anchored checks would be the only net. It stops with an error if a Homebrew tap warning is
+  not closed, or if a rule would change a file's line count.
+- The sanitization was done by an agent. Before pull request 8 it had agent-run scans only. The tracked
+  evidence files at `24634be` were byte-identical to a local, unpublished commit (`81a2ca7`) that had no
+  independent review, and they differ from the reviewed but unsanitized `c99300d`. The independent review of
+  pull request 8 then scanned the tree, the history of the pull-request commits, and the pull-request text.

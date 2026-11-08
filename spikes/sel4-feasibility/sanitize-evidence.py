@@ -17,6 +17,10 @@ path) are read from the live environment, so this file contains none of them. Ru
 4. 04-brew-drift-summary.txt records that the before and after inventories differ only by the two
    formulae installed for A1, with the hashes that support it.
 
+Matching is case-insensitive and does not fire inside a longer alphanumeric token, so a hash that happens to
+contain a short user name is left alone. A redaction never changes a file's line count, an unterminated tap
+warning is an error, and either stops the run with exit code 2.
+
 Measurements, errors, tool versions and hashes are not touched. CRLF line endings become LF. Spike code, stdlib only.
 """
 import argparse
@@ -49,6 +53,11 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def word(name: str) -> re.Pattern[str]:
+    """Match NAME case-insensitively, but not inside a longer alphanumeric token (such as a hash)."""
+    return re.compile(rf"(?<![A-Za-z0-9]){re.escape(name)}(?![A-Za-z0-9])", re.IGNORECASE)
+
+
 class Redactor:
     def __init__(self, repo: Path) -> None:
         home = str(Path.home())
@@ -56,24 +65,30 @@ class Redactor:
         host = socket.gethostname()
         short = host.split(".")[0]
         self.rules: list[tuple[re.Pattern[str], str]] = [
-            (re.compile(re.escape(str(repo))), "<REPO>"),
+            (re.compile(re.escape(str(repo)), re.IGNORECASE), "<REPO>"),
             (re.compile(r"/private/tmp/claude-[0-9]+/\S*"), "<SCRATCH>"),
             (re.compile(r"/private/var/folders/[^/\s]+/[^/\s]+/T"), "<TMPDIR>"),
             (re.compile(r"/var/folders/[^/\s]+/[^/\s]+/T"), "<TMPDIR>"),
-            (re.compile(re.escape(home)), "<HOME>"),
-            (re.compile(re.escape(user)), "<user>"),
+            (re.compile(re.escape(home), re.IGNORECASE), "<HOME>"),
+            (word(user), "<user>"),
+            (re.compile(r"(==> Tapp(?:ing|ed) )\S+/\S+"), r"\1<tap>"),
         ]
         for name in {host, short}:
             if name and name not in ("localhost",):
-                self.rules.append((re.compile(re.escape(name)), "<host>"))
+                self.rules.append((word(name), "<host>"))
 
     def apply(self, text: str) -> str:
+        """Substitute within lines. A rule never crosses a line, and this checks it."""
+        out = text
         for pattern, repl in self.rules:
-            text = pattern.sub(repl, text)
-        return text
+            out = pattern.sub(repl, out)
+        if len(out.splitlines()) != len(text.splitlines()):
+            raise ValueError("a redaction rule changed the number of lines")
+        return out
 
 
 def drop_tap_warning(text: str) -> str:
+    """Replace each tap-trust block by one note. An unterminated block is an error, never a silent cut."""
     out: list[str] = []
     skipping = False
     for line in text.splitlines(keepends=True):
@@ -86,6 +101,8 @@ def drop_tap_warning(text: str) -> str:
                 skipping = False
             continue
         out.append(line)
+    if skipping:
+        raise ValueError("a tap-trust warning has no closing line; refusing to drop the rest of the file")
     return "".join(out)
 
 
@@ -186,13 +203,20 @@ def main() -> int:
         except UnicodeDecodeError:
             print(f"error: {rel} is not UTF-8 text", file=sys.stderr)
             return 2
-        clean = sanitize(rel, text, red)
+        try:
+            clean = sanitize(rel, text, red)
+        except ValueError as err:
+            print(f"error: {rel}: {err}", file=sys.stderr)
+            return 2
         dst = out / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         with open(dst, "w", encoding="utf-8", newline="") as fh:
             fh.write(clean)
         manifest.append(f"{sha256_file(src)}  {sha256_file(dst)}  {rel}\n")
-    (out / "A1" / "04-brew-drift-summary.txt").write_text(drift_summary(raw), encoding="utf-8")
+    drift = out / "A1" / "04-brew-drift-summary.txt"
+    drift.write_text(drift_summary(raw), encoding="utf-8")
+    # Generated from the raw inventories, so it has no single raw file to hash.
+    manifest.append(f"generated  {sha256_file(drift)}  A1/04-brew-drift-summary.txt\n")
     with open(out / "evidence-manifest.txt", "w", encoding="utf-8") as fh:
         fh.writelines(manifest)
     print(f"sanitized {len(manifest) - 1} files into {out}")

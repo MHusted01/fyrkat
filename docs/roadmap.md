@@ -53,9 +53,13 @@ Exit criteria:
 
 ## S1: Kernel foundation spike
 
-**Status: planned.** It is defined by the [spike plan](research/sel4-spike-plan.md), with
-pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07, and
-**executing the experiments is not yet authorized.**
+**Status: in progress, stopped at the A3 gate.** It is defined by the [spike plan](research/sel4-spike-plan.md),
+with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
+A3, A4 and the A2a interpretation conditionally on 2026-11-08. A1 ran and passed (label U). A3 ran and failed
+(label U) for unmodified seL4 under HVF on one Apple M2 Pro, and the owner confirmed it. By the owner's ruling,
+decision rule 2 applies to that configuration, and the A3 Fail reopens the architecture question in
+[ADR 0002](adr/0002-initial-cpu-architecture.md). A2a, A4 and A5 have not started, and **resuming execution is
+not authorized.** Records: the plan's Amendments and `spikes/sel4-feasibility/results/`. No ADR is Accepted.
 
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**

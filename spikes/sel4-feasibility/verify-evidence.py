@@ -5,8 +5,9 @@
 
 It reads only the sanitized files (never results-raw/), so anyone with a clone can run it. It checks
 that the measurements the records rely on are present and consistent, that the manifest's hashes match
-the files, and (using the live environment's user, home and host names) that none of them remain.
-Exit code 0 when every check passes. Spike code, stdlib only.
+the files, and that no home path remains. The privacy check does not depend on who runs it: it looks for
+any `/Users/NAME/` or `/home/NAME/` path, and also for the running user's own home path, host name and,
+when it is a distinctive name, user name. Exit code 0 when every check passes. Spike code, stdlib only.
 """
 import argparse
 import getpass
@@ -28,6 +29,33 @@ def sums(text: str) -> dict[str, str]:
         if m:
             out[m.group(2)] = m.group(1)
     return out
+
+
+def section(text: str, header: str) -> str:
+    """The lines under the first `## ` header that contains HEADER, up to the next `## ` header."""
+    parts = re.split(r"(?m)^(?=## )", text)
+    return next((p for p in parts if p.startswith("## ") and header in p.splitlines()[0]), "")
+
+
+def config(text: str) -> dict[str, str]:
+    """Parse `KEY = VALUE` and `KEY:TYPE=VALUE` lines of a config evidence file."""
+    out: dict[str, str] = {}
+    for line in text.splitlines():
+        m = re.match(r"^(CONFIG_\w+) = (.*)$", line) or re.match(r"^(\w+):\w+=(.*)$", line)
+        if m:
+            out[m.group(1)] = m.group(2).strip()
+    return out
+
+
+def smp_build_ok(text: str, nodes: str, smp: bool) -> bool:
+    """A sel4test build's recorded config: non-hypervisor, qemu-arm-virt, the given node count and SMP flag."""
+    c = config(text)
+    return (c.get("CONFIG_MAX_NUM_NODES") == nodes and c.get("KernelMaxNumNodes") == nodes
+            and c.get("CONFIG_ENABLE_SMP_SUPPORT") == str(smp) and c.get("SMP") == ("TRUE" if smp else "FALSE")
+            and c.get("CONFIG_ARM_HYPERVISOR_SUPPORT") == "False" and c.get("KernelArmHypervisorSupport") == "OFF"
+            and c.get("CONFIG_PLAT_QEMU_ARM_VIRT") == "True" and c.get("CONFIG_KERNEL_MCS") == "False"
+            and c.get("CONFIG_ARM_CORTEX_A53") == "True" and c.get("KernelArmCPU") == "cortex-a53"
+            and f"cpu nodes: {nodes}" in text)
 
 
 def main() -> int:
@@ -58,15 +86,19 @@ def main() -> int:
     rep = read(res, "A1/22-loader-defect-repro.txt")
     check("A1 loader without cross ar/ranlib: 5,896 bytes, entry 0",
           "size: 5896" in rep and re.search(r"Entry point address:\s+0x0\b", rep) is not None)
-    check("A1 loader with cross ar/ranlib: 63,200 bytes, real entry", "size: 63200" in rep)
+    entries = [int(e, 16) for e in re.findall(r"Entry point address:\s+0x([0-9a-f]+)", rep)]
+    check("A1 loader with cross ar/ranlib: 63,200 bytes, real (non-zero) entry",
+          "size: 63200" in rep and len(entries) == 2 and entries[0] == 0 and entries[1] != 0)
     check("A1 cargo deny on the spike workspace: advisories, bans and sources ok",
           "advisories ok, bans ok, sources ok" in read(res, "A1/14-deny-spike-workspace.txt"))
     for rel in ("A1/11-deny-sel4-kernel-loader.txt", "A1/11-deny-sel4-kernel-loader-add-payload.txt"):
         ids = set(re.findall(r"RUSTSEC-\d{4}-\d{4}", read(res, rel)))
         check(f"A1 {rel}: the only advisory is RUSTSEC-2024-0449", ids == {"RUSTSEC-2024-0449"})
     path = read(res, "A1/19-unsafe-libyaml-path.txt")
-    check("A1 unsafe-libyaml has no normal edge and no symbol in the target loader",
-          "warning: nothing to print" in path and "nm matches=0" in path and "strings matches=0" in path)
+    check("A1 unsafe-libyaml has no normal or build edge into the target loader, and no symbol in it",
+          all("warning: nothing to print" in section(path, f"edges: {kind}, package sel4-kernel-loader,")
+              for kind in ("normal", "build"))
+          and "nm matches=0" in path and "strings matches=0" in path)
     base = read(res, "A1/00-baseline.txt")
     check("A1 host and tool versions recorded (M2 Pro, CMake 4.4.5, QEMU 11.1.3)",
           "Apple M2 Pro" in base and "cmake version 4.4.5" in base and "QEMU emulator version 11.1.3" in base)
@@ -96,22 +128,41 @@ def main() -> int:
     check("A3 HVF cannot emulate GICv2", "HVF does not support GICv2 emulation" in read(res, "A3/03-boot-hvf-el1-1cpu.txt"))
     pins = read(res, "A3/06-fetch-sel4test.txt")
     check("A3 eight sel4test project pins verified", len(re.findall(r"^OK \S+ [0-9a-f]{40}$", pins, re.M)) >= 8)
-    check("A3 4-node image is a real SMP kernel build log present", (res / "A3/24-build-4cpu.txt").is_file())
+    cfg1, cfg4 = read(res, "A3/41-config-1cpu.txt"), read(res, "A3/42-config-4cpu.txt")
+    check("A3 1-vCPU image: single-node, non-SMP, non-hypervisor qemu-arm-virt kernel, one cpu node",
+          smp_build_ok(cfg1, "1", False))
+    check("A3 4-vCPU image: a real 4-node SMP, non-hypervisor kernel with four cpu nodes",
+          smp_build_ok(cfg4, "4", True))
+    check("A3 the device tree names the hvc PSCI conduit that the elfloader rejects",
+          all('method = "hvc";' in t for t in (cfg1, cfg4)))
 
     # ---- integrity and privacy
+    listed: set[str] = set()
     bad = []
     for line in read(res, "evidence-manifest.txt").splitlines():
         if line.startswith("#") or not line.strip():
             continue
         _raw, clean, rel = line.split(None, 2)
+        listed.add(rel)
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    home, user = str(Path.home()), getpass.getuser()
-    host = socket.gethostname()
-    needles = {home, user, host, host.split(".")[0], "/var/folders", "claude-"} - {"", "localhost"}
-    leaks = [str(p.relative_to(res)) for p in res.rglob("*") if p.is_file()
-             and any(n in p.read_text(encoding="utf-8", errors="replace") for n in needles)]
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A3") for p in (res / sub).rglob("*")
+                if p.is_file() and p.name != "README.md"}
+    check("manifest: it lists exactly the evidence files under A1/ and A3/ (README.md notes aside)",
+          listed == evidence)
+    texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
+    home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
+    common = {"runner", "ubuntu", "github", "docker", "vagrant", "nobody", "daemon", "root"}
+    plain = {n for n in (host, host.split(".")[0]) if len(n) >= 4} - {"localhost"}
+    if home not in ("", "/"):
+        plain.add(home)
+    patterns = [r"(?:/Users|/home)/[A-Za-z0-9._-]+/", r"/var/folders", r"/private/tmp/claude-"]
+    if len(user) >= 6 and user.lower() not in common:
+        patterns.append(rf"(?<![A-Za-z0-9]){re.escape(user)}(?![A-Za-z0-9])")
+    rx = re.compile("|".join(patterns), re.IGNORECASE)
+    leaks = [str(p.relative_to(res)) for p, t in texts.items()
+             if rx.search(t) or any(n.lower() in t.lower() for n in plain)]
     check("privacy: no home path, user name, host name or scratch path in results/", not leaks)
 
     width = max(len(n) for n, _ in results)

@@ -18,15 +18,57 @@ the plan's Amendments). Every other row, and every detail of a row that is not n
 | D8 | [`fetch-sel4test.sh`](../fetch-sel4test.sh) uses `git init --separate-git-dir` so each project's `.git` is a file, skips `opensbi`, and recreates the manifest's three linkfiles as symlinks | musllibc's build runs `rm src/.git`, which expects a `repo`-style `.git` file. `opensbi` is RISC-V only | Plain git as decision 4 describes. The `.git` layout and the `opensbi` skip are the agent's choices | Delete `external/sel4test-workspace` |
 | D9 | [`boot-image.py`](../boot-image.py), [`probe-idregs.sh`](../probe-idregs.sh) and [`probes/idregs.c`](../probes/idregs.c): a QEMU boot harness and a bare-metal ID-register probe | A3 needed a repeatable boot-and-watch harness, and a direct measurement of what the HVF guest reports | **Spike code, not individually approved.** The probe is freestanding and reads read-only ID registers | Delete the files. The A3 evidence logs remain |
 | D10 | The spike-local [`deny.toml`](../deny.toml) keeps `wildcards = "deny"`, evaluates no licences, and allows exactly the six approved git origins | Decision 3. The loader is `BSD-2-Clause AND GPL-2.0-only`, which the root policy would deny | **Owner-approved in principle** (decision 3 and 5). The licence omission is the agent's choice | Edit the file |
-| D11 | The root task [`crates/root-task/src/main.rs`](../crates/root-task/src/main.rs) keeps the demo's `unwrap()` and `assert_eq!` | It is the approved demo's code, adapted with its BSD-2-Clause attribution kept. AGENTS.md says no `unwrap` outside tests, and also that `spikes/` is disposable | **Not individually approved.** Not changed, to keep the demo's behaviour | Edit the file |
+| D11 | The root task [`crates/root-task/src/main.rs`](../crates/root-task/src/main.rs) keeps the demo's three `unwrap()` calls and one `assert_eq!`: line 22 (`.unwrap()` ending the search for a non-device untyped), lines 30 and 31 (`empty_slots.next().unwrap()`, twice) and line 62 (`assert_eq!(observed_badge, badge)`) | It is the approved demo's code, adapted with its BSD-2-Clause attribution kept. AGENTS.md says no `unwrap`, `expect` or `panic!` outside tests, and also that `spikes/` is disposable and isolated. Editing them would change the root-task hash and need a new A1 run, which is not authorized | **Owner-approved one-time exception, 2026-11-08**, for exactly these four sites. It is acceptable because this is disposable, isolated spike code, a test program that prints a result and stops, and nothing outside `spikes/` depends on it. **It does not apply to production kernel or userspace code, or to any future experiment.** Recorded in the plan's Amendments | Replace the four sites and re-run A1 (needs authorization) |
 | D12 | The sel4test control boots use `-cpu cortex-a57`, and the sel4test "clean" builds reuse a cached musllibc from `external/sel4test-workspace/.sel4_cache` | The A1 kernel is built for a Cortex-A57 and the sel4test kernels for a Cortex-A53 (`KernelArmCPU`), which was not varied | Agent's choice. Neither is expected to change the HVF result, which depends on the guest ID registers | Delete `.sel4_cache` and rebuild |
+| D13 | The spike [`Cargo.lock`](../Cargo.lock) is the rust-root-task-demo's lock at `c13bdae` ("Update everything", 2026-11-04) with the package name changed. It resolves **six crates.io versions that are not the ones in the lock the owner approved at rust-sel4 `v6.0.0`** (`c819c27`, "Release 6.0.0", 2026-10-29). Detail below | The owner approved `bindgen` 0.72.1 "as locked at `v6.0.0`" and said versions that appear only in the demo's lock "are not covered, and any such difference stops the work and asks". There is no record that the difference was noticed, that the work stopped, or that the owner was asked | **Not approved. The owner has not decided.** The original lock and the A1 results are preserved unchanged until the owner approves a resolution. Nothing was regenerated and A1 was not re-run | Restore the approved versions (see below), which changes the lock and may change the root-task hash |
+| D14 | Smaller items found by the independent review: (a) `HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK` was set during the Homebrew install runs ([01](A1/01-brew-dryrun.txt) to [03](A1/03-brew-install.txt) show its warning); the logs do not show whether other Homebrew variables were set. (b) [`sanitize-evidence.py`](../sanitize-evidence.py) and [`verify-evidence.py`](../verify-evidence.py) are spike code. (c) A3 log [06](A3/06-fetch-sel4test.txt) was produced by an earlier revision of `fetch-sel4test.sh` (`0bbda42`) that did not print "OK kernel", and the logs do not record which script revision made them. (d) A3 [41](A3/41-config-1cpu.txt) and [42](A3/42-config-4cpu.txt) are excerpts extracted from the build directories by a small script that is not in the repository | Disclosure. The extra evidence files were added to support claims that the published logs could not verify | **Not individually approved.** (a) only suppresses a check on installed dependents. (b) and (d) read local files and write text | Delete the files. Re-run the extraction from the gitignored build directories |
+
+### D13 detail: the six lock-file differences [Measured unless marked]
+
+Dependency paths are from `cargo tree --frozen --offline --target all -e normal,build -i CRATE` on the spike workspace. "Approved" is the
+version in `external/rust-sel4/Cargo.lock` at `c819c27`. Release dates are from the crates.io API.
+
+| Crate | Approved | Resolved | Released (resolved / approved) | Path | Reaches the target binary? |
+|---|---|---|---|---|---|
+| `cc` | 1.10.0 | **1.11.0** | 2026-11-02 / 2026-10-23 | build-dependency of `psm` 0.1.32 and of `stacker`, under `pest_stack_guard` and `pest` | No: host-side build script |
+| `log` | 0.4.34 | **0.4.35** | 2026-10-30 / 2026-08-22 | dependency of `sel4-sys` (normal edge, so on the root task's AArch64 target graph) and of `bindgen` (build) | **Yes**: the only one of the six on the target's normal graph. Whether it changes the root-task bytes was not tested |
+| `psm` | 0.1.24 | **0.1.32** | 2026-08-02 / 2024-11-13 | `pest_stack_guard` 1.0.1 and `stacker` -> `pest` -> `pest_derive`, a build-dependency of `sel4-sys` | No: host-side build script |
+| `pest_stack_guard` | 1.0.0 | **1.0.1** | 2026-11-03 / 2026-10-26 | `pest` 2.9.5 -> `pest_derive`, `pest_generator`, `pest_meta`, build-dependencies of `sel4-sys` | No |
+| `ar_archive_writer` | absent | **0.5.3** (new) | 2026-07-31 / n/a | build-dependency of `psm` 0.1.32 (its manifest requires `^0.5.0`) | No |
+| `object` | 0.40.0 | **0.39.1** (older) | 2026-04-21 / 2026-08-01 | dependency of `ar_archive_writer` 0.5.3, whose manifest requires `^0.39` | No |
+
+**Why they resolved this way.** The spike lock is the demo's lock, produced by "update everything" on 2026-11-04. rust-sel4's own lock at
+`v6.0.0` is from 2026-10-29. Three of the resolved versions were published after the release lock (`cc` 1.11.0, `log` 0.4.35 and
+`pest_stack_guard` 1.0.1). `psm` 0.1.32 was published before it, but the release lock never bumped `psm`. `psm` 0.1.32 is what adds
+`ar_archive_writer` as a build-dependency, and `ar_archive_writer` 0.5.3 requires the `object` 0.39 series, which is why `object` is *older* than
+the approved 0.40.0 [Documented: the crates' own manifests]. The other differences in a full comparison (`bitflags`, `itertools`, `windows-sys`)
+are only extra older copies that the larger rust-sel4 workspace carries and the spike does not. The loader and `add-payload` were built from
+rust-sel4's own lock, which is the approved one. **Only the root task, built in the spike workspace, used the spike lock.**
+
+**Advisories.** None of the six crates has an entry in the local RustSec database (checked out 2026-11-06, 999 crate directories, none for these
+six). `cargo deny` 0.20.2 on the spike workspace passes (advisories, bans and sources ok) with the original lock and with the restored one below
+[Measured: scratch copies, `--frozen --offline`]. That says only that no known advisory applies as of that database.
+
+**Is restoring the approved versions feasible?** Yes, offline and with no new download: the old versions are in the local Cargo cache. In a scratch
+copy of the workspace (not the repository), these four commands produced a lock with all five approved versions and without `ar_archive_writer` and
+`object`, 51 changed lines against the spike lock, and `cargo tree --locked` and `cargo deny` still passed:
+`cargo update --offline -p cc --precise 1.10.0`, `-p log --precise 0.4.34`, `-p psm --precise 0.1.24` and `-p pest_stack_guard --precise 1.0.0`.
+Costs and unknowns: it edits a gated file (`Cargo.lock`), so it needs the owner's approval; the `log` change may alter the root-task binary
+[Inferred, not tested], so the A1 root-task hash (`a7c6be9a…`) and the identical-build claim would have to be re-established by a new A1 run,
+which is not authorized; and it moves the lock away from the demo's lock, so the demo's own provenance claim changes.
+
+**Options for the owner** (the agent's recommendation is in the report that goes with this file): approve the six versions as they are, with the
+reason that five are host-side build-time only and `log` is a patch bump; or restore the approved versions and re-run A1 under a new authorization.
 
 ## Privacy note
 
-The raw logs contained the local home path and user name (about 720 times) and the full Homebrew inventory.
-They were first pushed unredacted. The public copies are now sanitized, and the unredacted originals are kept
-only locally. What was found, what was removed, and what remains in already-published history are in
-[EVIDENCE-PRIVACY](EVIDENCE-PRIVACY.md). Whether to remove the earlier history is the owner's decision.
+The raw logs contained the local home path and user name (about 720 times in 26 files) and the full Homebrew
+inventory. They were first pushed unredacted in pull request 7. The owner chose a narrow replacement: that
+branch was deleted and the pull request closed, and the sanitized branch of pull request 8 was built from
+`main`. The public copies are sanitized and the unredacted originals are kept only locally. **The original
+commits are not erased:** `c99300d` still resolved by SHA on the public repository after the replacement, and
+`refs/pull/7/head` still pointed to it. The owner decided not to contact GitHub Support at this time. What was
+found, what was removed, and what remains are in [EVIDENCE-PRIVACY](EVIDENCE-PRIVACY.md).
 
 ## What was not done
 
