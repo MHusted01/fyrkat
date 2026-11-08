@@ -862,3 +862,17 @@ owner's message of 2026-11-08 in the working session.
 | Tooling deviations | To be documented as deviations requiring review. The message is **not retroactive blanket approval**. Record: [deviations](../../spikes/sel4-feasibility/results/deviations.md) | Nothing in that record is approved |
 | `cargo deny` advisory | To be investigated for the dependency path and impact without weakening the policy or introducing a replacement | Path recorded in [A1 evidence 19](../../spikes/sel4-feasibility/results/A1/19-unsafe-libyaml-path.txt) |
 | Stop condition | **Stays in force.** A4, A2a, A5, kernel modifications and additional tool installations are not authorized | The next step is an architecture decision by the owner |
+
+### 2026-11-08: Record of earlier owner answers, and corrections after the evidence review
+
+Recorded before the pull request for the A1 and A3 results. **No criterion is changed.** An independent
+review of the results found that some owner answers given in the working session were in no Amendment, and
+that parts of the A3 record were wrong. This entry records them. It does not edit the entries above.
+
+| Item | Record | Effect |
+|---|---|---|
+| Python environment | During A1 the owner approved Homebrew Python 3.12.16 for the spike venv, and `setuptools` and `wheel` installed there only, pinned by version and SHA-256, in answer to a question that also proposed building `pyfdt` with `--no-build-isolation` (the build method was the agent's proposal). `packaging` was not named: it is `wheel`'s own dependency | Tier 1 detail. `packaging` is listed as a deviation |
+| `protobuf` | During A3 the owner conditionally approved `protobuf` 7.36.2 in the spike venv only, with exact version and SHA-256 pinning, **only if** no compatible pinned protoc existed on Apple Silicon without Rosetta or a system install, and **only if** the override was isolated to nanopb. The second condition held: no other consumer imports `protobuf`. The first was **not tested as written**: the agent built protoc 3.20.3 locally from a pinned commit, a new tool the owner has not individually approved, and whether that counts as a practical compatible protoc is for the owner. **The override was not used** | The `sel4-deps` pin is intact. protoc 3.20.3 is listed as a deviation |
+| Clarification | The earlier row "Nothing in that record is approved", for the deviations file, means that file is not itself an approval. It lists rows that record specific owner answers (marked owner-approved there) beside rows that are not approved | Wording only |
+| Correction to the A3 record | The first A3 record said the kernel failed the ASID check under HVF "with 1 and 4 vCPUs". The "4 vCPU" image was a single-node kernel run with QEMU `-smp 4`. A repeat with a real 4-node SMP kernel stops earlier, in the elfloader (`HVC is not supported for PSCI`), under both HVF and TCG, so its ASID check was not reached. The 1-vCPU measurement stands. It was also wrongly recorded that sel4test had only started under TCG: it passed (124 tests, 59 disabled) | The 1-vCPU measurement stands, and **in the agent's assessment the A3 outcome is unchanged**. The owner's confirmation of A3 was given before this correction, and **is requested again** |
+| Correction to the cpio deviation | A custom cpio stand-in was written on the wrong belief that GNU cpio was unavailable. GNU cpio 2.15 was already installed. The stand-in was removed and the builds repeated with GNU cpio | Fewer unapproved tools |

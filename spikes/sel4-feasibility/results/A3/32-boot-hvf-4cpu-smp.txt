@@ -1,0 +1,22 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=3 -accel hvf -cpu host -smp 4 -m size=1024M -nographic -monitor none -serial stdio -kernel external/sel4test-workspace/build-4cpu/images/sel4test-driver-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: <Reserved> Part: 0x0 r0p0
+  paddr=[4068f000..409c60a7]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 406d0498.
+Loaded DTB from 406d0498.
+   paddr=[40246000..40248fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40245fff]
+  vaddr=[ffffffffc0000000..ffffffffc0245fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 40249000
+  paddr=[40249000..4066efff]
+  vaddr=[400000..825fff]
+  virt_entry=40e970
+Boot cpu id = 0x0, index=0
+HVC is not supported for PSCI!
+Failed to boot cpu 0x1: 18446744073709551615
+abort() called.
+
+[boot-image] marker 'All is well in the universe' NOT seen after 45.06s (accel=hvf cpu=host smp=4 gic=3 virt=False)

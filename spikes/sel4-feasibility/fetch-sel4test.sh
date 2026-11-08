@@ -38,7 +38,12 @@ fetch projects/sel4test          https://github.com/seL4/sel4test.git           
 fetch projects/util_libs         https://github.com/seL4/util_libs.git           ef49a397b7044fc38b609a99a8c6265a97913b8e
 
 # The kernel is the pinned seL4 checkout, which must be at the manifest's kernel revision.
-[ "$(git -C "$W/external/seL4" rev-parse HEAD)" = 62e345c240a15671484530b4e6e069ce266c28d7 ]
+kgot="$(git -C "$W/external/seL4" rev-parse HEAD)"
+if [ "$kgot" != 62e345c240a15671484530b4e6e069ce266c28d7 ]; then
+    echo "MISMATCH kernel: $kgot" >&2
+    exit 1
+fi
+echo "OK kernel $kgot"
 ln -sfn ../seL4 "$D/kernel"
 
 # Linkfiles from the manifest.

@@ -1,4 +1,5 @@
-# Build tools for pyfdt (sdist only). Hash-pinned. Approved by the owner on 2026-11-08.
+# Build tools for pyfdt (sdist only). Hash-pinned. The owner approved setuptools and wheel on 2026-11-08.
+# packaging is wheel's own dependency and was not individually approved (see results/deviations.md).
 packaging==26.3 \
     --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
 setuptools==84.2.1 \

@@ -1,0 +1,25 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=3 -accel hvf -cpu host -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel external/sel4test-workspace/build-1cpu/images/sel4test-driver-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: <Reserved> Part: 0x0 r0p0
+  paddr=[40681000..409a908f]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 406baba0.
+Loaded DTB from 406baba0.
+   paddr=[40239000..4023afff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40238fff]
+  vaddr=[ffffffffc0000000..ffffffffc0238fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 4023b000
+  paddr=[4023b000..40660fff]
+  vaddr=[400000..825fff]
+  virt_entry=40e970
+Enabling MMU and jumping to entry point...
+
+ERROR: kernel requires 16-bit ASIDs
+ERROR: CPU init failed
+seL4 called fail at /Users/marcushusted/dev/fyrkat/spikes/sel4-feasibility/external/sel4test-workspace/kernel/src/arch/arm/kernel/boot.c:673 in function init_kernel, saying "ERROR: kernel init failed"
+halting...
+Kernel entry via Unknown (0)
+
+[boot-image] marker 'All is well in the universe' NOT seen after 45.08s (accel=hvf cpu=host smp=1 gic=3 virt=False)

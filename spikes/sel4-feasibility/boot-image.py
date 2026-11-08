@@ -60,13 +60,15 @@ def main() -> int:
     deadline = time.monotonic() + args.timeout
     start = time.monotonic()
     marker = args.marker.encode()
-    while time.monotonic() < deadline and not seen:
+    eof = False
+    while time.monotonic() < deadline and not seen and not eof:
         if proc.poll() is not None:
             out += proc.stdout.read() or b""
             break
         for _key, _ in sel.select(timeout=0.2):
             chunk = os.read(proc.stdout.fileno(), 65536)
             if not chunk:
+                eof = True
                 break
             out += chunk
         seen = marker in out

@@ -1,0 +1,13 @@
+# Command, run twice: qemu-system-aarch64 -machine virt,secure=off,gic-version=2,dumpdtb=/tmp/dtN.dtb -cpu cortex-a57 -smp 1 -m 1G -nographic; then dtc -I dtb -O dts
+# DTB seed difference, 2026-11-08T02:13:11Z: two QEMU dumps with identical arguments
+3adfe26a80a60a0b3e3a69d0a5623c84c4b32d4c39347631fc34befa933acf36  /tmp/dt1.dtb
+190e41fc2f8bb5791df415e59236f0bf28f9469bb388b430c98659ed04283083  /tmp/dt2.dtb
+## diff of the decoded trees (everything that differs):
+397,398c397,398
+< 		rng-seed = <0x6b57a64f 0x5f24ca98 0x8d25e4ce 0xd3083025 0xc07a9bb4 0xf948e756 0xc53e3871 0x30155ab0>;
+< 		kaslr-seed = <0x60c46c6b 0xd930f9c1>;
+---
+> 		rng-seed = <0x56e705f9 0xd8a5769 0xcc835cc7 0x55d157a8 0x33681c2 0xa5efc715 0x72376c6d 0x49dabd2d>;
+> 		kaslr-seed = <0x1b1cd5c3 0xc90d5817>;
+## kernel.dtb embedded in image.elf:
+kernel.dtb 7916 bytes, found verbatim in image.elf at offset 2389396
