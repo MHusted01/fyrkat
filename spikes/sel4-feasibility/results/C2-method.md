@@ -1,7 +1,7 @@
 # C2 method: page faults against Linux
 
 - **Status:** Approved by the owner on 2026-11-08 (decision 1, choices 1a to 1c), recorded in the
-  plan's Amendments, subject to the independent review recorded there. Frozen when merged to `main`.
+  plan's Amendments, subject to the independent review recorded there. Takes effect when merged to `main`. Edits after that and before the first run are ordinary, except one that loosens a criterion.
   No run of C2 has happened, pilot or otherwise.
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C2,
   approved at `46a90fa`.
@@ -34,12 +34,16 @@ confirmed each:
 2. **Linux keeps its shipped `fault_around_bytes`** for the headline. The one-page setting is a
    sensitivity result.
 3. **The seL4 headline pager retypes one frame inside each fault that allocates** (F1, F3 and the
-   allocating part of F4). In F1 it also **zeroes the frame explicitly** inside the fault, so that
-   both systems do the zeroing work for anonymous memory inside the fault. The seL4 kernel does not
-   zero on retype: it clears memory when an untyped is reset [Documented: seL4 `62e345c`,
-   `untyped.c` `resetUntypedCap`, and `objecttype.c` `Arch_createObject`, which only cleans the
-   cache]. Without the explicit write the seL4 side would skip work that Linux does, which favours a
-   Pass. The variant without it is a sensitivity result. F2 maps an existing frame. See
+   allocating part of F4), and in F1 and F3 it also **zeroes the frame explicitly** inside the
+   fault. The seL4 kernel does not zero on each retype: frame creation only cleans the cache, and
+   memory is cleared when an untyped with no children is reset, which a retype from such an untyped
+   triggers [Documented: seL4 `62e345c`, `objecttype.c` `Arch_createObject` and `untyped.c`
+   `resetUntypedCap`]. Linux zeroes an anonymous page in its fault. The pinned Debian kernel is built
+   with `CONFIG_INIT_ON_ALLOC_DEFAULT_ON=y` [Documented: Debian kernel-team `linux`,
+   `debian/6.12.115-1`, `debian/config/config`], so it is expected to zero a copy-on-write
+   destination page before copying into it [Inferred]. Without the explicit writes the seL4 side
+   would skip work that Linux does, which favours a Pass. The variant without them is a sensitivity
+   result. F2 maps an existing frame. See
    [Pager action per workload](#pager-action-per-workload-on-sel4).
 4. **The statistic** is the median of 30 completed-run medians, with the rules under
    [Counting and reporting](#counting-and-reporting).
@@ -90,9 +94,9 @@ confirmed each:
   layer differs.
 - **Page size:** 4 KiB on both.
 - **Timing source and resolution:** the virtual counter, as in C1, with the same batch rule: one
-  tick under 1% of a batch, so a batch lasts at least 100 ticks (about 4.2 µs at 24 MHz). A fault
+  tick under 1% of a batch, so a batch lasts more than 100 ticks (about 4.2 µs at 24 MHz). A fault
   costs far more than 4 ns, so a real batch of 1,024 pages lasts far longer [Inferred]. The harness
-  records the tick count of every batch. A batch under 100 ticks fails the 1% rule: the run stops,
+  records the tick count of every batch. A batch of 100 ticks or fewer fails the 1% rule: the run stops,
   the owner is told, and the batch size is not changed afterwards. C2 does not use C1's 1,000-tick
   flag. With Linux fault-around, an F2 batch may need only about one fault per 16 pages, and its
   length in ticks is not known in advance [Inferred].
@@ -115,13 +119,16 @@ Notes:
   next 4,096 pages (16 MiB) of the same file, read once beforehand. The three regions do not overlap.
 - **F4 order:** the list of 16,384 (region, page) pairs is generated in region order, then shuffled
   with a Fisher–Yates shuffle: for `i` from 16,383 down to 1, take `j = x mod (i + 1)` where `x` is the
-  next output, and swap positions `i` and `j`. The random numbers come from `xorshift64*` with state
-  shifts 12, 25 and 27 and multiplier `0x2545F4914F6CDD1D`, seeded with `0x0F1A2B3C4D5E6F70`. Both
+  next output, and swap positions `i` and `j`. The random numbers come from `xorshift64*`: `x ^= x >> 12; x ^= x << 25;
+  x ^= x >> 27;` and the output is `x * 0x2545F4914F6CDD1D` modulo 2^64, seeded with `0x0F1A2B3C4D5E6F70`. Both
   systems get the same order. F4 has 16 batches of 1,024 pages.
 - **Order within a boot, and cleanup:** F1, F2, F3, F4, each on a fresh mapping. After each workload,
-  outside timing, the region is unmapped. On seL4 its frames are revoked, and the untyped is reset
-  (the kernel clears memory then) by a throwaway retype before the next timed phase, so that no
-  untyped reset, which can clear a large region, falls inside a timed batch. On Linux the harness calls `munmap`, and the file's pages stay resident.
+  outside timing, the region is unmapped and on seL4 its frames are revoked. **Before every timed
+  phase, F1 included,** the pager performs a throwaway retype from the untyped it will use and keeps
+  that object until the phase ends. That forces any untyped reset, which can clear a large region
+  (untypeds handed over at boot start fully free [Documented: seL4 `boot.c`, `untyped.c`]), to happen
+  outside timing, so that none falls inside a timed batch. On Linux the harness calls `munmap`, and
+  the file's pages stay resident.
 - **F1 to F3** have 32 batches each. A fresh mapping is used for each workload and each run, so F2
   does not warm F3.
 - **File:** on Linux it is a regular file on the guest's root filesystem, not tmpfs, because tmpfs
@@ -137,12 +144,12 @@ The headline pager does the following, and any other action is a separate result
   read this session].
 - **F2:** the store's frame already exists and is resident. Map it read-only. No retype, copy or
   zeroing. Linux maps a page-cache page without zeroing, so none is expected on either side.
-- **F3:** retype one frame, copy 4 KiB into it from the store's frame, and remap the page read-write.
-  There is no zeroing on either side: the retype does not zero, and a copy-on-write copy overwrites
-  the page [Inferred for Linux].
+- **F3:** retype one frame, zero it with an explicit 4 KiB write of zeros, copy 4 KiB into it from
+  the store's frame, and remap the page read-write. The zero matches the work Linux is expected to
+  do with `init_on_alloc` on [Inferred]. The variant without the zero is a sensitivity result.
 - **F4:** each access follows the action for its region.
 
-Zeroing therefore sits in both headlines for F1 only, by the explicit write on seL4. As a sensitivity result the pager also runs
+Zeroing therefore sits in both headlines for F1 and F3, by the explicit write on seL4. As a sensitivity result the pager also runs
 with a retype of 64 frames at a time, inside the timed batch, for F1, F3 and the allocating part of
 F4. The cost of the retypes is reported separately.
 
@@ -164,7 +171,7 @@ F4. The cost of the retypes is reported separately.
   the measurement. No batch or run is removed as an outlier. A stopped run is reported with its data
   and cause, as in C1.
 - **Stopped runs:** a run is **completed** when one boot finishes F1 to F4 on one system and
-  setting. A run is **stopped** by a batch under 100 ticks, a load average that never falls under
+  setting. A run is **stopped** by a batch of 100 ticks or fewer, a load average that never falls under
   0.05, a crash or hang, or a wall time over 30 minutes. Stopped runs are kept and reported in their
   own table with their data and cause. Each is replaced by a fresh, labelled run, up to 10 per system
   and setting, placed at the end of that system's alternating order. The headline statistics use the
@@ -175,7 +182,7 @@ F4. The cost of the retypes is reported separately.
   32 batches the nearest-rank 99th percentile is the maximum batch, and the results file says so.
   The median of an even number of values is the mean of the two middle values.
 - **Reported across runs:** the median of run medians (the headline), the minimum and maximum run
-  median, the interquartile range (Q3 minus Q1, linear interpolation), and the median of run 99th
+  median, the interquartile range (Q3 minus Q1, linear interpolation, the R-7 method), and the median of run 99th
   percentiles, for each system and workload.
 - **Ratio:** the seL4 headline divided by the Linux headline, per workload, with a range from the
   lowest seL4 run median over the highest Linux run median to the highest seL4 run median over the
@@ -201,7 +208,8 @@ Above 5 times the same record adds a profile and the classification the plan req
 
 Each C2 results file contains, in addition to the plan's list: this file's commit SHA, the pager
 commit, the kernel configuration, the Linux image hash and kernel version, the contents of the
-transparent-huge-page and `fault_around_bytes` files, the load average and `Dirty` readings, the
+transparent-huge-page and `fault_around_bytes` files, the Linux kernel command line (`/proc/cmdline`)
+and the boot line that reports memory auto-initialisation (`init_on_alloc`), the load average and `Dirty` readings, the
 QEMU version and command, `CNTFRQ_EL0` per run, the host power, thermal and process output, per-run
 fault counts, and the raw batch data.
 

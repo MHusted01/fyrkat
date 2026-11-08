@@ -1,7 +1,7 @@
 # C1 method: IPC latency
 
 - **Status:** Approved by the owner on 2026-11-08 (decision 1, choices 1a to 1c), recorded in the
-  plan's Amendments, subject to the independent review recorded there. Frozen when merged to `main`.
+  plan's Amendments, subject to the independent review recorded there. Takes effect when merged to `main`. Edits after that and before the first run are ordinary, except one that loosens a criterion.
   No run of C1 has happened, pilot or otherwise.
 - **Plan:** [seL4 feasibility spike plan](../../../docs/research/sel4-spike-plan.md), experiment C1,
   approved at `46a90fa`.
@@ -51,9 +51,9 @@ The timed kernel is fixed here, because the harness depends on these options.
 | Fast path, printing | Defaults for a release build, recorded | |
 
 The results file records the full configuration file and lists every difference from the kernel that
-Stage B and A2 used. Whether the A2 matrix needs a row for the timing-channel option is an owner
-decision. This file does not decide it, and Stage C needs A2-final to be Pass or Conditional as the
-plan says.
+Stage B and A2 used. The owner decided on 2026-11-08 (choice 1b) that this kernel is a
+measurement-only configuration outside the A2 matrix. Stage C numbers are U and carry no assurance
+claim, and A2-final is taken on K2 as the plan says.
 
 **Placement check.** The kernel call that reports a thread's core, `seL4_DebugGetThreadAffinity`,
 exists only in debug SMP builds [Documented: `libsel4/include/api/syscall.xml`]. So placement is
@@ -124,7 +124,7 @@ Amendment after it.
 - **Time limit:** a run that exceeds 30 minutes of wall time is stopped, recorded as timed out, and
   its data is kept and reported.
 - **Resolution rule:** one counter tick must be under 1% of the batch duration, so a batch must last
-  at least 100 ticks (about 4.2 µs at 24 MHz). The harness flags any batch under 1,000 ticks as a
+  more than 100 ticks (about 4.2 µs at 24 MHz). The harness flags any batch under 1,000 ticks as a
   sign of a broken clock and stops the run.
 - **Stopped runs.** A run stopped for a broken clock or a timeout is kept and reported in its own
   table with its data and its cause. It does not count toward the 30. Each is replaced by a fresh
@@ -145,7 +145,7 @@ Amendment after it.
   measure.
 - **Reported across runs, per workload:** the median of the 30 run medians (the headline figure),
   the minimum and maximum run median, the interquartile range of the run medians (Q3 minus Q1, linear
-  interpolation), and the median of the 30 run 99th percentiles. The median of an even number of
+  interpolation, the R-7 method), and the median of the 30 run 99th percentiles. The median of an even number of
   values is the mean of the two middle values. Ratios are rounded to two significant figures for
   display only, and every test uses the unrounded value. Raw batch results are stored.
 - **Pass test:** the W1 headline figure and the W2 headline figure are each 1 µs or less, compared
@@ -206,9 +206,9 @@ command, and the raw batch data.
   published figure. The 850 cycles equals the Cortex-A57 sum above, at 1.9 GHz, about 0.45 µs
   [Inferred: the plan does not name its source]. The 3.4 GHz clock belongs to the x86-64 rows
   [Documented: the performance page]. The plan's sentence is context and not a criterion, so this
-  file does not rely on it. The owner may want it corrected by an Amendment (P2).
-- The three interpretations under [Criterion](#criterion).
-- The A2 question under [Kernel build](#kernel-build-for-c1-and-c2).
+  file does not rely on it. Corrected by Amendment P2, approved on 2026-11-08.
+- The three interpretations under Criterion: confirmed by the owner on 2026-11-08.
+- The A2 question under Kernel build: decided by choice 1b.
 
 ## Known limits
 

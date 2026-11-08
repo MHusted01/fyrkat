@@ -1,6 +1,6 @@
 # seL4 spike prerequisites
 
-- **Status:** Draft, prepared 2026-11-07 and revised after independent reviews. Nothing in this
+- **Status:** Prepared 2026-11-07 and revised after independent reviews. The owner's decisions of 2026-11-08 are in the plan's [Amendments](sel4-spike-plan.md#amendments), and they win where this file still says draft or pending. Nothing in this
   file has been installed, built or run.
 - **Plan:** [spike plan](sel4-spike-plan.md), approved at `46a90fa`. This file adds no criterion and
   changes none.
@@ -49,7 +49,7 @@ for the owner to fix before A1 starts, so that it is not interpreted after a fai
 many board files such as `AARCH64_bcm2711_verified.cmake` and `AARCH64_bcm2712_verified.cmake`, and
 `X64_verified.cmake`. The plan says K0 is a verified board. Choice 1c of the decision package
 recommends `AARCH64_verified.cmake`, fixed before A2a so that A2a cannot pick the file that suits its
-result. The owner confirms it.
+result. The owner confirmed it on 2026-11-08.
 
 ## Tool list
 
@@ -60,10 +60,10 @@ result. The owner confirms it.
 | CMake | seL4 build | seL4 asks for 3.16.0 or later [Documented: `CMakeLists.txt`] | 4.4.5 present. Whether seL4 17.0.0 configures under CMake 4 is **not tested** | No |
 | Ninja, `dtc` | seL4 build | To be frozen with `brew pin` and versions recorded (decision 7 of the decision package). No pin exists yet | 1.13.2 and 1.8.1 present | No |
 | `xmllint` | seL4 build [Documented: seL4 host-dependencies page] | System | Present | No |
-| libclang | `bindgen` in the `sel4-sys` crate [Documented: `crates/sel4/sys/Cargo.toml` lists `bindgen` 0.73.2 as a build dependency] | Not decided | `/Library/Developer/CommandLineTools/usr/lib/libclang.dylib` exists. Not tested with `bindgen` | No, if that library is used |
-| Other host packages named on seL4's host-dependencies page for Linux: `protobuf-compiler`, `xxd`, `u-boot-tools`, `ccache` | seL4 build | Not decided | Not checked. The page assumes a Linux host [Documented] | Probably, for any that are missing |
-| Rust `nightly-2026-08-21` if `v6.0.0` is chosen, otherwise `nightly-2026-10-28`, with `rust-src`, `llvm-tools-preview`, `rustc-dev`, and targets `aarch64-unknown-none`, `x86_64-unknown-none`, `aarch64-unknown-linux-musl` | A1, A4, A5, B, C | Date-pinned | **Absent.** Only stable 1.99.1, 1.88 and a default `stable` are installed | **Yes.** Pending in the handoff |
-| Python virtual environment with `sel4-deps` | seL4 build scripts | `sel4-deps==0.9.0` [Documented: PyPI]. Its 19 requirements need pins with hashes. `requires_python` is only `>=3`, and the host has Python 3.15.0, whose fit is **not tested** | **Absent** | **Yes**, a new environment and packages |
+| libclang | `bindgen` in the `sel4-sys` crate [Documented: `crates/sel4/sys/Cargo.toml` lists `bindgen` 0.72.1 at `v6.0.0` and 0.73.2 on `main`] | Not decided | `/Library/Developer/CommandLineTools/usr/lib/libclang.dylib` exists. Not tested with `bindgen` | No, if that library is used |
+| Other host packages named on seL4's host-dependencies page for Linux: `protobuf-compiler`, `xxd`, `u-boot-tools`, `ccache` | seL4 build | Not decided | `protoc` and `xxd` are present and `ccache` is absent. `u-boot-tools` was not checked [Measured: `command -v`, 2026-11-08]. The page assumes a Linux host [Documented] | Probably, for any that are missing |
+| Rust `nightly-2026-08-21` (P1, approved 2026-11-08) with `rust-src`, `llvm-tools-preview`, `rustc-dev`, and target `aarch64-unknown-none` (Tier 1; `x86_64-unknown-none` and `aarch64-unknown-linux-musl` are Tiers 2 and 3 and are not approved) | A1, A4, A5, B, C | Date-pinned | **Absent.** Only stable 1.99.1, 1.88 and a default `stable` are installed | Approved on 2026-11-08 (Tier 1) |
+| Python virtual environment with `sel4-deps` | seL4 build scripts | `sel4-deps==0.9.0` [Documented: PyPI]. Its 19 requirements need pins with hashes. `requires_python` is only `>=3`, and the host has Python 3.15.0, whose fit is **not tested** | **Absent** | Approved on 2026-11-08 (Tier 1). Pins need the full transitive set with hashes. `pyyaml` 6.0.3 and `pyfdt` 0.3 have no cp315 wheel and build from source [Inferred], so their build tools are pinned with hashes too and the build uses `--no-build-isolation` |
 | AArch64 cross GCC | seL4 kernel build | See decision 2 | **Absent** | **Yes** |
 | x86-64 cross GCC | X1 for A4 and A5-x86 | See decision 2 | **Absent.** On macOS seL4's `gcc.cmake` looks for `x86_64-linux-gnu-` and `x86_64-unknown-linux-gnu-` compilers [Documented: `gcc.cmake`, lines 90 to 101] | **Yes** |
 | `sel4-kernel-loader` and `sel4-kernel-loader-add-payload` | A4 comparison, and the upstream boot path | Built from the rust-sel4 pin | Not built | Built by the spike. Covered by the owner's decision on rust-sel4 and the nightly, once given |
@@ -111,8 +111,8 @@ on macOS without an extra linker is **not tested**.
 - **The nightly policy.** `docs/standards/toolchain.md` allows a date-pinned nightly "for analysis
   tools", installed on demand, and never for a shipped artefact. Spike code is never shipped. The
   policy does not cover this use by name, and the plan's Consequences table says that "User space
-  requires nightly Rust" reopens the toolchain policy [Documented: both files]. The owner should
-  confirm that the installation is covered.
+  requires nightly Rust" reopens the toolchain policy [Documented: both files]. The owner approved the
+  rule on 2026-11-08, and `toolchain.md` now states it.
 - **Where fetched content goes.** The plan puts seL4 in a gitignored directory. This work adds
   `.gitignore` entries for `/spikes/sel4-feasibility/external/` (seL4, `seL4_tools`, `sel4test`,
   rust-sel4 checkouts and the Linux image), `/spikes/sel4-feasibility/build/` and
@@ -132,15 +132,16 @@ on macOS without an extra linker is **not tested**.
 
 | Item | State |
 |---|---|
-| C1 and C2 method files | Drafted: [C1](../../spikes/sel4-feasibility/results/C1-method.md), [C2](../../spikes/sel4-feasibility/results/C2-method.md). Need owner review. The C1 published baseline is fixed in the file |
-| rust-sel4 pin | Two candidates above. The decision package recommends `v6.0.0` and the owner chooses |
-| Nightly toolchain, cross GCC, Python environment, Linux image | Not installed. Need owner approval |
-| Spike workspace manifest, lock file, toolchain file and spike-local `deny.toml` | Not created. Need owner approval |
-| Owner's authorization to execute | **Not given** |
+| C1 and C2 method files | Drafted: [C1](../../spikes/sel4-feasibility/results/C1-method.md), [C2](../../spikes/sel4-feasibility/results/C2-method.md). Approved by the owner on 2026-11-08. The C1 published baseline is fixed in the file |
+| rust-sel4 pin | `v6.0.0`, approved as P1 on 2026-11-08. `f631577` stays a documented alternative |
+| Nightly toolchain, cross GCC, Python environment | Not installed. Tier 1 approved on 2026-11-08 |
+| Linux image | Not downloaded. Tier 3 is not approved |
+| Spike workspace manifest, lock file, toolchain file and spike-local `deny.toml` | Not created. Approved on 2026-11-08 |
+| Owner's authorization to execute | Given conditionally on 2026-11-08 (decision 8). See the plan's Amendments |
 
 ## Decisions for the owner
 
-The eight outstanding decisions, with a recommendation and the evidence for each, are in the
+The eight decisions (answered on 2026-11-08, recorded in the plan's Amendments), with a recommendation and the evidence for each, are in the
 [S1 decision package](s1-decision-package.md). That file replaces the list that stood here.
 
 ## Reproducing the queries

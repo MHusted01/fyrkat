@@ -5,7 +5,7 @@
   that needs the owner's approval.
 - **Purpose:** fix, before anything is built, what an optional comparator must show and how its
   result is judged, so that the judging cannot be bent by the result.
-- **Adoption:** these criteria **add rules to Stage D**, which the plan treats as fixed. They take
+- **Adoption:** the owner deferred this decision (P3) to Stage D on 2026-11-08. These criteria **add rules to Stage D**, which the plan treats as fixed. They take
   effect only if the owner approves them and records an Amendment (item P3 of the
   [decision package](s1-decision-package.md)). They add no criterion to A1 to C3.
 - **Scope beyond the plan:** the plan describes "a minimal Rust kernel slice". This draft applies the
