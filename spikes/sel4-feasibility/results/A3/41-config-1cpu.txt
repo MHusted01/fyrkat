@@ -1,0 +1,36 @@
+# Configuration of the sel4test build build-1cpu, read from its build directory.
+# Sources: CMakeCache.txt, kernel/gen_config/kernel/gen_config.json, qemu-arm-virt.dtb (via dtc).
+## CMakeCache.txt (selected keys)
+CMAKE_BUILD_TYPE:STRING=Debug
+KernelPlatform:STRING=qemu-arm-virt
+KernelSel4Arch:STRING=aarch64
+KernelArmHypervisorSupport:BOOL=OFF
+KernelMaxNumNodes:STRING=1
+SMP:BOOL=FALSE
+NUM_NODES:STRING=1
+KernelIsMCS:BOOL=OFF
+KernelDebugBuild:BOOL=ON
+KernelVerificationBuild:BOOL=OFF
+KernelArmCPU:INTERNAL=cortex-a53
+QEMU_GIC_VERSION:UNINITIALIZED=3
+## kernel gen_config.json (selected keys)
+CONFIG_MAX_NUM_NODES = 1
+CONFIG_ENABLE_SMP_SUPPORT = False
+CONFIG_ARM_HYPERVISOR_SUPPORT = False
+CONFIG_KERNEL_MCS = False
+CONFIG_DEBUG_BUILD = True
+CONFIG_VERIFICATION_BUILD = False
+CONFIG_PLAT_QEMU_ARM_VIRT = True
+CONFIG_ARM_GIC_V3_SUPPORT = True
+CONFIG_ARM_CORTEX_A53 = True
+CONFIG_ARM_CORTEX_A57 = False
+## device tree dumped at configure time (qemu virt, secure=off)
+cpu nodes: 1
+	psci {
+		migrate = <0xc4000005>;
+		cpu_on = <0xc4000003>;
+		cpu_off = <0x84000002>;
+		cpu_suspend = <0xc4000001>;
+		method = "hvc";
+		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
+	};

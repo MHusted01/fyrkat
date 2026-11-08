@@ -1,0 +1,9 @@
+# Homebrew drift check, from the full unredacted inventories (kept locally)
+formulae before: 384   after: 386
+added (2):
+  + aarch64-elf-binutils 2.47
+  + aarch64-elf-gcc 16.2.0
+removed or changed (0):
+after minus the added lines equals before: True
+SHA-256 of the full sorted 'before' list: 7d472e3d6de42ccee61475a9bda1647df4f508d1009db4c861e67d21df026a79
+SHA-256 of the full sorted 'after' list:  58168eca0de89d39d7095636260102397f7a147d832cafcc0608b262b58cca8a

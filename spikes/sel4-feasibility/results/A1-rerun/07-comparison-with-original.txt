@@ -1,0 +1,30 @@
+# compare-a1-runs.py, 2026-11-08T14:28:17Z
+# Command: compare-a1-runs.py --orig external/a1-original-build --new build --rerun1-image <the rerun's first image>
+# orig = the preserved original A1 run 2 (identical to run 1 except image.elf); new = the rerun's second build.
+## outputs: original run against the rerun (second build)
+kernel.elf  original 95891911d0bed9e4  rerun 95891911d0bed9e4  same
+sel4-kernel-loader.elf  original 8be9d6df5e569b1c  rerun 8be9d6df5e569b1c  same
+s1-root-task.elf  original a7c6be9afdefeab6  rerun 64fcc25c933418d0  DIFFERENT
+image.elf  original bb9bb79ef77026c2  rerun 388e120845f44049  DIFFERENT
+image.elf  rerun first build cf6a0d6795ad3602  rerun second build 388e120845f44049
+## root task
+section sizes that differ (bytes, decimal): .strtab 17274 -> 17287
+loaded sections whose bytes differ: .rodata (763 bytes), .text (18 bytes)
+instruction words: 4795 and 4795; differing: 8
+all differing instructions are address computations (adr/adrp/add): yes (add, adr)
+original: the root task embeds the sel4-sys build-script directory name ['3d413dfeda2b8c15']
+rerun: the root task embeds the sel4-sys build-script directory name ['315641f36d34bbc3']
+the embedded name differs between the runs: yes
+## boot image
+add-payload tool identical in both runs: yes
+control: add-payload on the original inputs reproduces the original image: yes
+kernel.dtb (7916 bytes) sits in the original image at offset 2389396 and in the rerun image at 2389396
+original root-task loaded segment (ELF file offset 0x0, 12568 bytes) sits in the image at 2357632
+original root-task loaded segment (ELF file offset 0x3118, 19180 bytes) sits in the image at 2370200
+original root-task loaded segment (ELF file offset 0x7c08, 16 bytes) sits in the image at 2389380
+original image against (original inputs + new root task): 782 bytes differ; every one is in a loaded segment of the root task and placed (.rodata: 763, .text: 18, ELF header e_shoff: 1): yes
+(original inputs + new root task) against the rerun image: 39 bytes differ; exactly the kernel.dtb bytes that differ: yes; device-tree properties that differ: kaslr-seed, rng-seed
+rerun first build against rerun second build: 40 bytes differ; all inside kernel.dtb: yes; device-tree properties that differ: kaslr-seed, rng-seed
+
+all differences accounted for: yes
+exit=0

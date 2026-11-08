@@ -18,3 +18,10 @@ target/
 .idea/
 .vscode/
 *.swp
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Unredacted raw evidence, kept locally only (see spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md)
+/spikes/sel4-feasibility/results-raw/

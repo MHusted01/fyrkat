@@ -1,0 +1,7 @@
+# The nightly the owner approved on 2026-11-08 (P1). It matches rust-sel4 v6.0.0's own pin.
+# Features that force nightly are recorded in the A1 results.
+[toolchain]
+channel = "nightly-2026-08-21"
+profile = "minimal"
+components = ["rust-src", "llvm-tools-preview", "rustc-dev"]
+targets = ["aarch64-unknown-none"]

@@ -1,0 +1,2 @@
+seL4: 62e345c240a15671484530b4e6e069ce266c28d7 == pin OK
+rust-sel4: c819c27b076130cba9821c4555f23773e4b0bffd == pin OK

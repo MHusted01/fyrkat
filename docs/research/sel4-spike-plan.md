@@ -847,3 +847,101 @@ is changed.**
 | C2 untyped reset | A retype from an untyped with no children resets it, and boot untypeds start with their free index at the end, so the first retype resets and clears the whole untyped [Documented: seL4 `boot.c` and `untyped.c`]. The pager does a throwaway retype before every timed phase, F1 included | Removes a hidden cost from the first timed batch |
 | Rust builds | Builds in the rust-sel4 checkout set `RUSTUP_TOOLCHAIN=nightly-2026-08-21` and `RUSTUP_AUTO_INSTALL=0`, so that rustup does not install the checkout's extra targets (Tier 2 and 3 are not approved) | Enforces the Tier 1 limit |
 | Homebrew | The install sets `HOMEBREW_NO_INSTALL_UPGRADE=1`, which only stops the named formula being upgraded. The control is pin-and-record: `brew list --versions` is compared before and after, and a dependency upgrade that cannot be prevented is recorded and reported | Enforces decision 7 |
+
+### 2026-11-08: Owner confirmation of the A1 and A3 outcomes
+
+Recorded after the experiments ran. It changes **no criterion** and relaxes nothing. The source is the
+owner's message of 2026-11-08 in the working session.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A1 | Accepted as **Pass**, label U, with its documented reproducibility limitation (two clean builds on one machine and path, and a boot image that differs only by QEMU's random device-tree seeds). Record: [A1](../../spikes/sel4-feasibility/results/A1.md) | The A1 outcome stands |
+| A3 | **Confirmed as Fail** under the approved plan, on the reported evidence: unmodified non-hypervisor seL4 does not boot under HVF with 1 or 4 vCPUs on the Apple M2 Pro because the guest reports 8-bit ASIDs. Record: [A3](../../spikes/sel4-feasibility/results/A3.md) | The A3 outcome stands. The Consequences row applies: it reopens the ADR 0002 architecture question, Stage C does not run, and work stops |
+| Meaning of the A3 Fail | It reopens the architecture question in ADR 0002 (native execution on the Mac). **It does not automatically reject seL4 as Fyrkat's kernel candidate** | ADR 0002 and ADR 0004 are not edited by this entry |
+| Push | The owner authorized pushing `spike/s1-workspace` and opening a pull request, after a focused independent review. **Merging is not authorized** | Preserves the evidence |
+| Tooling deviations | To be documented as deviations requiring review. The message is **not retroactive blanket approval**. Record: [deviations](../../spikes/sel4-feasibility/results/deviations.md) | Nothing in that record is approved |
+| `cargo deny` advisory | To be investigated for the dependency path and impact without weakening the policy or introducing a replacement | Path recorded in [A1 evidence 19](../../spikes/sel4-feasibility/results/A1/19-unsafe-libyaml-path.txt) |
+| Stop condition | **Stays in force.** A4, A2a, A5, kernel modifications and additional tool installations are not authorized | The next step is an architecture decision by the owner |
+
+### 2026-11-08: Record of earlier owner answers, and corrections after the evidence review
+
+Recorded before the pull request for the A1 and A3 results. **No criterion is changed.** An independent
+review of the results found that some owner answers given in the working session were in no Amendment, and
+that parts of the A3 record were wrong. This entry records them. It does not edit the entries above.
+
+| Item | Record | Effect |
+|---|---|---|
+| Python environment | During A1 the owner approved Homebrew Python 3.12.16 for the spike venv, and `setuptools` and `wheel` installed there only, pinned by version and SHA-256, in answer to a question that also proposed building `pyfdt` with `--no-build-isolation` (the build method was the agent's proposal). `packaging` was not named: it is `wheel`'s own dependency | Tier 1 detail. `packaging` is listed as a deviation |
+| `protobuf` | During A3 the owner conditionally approved `protobuf` 7.36.2 in the spike venv only, with exact version and SHA-256 pinning, **only if** no compatible pinned protoc existed on Apple Silicon without Rosetta or a system install, and **only if** the override was isolated to nanopb. The second condition held: no other consumer imports `protobuf`. The first was **not tested as written**: the agent built protoc 3.20.3 locally from a pinned commit, a new tool the owner has not individually approved, and whether that counts as a practical compatible protoc is for the owner. **The override was not used** | The `sel4-deps` pin is intact. protoc 3.20.3 is listed as a deviation |
+| Clarification | The earlier row "Nothing in that record is approved", for the deviations file, means that file is not itself an approval. It lists rows that record specific owner answers (marked owner-approved there) beside rows that are not approved | Wording only |
+| Correction to the A3 record | The first A3 record said the kernel failed the ASID check under HVF "with 1 and 4 vCPUs". The "4 vCPU" image was a single-node kernel run with QEMU `-smp 4`. A repeat with a real 4-node SMP kernel stops earlier, in the elfloader (`HVC is not supported for PSCI`), under both HVF and TCG, so its ASID check was not reached. The 1-vCPU measurement stands. It was also wrongly recorded that sel4test had only started under TCG: it passed (124 tests, 59 disabled) | The 1-vCPU measurement stands, and **in the agent's assessment the A3 outcome is unchanged**. The owner's confirmation of A3 was given before this correction, and **is requested again** |
+| Correction to the cpio deviation | A custom cpio stand-in was written on the wrong belief that GNU cpio was unavailable. GNU cpio 2.15 was already installed. The stand-in was removed and the builds repeated with GNU cpio | Fewer unapproved tools |
+
+### 2026-11-08: Privacy review, and replacement of the published spike branch
+
+Recorded with the sanitized replacement. **No criterion, outcome or method is changed.** The source is the
+owner's messages of 2026-11-08 in the working session.
+
+| Item | Record | Effect |
+|---|---|---|
+| Finding | The A1 and A3 raw logs were pushed (pull request 7, branch `spike/s1-workspace`) before a privacy review. They held the author's local home path and user name (about 720 times in 26 files), the full Homebrew inventory and three unrelated third-party tap names. No email address, token, key, host name or binary was found. `main` was never affected | Exposure in the old branch only |
+| Owner decision | The owner chose to replace the published history, **narrowly**: only `spike/s1-workspace` and pull request 7, not `main` or any other branch, and no force-push of a protected branch | Authorization, not a blanket one |
+| What was done | Pull request 7 was edited to remove the path, closed with an explanation, and its remote branch deleted. A replacement branch, `spike/s1-workspace-sanitized`, was built from `main` in three commits whose files are byte-identical to the reviewed tree, with the logs replaced by sanitized copies. The raw originals are kept only locally, outside Git. A new pull request was opened with a sanitized description | See [EVIDENCE-PRIVACY](../../spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md) |
+| Evidence integrity | `verify-evidence.py` re-checks 29 conclusions from the public copies alone and passed from a clean checkout. A1 and A3 outcomes, measurements and methodology are unchanged | The A1 Pass and A3 Fail stand as recorded |
+| **Remaining exposure** | The original commits may still be retrievable through GitHub's retained references for pull request 7, by commit SHA, and from existing clones or forks. Pull request 7's edit history may show its original text. **This is not a claim of complete erasure** | Removing retained references needs a GitHub Support request, which is the owner's decision |
+| Stop condition | Unchanged. A4, A2a, A5, kernel modifications, further tool installs and any architecture change remain unauthorized | |
+
+### 2026-11-08: Owner re-confirmation of A3, and the owner's direction on ADR 0002
+
+Recorded after the correction entry above and after PR 8 reached `24634be`. It changes **no criterion**,
+relaxes nothing and edits no ADR. The source is the owner's message of 2026-11-08 in the working session.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| A3 | **Re-confirmed as Fail (label U)** for the tested configuration: unmodified non-hypervisor seL4 17.0.0 under HVF on the owner's Apple M2 Pro, 1 vCPU. The owner's condition: the mislabeled "4 vCPU" image **must not be presented as valid SMP evidence** (it was a single-node kernel run with QEMU `-smp 4`; a real 4-node SMP kernel stops earlier, in the elfloader, under HVF and TCG) | Supersedes the earlier "requested again" status. The A3 outcome stands as recorded in [A3](../../spikes/sel4-feasibility/results/A3.md) |
+| ADR 0002 direction | **AArch64-first is retained as a provisional direction**, and **seL4-first as a working hypothesis**. QEMU TCG is acceptable for early development and testing, but **must not be represented as equivalent to hardware acceleration or to physical hardware validation** | An owner decision recorded here. **ADR 0002 and ADR 0004 are not edited, and neither is Accepted.** ADR 0002 stays Provisional and ADR 0004 stays Proposed. The A3 Fail has not been resolved into an ADR change; any edit to either ADR needs its own owner-approved change |
+| Push | The owner authorized pushing `24634be` alone to PR 8's branch. That was done, and the three required checks passed on it | Authorization used |
+| Review and merge | The owner authorized one focused independent review of PR 8, fixes to material findings within PR 8's scope, and a **conditional** merge of PR 8: only if the review explicitly returns MERGE-READY, all required checks pass on the final head, the evidence verifier passes, and no unresolved material security or correctness finding remains. If any condition fails, nothing is merged | Conditional authorization. Merging is not otherwise authorized |
+| Stop condition | **Stays in force.** A2a, A4, A5, the comparator, new tool installations, kernel modifications and any criterion change are not authorized. S1 execution does not resume automatically after the merge | The next experiment needs its own authorization |
+| PR 7 | No GitHub Support request at this time | Retained references stay as recorded in the privacy entry above |
+
+### 2026-11-08: Owner rulings on the independent review of pull request 8
+
+Recorded after the independent review of PR 8 returned NOT MERGE-READY. **No criterion is changed and no
+outcome is changed.** The finding numbers (F1 to F18) are the review's. The source is the owner's message of
+2026-11-08 in the working session.
+
+| Item | Owner ruling | Effect |
+|---|---|---|
+| F1: decision rule 2 | **Decision rule 2 applies.** The tested HVF-specific configuration fails the approved A3 requirement, and passing it would need a prohibited Class 3 kernel change under the currently available options. The ruling is **not** generalized into a rejection of seL4 on TCG or on other hardware. seL4-first and AArch64-first are retained only as **provisional, broader hypotheses**, subject to the reopened architecture decision | Resolves the conflict between the Consequences row, the A3 clause ("does not falsify the hypothesis alone") and decision rule 2, which the A3 record had settled silently. The A3 record now states it. ADR 0002 stays Provisional and ADR 0004 stays Proposed. No ADR is edited |
+| F2: six `Cargo.lock` differences | **Not approved.** Enumerate them: approved against resolved versions, dependency paths, reasons, advisories, and whether restoring the approved versions is feasible. **Preserve the original A1 lockfile and results** until the owner approves a resolution. A read-only investigation only: no A1 re-run, no regeneration of dependencies, no change to the lockfile | The investigation is recorded as [deviations D13](../../spikes/sel4-feasibility/results/deviations.md). The spike `Cargo.lock` and the A1 results are unchanged. **F2 is unresolved, and PR 8 is not to be merged while it is** |
+| F7: nightly Rust | The owner **acknowledges that A1 triggered** the pre-registered consequence "User space requires nightly Rust: reopens the toolchain policy". The existing `nightly-2026-08-21` approval stays valid for the isolated S1 experiment. It **does not establish a permanent Fyrkat-wide nightly policy** | The trigger is recorded in A1. **The long-term toolchain decision is unresolved** and is not made here |
+| F10: `unwrap` and `assert_eq!` | A **one-time exception** for the three existing `unwrap()` calls and one `assert_eq!` in the experimental A1 root task (`crates/root-task/src/main.rs`, lines 22, 30, 31 and 62). Acceptable because the code is disposable, isolated spike code. **It does not apply to production kernel or userspace code, or to any future experiment** | Recorded as deviation D11. AGENTS.md is unchanged |
+| Documentation corrections | Authorized within PR 8's existing scope: F1, F3, F4, F5, F7, F8, F9 and F10, including sanitized configuration excerpts for claims the published evidence could not verify, and the lower-severity sanitizer and verifier fixes without changing experimental results. F3 must describe the branch-history replacement and the continued accessibility of the original commits accurately, and must not claim erasure. F5 must make the verifier check configuration contents | Done in PR 8 and listed in its description. No experimental result, lockfile or recorded outcome is changed |
+| Push, review, merge | Committing and pushing the approved corrections, including `05c40b2`, to PR 8 is authorized, with signing, DCO, privacy and CI requirements. A focused independent **delta** review follows. The conditional merge authorization applies **only if every material finding, F2 included, is resolved and the reviewer explicitly returns MERGE-READY** | Merge is not authorized while F2 is unresolved |
+| Stop condition | **Stays in force.** A2a, A4, A5, the comparator, new tool installations and kernel changes are not authorized | |
+
+### 2026-11-08: Correction to the provenance statement in the privacy entry
+
+Recorded after the delta review of pull request 8. **No criterion, outcome or method is changed.** The entry
+"Privacy review, and replacement of the published spike branch" says the replacement commits' files are
+"byte-identical to the reviewed tree". That is imprecise. They are identical to a local, unpublished commit
+(`81a2ca7`) that had no independent review, and they differ from the reviewed but unsanitized `c99300d`
+(36 files, including the sanitizer and verifier scripts, which `c99300d` did not have). The independent review of
+pull request 8 then examined the sanitized files themselves. The entry above is not edited: Amendments are
+append-only.
+
+### 2026-11-08: Owner decisions on F2, F13 to F16 and F18, and the result of the A1 rerun
+
+Recorded after the delta review of pull request 8 and after the rerun. **No criterion is changed and no earlier
+outcome is changed.** The source of every row except "Rerun result" is the owner's message of 2026-11-08 in the working session. "Rerun result" is the agent's measurement, recorded for the owner's review, and is not an owner decision or an acceptance.
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| F2 | **Option 2:** restore the six `Cargo.lock` dependencies to the versions approved in rust-sel4 `v6.0.0`. The four offline `cargo update --precise` operations are authorized, provided they affect only the spike lock file and add no other dependency change. If an approved version cannot be restored without other changes, stop and report | Done. The four operations changed only `spikes/sel4-feasibility/Cargo.lock`: four downgrades and two removals, and every registry package of the result is, with the same version and checksum, in the approved lock. Deviation D13 is resolved |
+| A1 rerun | **One narrowly scoped rerun** with the corrected lock, the same methodology and the same acceptance criteria. Preserve the original A1 evidence and hashes unchanged. Store the new run as a separate, clearly identified verification result. Compare the kernel, loader, root task and boot image with the original, accounting for the QEMU device-tree randomness. If the root task or another relevant output changes, document the difference and its implications and do not silently replace the original A1 result | Done as a separate result: [A1 rerun](../../spikes/sel4-feasibility/results/A1-rerun.md). Two clean builds were made, because the criterion compares two builds |
+| Rerun result (the agent's measurement, **not an owner decision**) | *Not an owner decision; recorded for the owner's review. Source: [A1 rerun](../../spikes/sel4-feasibility/results/A1-rerun.md).* The acceptance criterion holds again (label U) in the agent's reading. The kernel and loader are identical to the original. **The root task differs** (`a7c6be9a…` to `64fcc25c…`): 8 of 4,795 instruction words differ, all address computations [Measured]. The cause is a hashed Cargo build-script directory name embedded in the binary, which depends on the dependency set [Inferred: Cargo's behaviour, not tested in isolation]. The image differs only by the root-task bytes and the device-tree seeds, and every differing byte is accounted for [Measured] | The original A1 result and evidence stand unchanged, and the owner has not yet accepted or rejected the rerun. A root-task hash must name its lock. No behavioural test exists, because the A1 image has never booted |
+| F13 to F16 | Approved as documentation-only corrections, provided they change no experimental outcome, acceptance criterion or architecture decision | None did |
+| F18 | Retain the original raw evidence and the local backup. Implement a narrowly scoped **local** safeguard against accidentally pushing the unsanitized branch or its original commits. Do not delete the backup, rewrite history, or modify global Git configuration | Done as deviation D16: a local, untracked pre-push hook behind a local `core.hooksPath`. The backup, the branch and the history are untouched, and global Git configuration is unchanged |
+| Next steps | After the rerun: run the complete repository checks and the evidence verifier, update the evidence and deviations documentation, request a final independent delta review, push the reviewed corrections to PR 8 and verify CI on the final remote head. **Merge PR 8 only if** the reviewer explicitly returns MERGE-READY, all required checks pass, the evidence verifier passes, and no material finding remains. If any condition fails, stop and report. After merging, report the final `main` commit and stop for the next architectural decision | The conditional merge authorization from the earlier entry stands under these conditions |
+| Stop condition | **Stays in force** for everything else: A2a, A4, A5, the comparator, new tool installations and kernel changes are not authorized | |

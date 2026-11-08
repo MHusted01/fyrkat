@@ -1,0 +1,5 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel hvf -cpu host -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel build/image.elf
+qemu-system-aarch64: -accel hvf: Nested virtualization not supported on this system.
+qemu-system-aarch64: HVF does not support GICv2 emulation
+
+[boot-image] marker 'TEST_PASS' NOT seen after 0.02s (accel=hvf cpu=host smp=1 gic=2 virt=True)
