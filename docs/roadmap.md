@@ -55,7 +55,7 @@ Exit criteria:
 
 **Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1, E2 and E3 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
-A3, A4 and the A2a interpretation conditionally on 2026-11-08.
+A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later stop that day held A2a and A4, and they have not been authorized since.
 
 - **A1** ran and passed (label U), and a rerun with the approved dependency lock also passed (label U). The owner
   accepted the rerun **limited to build reproducibility**. No runtime validation exists: the A1 image has never
@@ -77,9 +77,10 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08.
   configuration. **Pass, label U, functional only: 3 of 3 boots** ([E2](../spikes/sel4-feasibility/results/E2.md)), **finally accepted by the owner** (after an independent review) as limited to its demonstrated
   functional and capability-isolation probes; it does not establish verified kernel-generated fault delivery. It is a precursor, not Stage B evidence (A2a has not run), and it does not test revocation, rights amplification, hardware or assurance.
 - **E3 (owner-authorized, 2026-11-09):** capability revocation on the same configuration: after `seL4_CNode_Revoke` on the root task's endpoint capability, the mints of it and their copies in two tasks' CNodes are gone, while the ancestor, an unrelated control and a new mint work.
-  **The agent's reading is Pass, label U, functional only: 3 of 3 boots, six mutants fail as they should** ([E3](../spikes/sel4-feasibility/results/E3.md)). **Provisionally accepted by the owner**, limited to the tested revocation behaviour under QEMU TCG, pending independent review (a first review found defects, since fixed and the evidence rerun; a second review of the final state returned MERGE-READY; the owner's final acceptance is pending).
+  **The agent's reading is Pass, label U, functional only: 3 of 3 boots, six mutants fail as they should** ([E3](../spikes/sel4-feasibility/results/E3.md)). **Finally accepted by the owner** (2026-11-09), limited to the tested capability-revocation topology under single-vCPU QEMU TCG with the debug kernel, after two independent reviews (NOT MERGE-READY, then MERGE-READY on the evidence); the verifier changes made after the second review are not reviewed, and E3.md lists the forged-log gaps that remain. D21 to D23 approved.
   A call through a revoked slot returns the same error as one through a never-populated slot, so the error code is not evidence. It does not test revoking a badged child, an untyped, a deeper chain, or any other object type, and it is not Stage B evidence.
-- **Next:** the E3 PR, then the owner's final acceptance of E3. No further experiment is authorized.
+- **A2a (owner-authorized, 2026-11-09):** ran, **outcome Investigate** by the plan's definition (the P5 cell of K3 cannot be classified yet and no required Stage B test has run); the K1 and K2 cells for P1 to P4 are class B as pre-registered ([A2a](../spikes/sel4-feasibility/results/A2a.md)). Build success, configuration similarity and formal-verification applicability are kept apart there. Findings: K0, the only verified AArch64 configuration, is hypervisor-mode, so the hypervisor-enabled kernel of E1 to E3 is nearer to it than K1 and K2 in that option; K1, K2 and the E1H kernel are debug builds against K0's release build; the public documentation names no version.
+- **Next:** the owner's decision on the configuration and loader question before Stage B, and on the [A5 design proposal](research/a5-design-proposal.md). **Stage B, A4, A5 and the comparator are not authorized**; A5 is held for a reviewed design and is the likeliest falsifier.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 

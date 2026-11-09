@@ -6,103 +6,95 @@ It records approvals and grants none. Owner decisions are in the last entries of
 
 ## Snapshot
 
-- **Date:** 2026-11-09. `origin/main` is `59dc7cb` (PR 12, E2, squash-merged; before it `c90f0e6` E1, `09f5dd5`, `07c35e2`). [Measured: `git`]
-- **Checked-out branch:** `spike/e3-revocation`, created from `origin/main` (`59dc7cb`) for E3. HEAD is still `59dc7cb`: **all E3 work is uncommitted**, together with the earlier
-  edit of this file. Local `main` is stale: use `origin/main`. Stale local branches still exist: `spike/e1-route-ii` (at `22aae47`) and `spike/e2-ipc-isolation` (at `d2250ca`) among them. Each equals its remote branch and is tree-identical to its squash-merge commit [Measured, 2026-11-09]; `local-only/s1-workspace-unsanitized` has unique commits and is retained by the owner's instruction.
+- **Date:** 2026-11-09. `origin/main` is `44d1d70` (PR 13, E3, squash-merged; before it `59dc7cb` E2, `c90f0e6` E1). CI on `44d1d70` passed. [Measured: `git`, `gh`]
+- **Checked-out branch:** `spike/a2a-assurance`, from `main`, **nothing committed, nothing pushed**. It holds the A2a work and the E3 final-acceptance records, which the owner asked to ride with the A2a PR and not become a documentation-only PR (see "Uncommitted changes"). The owner asked for a report before any push or PR.
 - **Open PR:** only #9 (Dependabot, `protobuf` 3.20.3 to 5.29.6). **Not to be merged; its alerts are not to be dismissed.** [Measured: `gh pr list`]
 - **ADRs:** 0001 Part A Provisional, Part B Withdrawn; 0002 and 0003 Provisional; 0004 Proposed. **None is Accepted.** [Measured: Status lines]
 
 ## Milestone status
 
 - **M0:** complete (owner, 2026-11-07). **S1** (exit: the owner decides ADR 0004; M1 cannot be finalized before it): in progress.
-- A1 Pass (U); A1 rerun Pass (U), accepted for build reproducibility only. A3 Fail (U): unmodified seL4 17.0.0 under HVF on one M2 Pro (rule 2 applies to
-  that HVF hypothesis only). A2a, A4, A5: not started.
-- **E1 (Route II): merged, Pass (U), functional only.** A Rust root task boots on a hypervisor-enabled seL4 under QEMU TCG, 3 of 3 boots.
-- **E2: merged, Pass (U), functional only, finally accepted by the owner** (2026-11-09) as limited to its demonstrated functional and capability-isolation probes. It does **not** establish
-  kernel-generated fault delivery (see the forged-fault-message limitation in [E2](../../spikes/sel4-feasibility/results/E2.md)). A precursor, **not** Stage B, P1 or P2 evidence (A2a has not run).
-- **E3 (capability revocation): run, Pass (U), functional only, provisionally accepted by the owner** (2026-11-09) as limited to the tested revocation behaviour under QEMU TCG, **pending independent review**. D21 and D22 approved for E3 only. Record: [E3](../../spikes/sel4-feasibility/results/E3.md).
-  A first review returned NOT MERGE-READY; its findings were fixed and the evidence rerun; a second review of the final state returned **MERGE-READY** (no material finding; low and editorial points noted in E3.md). The owner's final acceptance is pending.
+- **Stage A:** A1 Pass (U); A1 rerun Pass (U), accepted for build reproducibility only. A3 Fail (U): unmodified seL4 17.0.0 under HVF on one M2 Pro (rule 2 applies to that HVF hypothesis only).
+  **A2a: run (2026-11-09), outcome Investigate** by the plan's definition; K1 and K2 cells for P1 to P4 are class B as pre-registered; the P5 cell of K3 cannot be classified. Record: [A2a](../../spikes/sel4-feasibility/results/A2a.md). **A4, A5: not started.**
+- **E1, E2, E3: merged, Pass (U), functional only, on the experiment-only E1-H kernel (hypervisor support on), which is not a row of the assurance matrix.** E2 and E3 are finally accepted (E3: limited to the tested revocation topology under single-vCPU QEMU TCG with the debug kernel; D21 to D23 approved).
+  They are precursors, **not** Stage B, P1, P2 or P3 evidence. E3 limits that must not be dropped: the verifier was tightened **after** the second review and that was **not** independently reviewed; some forged-log gaps in `verify_e3.py` remain; the `SAFETY` comment on `static mut FREE_PAGE_PLACEHOLDER` in `e3_spawn.rs` is inaccurate. Not production-ready.
 
-## Completed since the last handoff
+## A2a in short (the agent's reading; the record has the detail and the limits)
 
-- **E3 built, run and tested locally; nothing committed, pushed or opened.** Branch `spike/e3-revocation` from `origin/main`. Code is in the existing `e2-task` and `e2-root-task` crates as new binaries
-  (`e3_task`, `e3_root_task`), found by Cargo's automatic discovery, so **`Cargo.toml` and `Cargo.lock` are unchanged** (D21); `build-e3.sh`; `verify_e3.py` and `sanitize-run.py` (D22); evidence in `results/E3/`.
-- **What E3 shows** [Measured, emulator]: a root task builds two identical tasks, each with a badged mint of its endpoint capability `P`, a copy of that mint, and a mint of an unrelated endpoint `Q`, and
-  no capability to its own CNode. All are shown populated (a root-side `Copy` succeeds) and usable (the root task receives the call with the kernel-attached badge). The root task calls `Revoke` on `P`.
-  Afterwards the mints of `P` and their copies are gone (root-side `Copy` refused with `FailedLookup`; the tasks' calls refused with label 2; the kernel logs a null-cap line each; nothing reached the root
-  task through them), and `P`, the mints of `Q`, and a new mint of `P` made after the revoke all work. 3 of 3 boots.
-- **Six mutants fail as they should** (the evidence kernel, loader and task binary, byte for byte; only the root task differs): no revoke, a revoke of `Q`, a revoke of too much (the control probe fails), a removal from task 1 only (task 2's probe fails) are stopped by the root task's probes;
-  a no-op without two probes is stopped by a call reaching the root task; a root task that answers the call is stopped by the task's own refusal check.
-- **Error behaviour** (required item 8): a call through a revoked slot returns label 2, **the same as a never-populated slot**; the copy error is `FailedLookup` for both. The record does not rely on the codes.
-- **Limits, stated in E3.md:** one revoke topology (retype-original unbadged `P`, badged mints and a same-badge copy); the two tasks are symmetric (no server/client difference); slots 1 and 2 share a badge;
-  the probe is a `Copy`; no revoke of a badged child, untyped, deeper chain, blocked thread or other object type; debug kernel, one vCPU, TCG only.
-- **The first independent review** (`reviewer`, fresh context) returned NOT MERGE-READY. It confirmed the kernel semantics and reproduced the evidence, and found: **E3's binaries broke E2's build recipe** (`build-e2.sh` named no root-task binary; fixed, D23, and my
-  earlier "E2 regression" check had named the binary itself, so it had not shown this); three detectors had never been shown to fail (mutants M4 to M6 added); the authorized baseline recommendation had been overwritten here (now quoted in the plan's Amendments); provenance and verifier gaps (source hashes
-  now recorded and compared, the driver script `run-e3-evidence.sh` committed, the verifier tightened); and several overstatements, corrected. Because the fixes changed the root task, the whole evidence was rerun from the final source. Details: E3.md, "The independent review".
-- **Things that went wrong on the way, disclosed in E3.md, none of them evidence:** a first build attempt failed on an unexported `SEL4_PREFIX` in `build-e3.sh`; a first complete run had two mutants and rebuilt the task binary for each; a second complete run (three mutants) is what the
-  first review examined; the final run is the third. Local copies are in `external/e3-superseded-*` and `results-raw/E3-superseded-*` (gitignored). One verifier bug (kernel-line counts joined across boots) was found by the first verifier run and fixed before the evidence was recorded.
-- The plan's Amendments have new entries (the owner's E2 final acceptance and E3 authorization; the agent's E3 measurement; the owner's provisional acceptance and the PR and merge conditions; the review's corrections, with the baseline recommendation quoted). `docs/roadmap.md` and `results/E2.md` were updated to match.
+- **Three things kept apart.** *Build success:* K0 (`AARCH64_verified.cmake`, platform `tx2`), K1, K2 and the informational E1H all build with `aarch64-elf-gcc` 16.2.0, twice. *Configuration similarity:* against K0, 554 (E1H), 396 (K1) and 339 (K2) of about 900 functions are textually identical; the tables are reproducible across clean builds, complete against `nm`, and recomputed by the verifier.
+  *Formal-verification applicability:* none established. The public documentation lists AArch64 verified configurations as hypervisor-mode, for listed platforms (QEMU virt is not one), C-level functional correctness, not covering SMP, MCS, IOMMU/DMA, debug or printing builds, boot, or timing channels, and it **names no seL4 version**.
+- **Corrected earlier statement:** the handoff used to say the E1-H kernel was "probably further from K0 [Inferred]". **It is the opposite.** K0 is a hypervisor-mode configuration; the plan's K1 and K2 (no hypervisor support) differ from it in that option, and E1-H (which the Rust loader requires) does not. That is one option, not "closer to verified".
+- **Debug against release:** K0 is a release build; K1, K2 and E1-H are debug builds. Sampled differences on the capability path are debug assertions, so much of the function-level difference is probably the debug option [Inferred; not measured; needs release variants, which were out of scope].
+- `cteRevoke`, `cteDelete`, `isMDBParentOf`, `isCapRevocable`, `deriveCap`, `invokeUntyped_Retype` and `resetUntypedCap` are textually identical to K0 in all three; `cteInsert` is not.
+
+## S1 gates now
+
+| | Status | What decides it |
+|---|---|---|
+| **Configuration and loader (before Stage B)** | Needs the owner | `sel4-kernel-loader` boots only hypervisor-enabled kernels (EL2), the plan's K1 and K2 are non-hypervisor and need seL4's own elfloader, and E1 to E3 ran on a hypervisor-enabled kernel that is not a matrix row. Options: an Amendment adding a hypervisor-enabled (ideally release) row, or Stage B on K1 and K2 with the elfloader. A2a's numbers say the hypervisor-enabled row is no farther from K0 in that option. The matrix also does not say whether K1 and K2 are debug or release, and says K1 and K2 run under HVF, which A3 contradicts |
+| **A4** (UEFI boot, AArch64 and x86-64) | Not authorized | AArch64 half: EDK2 firmware ships with Homebrew QEMU; a thin UEFI stub is new code. x86-64 half needs Tier 2 (`x86_64-elf-gcc`, rustup `x86_64-unknown-none`), not installed, not approved. Pass needs both architectures with no kernel patch |
+| **A5** (SMMUv3 and DMA isolation) | Held for a reviewed design | [A5 design proposal](../research/a5-design-proposal.md): the crux is revoke-while-mapped, and the smallest falsification test is one stream, one page, one `edu` device. A5-arm Fail falsifies the hypothesis, so this is the likeliest falsifier. A cheaper informational first probe could run on E1-H |
+| **A2-final, Stage B, C, D** | Later | A2-final needs the required Stage B tests on a matrix configuration; none has run on one |
+
+## macOS CI (checked, independent of A2a)
+
+- The scheduled run `42629351498` (2026-11-09 13:52 UTC) was **cancelled by GitHub with no step executed**: "The job was not acquired by Runner of type hosted even after multiple attempts", with a macOS arm64 capacity notice; `runner_id` 0 [Measured].
+- The **one manual run authorized**, `42674266306` (18:28 UTC), **failed after 51 s with no job started** and one annotation, "Internal server error" with a correlation ID: a GitHub-side error [Measured: `gh`, and the public run page read by a fetch agent]. `gh` reports "likely failed because of a workflow file issue", but no file defect is established: the file equals the copy GitHub holds, it uses the same pinned GitHub-owned actions as `ci.yml`, the repository allows GitHub-owned actions, and `actionlint` passes.
+- **The workflow was not modified.** The macOS path (`cargo xtask check` and `boot` on a hosted runner) has still never run to completion. No further run was triggered (one was authorized).
 
 ## Authorizations in force
 
-Source: the owner's messages in this conversation; the plan's Amendments (entries of 2026-11-09, the last four).
-- **Authorized, conditionally:** the independent review of E3 (done twice; the second, of the final state, returned MERGE-READY); then, **only after a MERGE-READY verdict on the final implementation** (given): the full verifier, its self-tests and `cargo xtask check`, signed DCO commits, a push of `spike/e3-revocation`, a PR that includes this file, and a merge
-  **only when the required CI checks pass on the final reviewed head and no material finding remains**. Then report and stop. Deleting stale local branches is allowed after verifying they hold no unique commits or uncommitted work. Unrelated untracked directories (`.agents/`, `.codex/`) are not to be touched.
-- Standing: D2, D3, D7, D9, D10, D14(b), D17, D18 (2026-11-08), **D19, D20 for E2's experimental scope only**, **D21, D22 for E3 only** (2026-11-09). D23 (the `build-e2.sh` repair) is **not** approved as such.
-- **Not authorized:** changing ADR statuses, changing dependencies (any change to `Cargo.toml` or `Cargo.lock`), another experiment; A2a, A4, A5, the custom-kernel comparator, Class 3 kernel modifications; any kernel, loader or `crates/root-task` change; any new tool or global installation; merging or touching PR 9.
-- Agents never push, force push or merge outside the conditions above; do not spawn agents on their own initiative; an agent does not review its own work.
+Source: the owner's messages in this conversation; the plan's Amendments (entries of 2026-11-09).
+- **Authorized and used:** A2a, local execution and evidence verification (record the results; routine tooling; existing pinned tools only), the one manual macOS run, and the A5 design proposal as a document. The E3 PR and its merge are used up.
+- Standing: D2, D3, D7, D9, D10, D14(b), D17, D18 (2026-11-08); D19, D20 for E2; D21, D22, D23 for E3 (2026-11-09). **D24 (A2a tooling) was authorized as routine tooling and is not independently reviewed.**
+- **Not authorized:** any push or PR for this branch (the owner asked for a report first); Stage B, A4, A5 (including the proposal's probe), the custom-kernel comparator, Class 3 kernel modifications; release variants of the A2a configurations; changing ADR statuses, dependencies, kernel or loader source, or the Stage B matrix; any new tool or installation; merging or touching PR 9.
+- Agents never push, force push or merge without the owner; do not spawn agents on their own initiative; an agent does not review its own work.
 
 ## Pending approvals (the owner's)
 
-1. E3: final acceptance as Pass (U) after the review (it is provisional until then). D23: whether the `build-e2.sh` repair is accepted (the alternative is separate crates, which needs a `Cargo.toml` and `Cargo.lock` change and a full E3 rerun).
-2. Whether to commit this handoff (it goes into the E3 PR as the owner asked), and the stale local branches (see "Context").
-3. Long-term toolchain policy (`nightly-2026-08-21` is approved for S1 only); the A5 question; whether ADR 0002 or 0004 text should change in light of E1, E2 and E3. Which experiment, if any, comes next.
-4. PR 9: the owner decided to keep the `protobuf` pin and not merge or dismiss. Its conflict with the `sel4-deps` `protobuf<4` metadata is known (installs use
-   `--no-deps`); no more `protobuf` experiments.
+1. Whether to push `spike/a2a-assurance` and open its PR (it carries the A2a work, the E3 final-acceptance records and the A5 proposal); the A2a tooling has had **no independent review**, and E3's convention was a `reviewer` pass before merge.
+2. The configuration, build-type and loader question above, before any Stage B work.
+3. Whether to authorize the A5 design (and the informational E1-H probe), A4's AArch64 half, or release variants of K1, K2 and E1H (the smallest addition that would separate the debug effect from the hypervisor, platform and SMP effects).
+4. Long-term toolchain policy (`nightly-2026-08-21` is approved for S1 only); whether ADR 0002 or 0004 text should change; Tier 2 for A4's x86-64 half.
+5. PR 9: the owner decided to keep the `protobuf` pin and not merge or dismiss. Its conflict with the `sel4-deps` `protobuf<4` metadata is known (installs use `--no-deps`); no more `protobuf` experiments.
 
 ## Blockers and conflicts
 
-- The S1 stop condition blocks everything except what the owner names. No conflict found between this file, Git and the ADRs.
+- The S1 stop condition blocks Stage B, A4 and A5 until the owner names one. No conflict found between this file, Git and the ADRs, apart from the plan's matrix saying K1 and K2 run under HVF.
 - **Privacy exposure remains:** `refs/pull/7/head` still resolves to `c99300d`; the original commits are fetchable by SHA. Not erasure. `main` never held them.
-- Open items: `RUSTSEC-2024-0449` (host-side, policy unchanged); a base-controlled `pull_request_target` check; CI uses QEMU 8.2.2 against the spike's 11.1.3.
+- Open items: `RUSTSEC-2024-0449` (host-side, policy unchanged); a base-controlled `pull_request_target` check; CI uses QEMU 8.2.2 against the spike's 11.1.3; the macOS workflow has not completed once.
 
 ## Uncommitted changes
 
-`git status -sb`: `## spike/e3-revocation...origin/main`. Modified: `docs/development/SESSION_HANDOFF.md` (this file), `docs/research/sel4-spike-plan.md`, `docs/roadmap.md`,
-`spikes/sel4-feasibility/{build-e2.sh, crates/e2-task/src/lib.rs, results/E2.md, results/deviations.md, results/evidence-manifest.txt, verify-evidence.py}`. New: `spikes/sel4-feasibility/{build-e3.sh, run-e3-evidence.sh, sanitize-run.py, verify_e3.py,
-results/E3.md, results/E3/, crates/e2-task/src/bin/e3_task.rs, crates/e2-task/src/e3_abi.rs, crates/e2-root-task/src/bin/e3_root_task.rs, crates/e2-root-task/src/e3_spawn.rs}`.
-Untracked and not from the spike work, not to be committed with it: `.agents/skills/*` and `.codex/*` (agent and hook configuration; `.codex/hooks.json` holds absolute home paths), untouched: **stage files by name, never `git add -A`**.
-Gated files changed: none (`Cargo.toml`, `Cargo.lock`, `.github/`, `xtask/`, `docs/adr/`, `.claude/` are all unchanged); `docs/research/` and `docs/roadmap.md` are not gated.
+`git status -sb`: `## spike/a2a-assurance` (from `main` at `44d1d70`). Modified: this file, `docs/research/sel4-spike-plan.md` (Amendments), `docs/roadmap.md`, `spikes/sel4-feasibility/{verify-evidence.py, results/{E3.md, deviations.md, evidence-manifest.txt}}`.
+New: `docs/research/a5-design-proposal.md`, and under `spikes/sel4-feasibility/`: `build-a2a.sh`, `a2a-compare.py`, `run-a2a-evidence.sh`, `verify_a2a.py`, `results/A2a.md`, `results/A2a/`. `.agents/skills/*` and `.codex/*` (agent and hook configuration; `.codex/hooks.json` holds absolute home paths) are untouched and not part of this:
+**stage files by name, never `git add -A`**. No gated file is changed. The raw builds are in the gitignored `external/a2a-build*` and `results-raw/A2a`.
 
 ## Verified results
 
 | Command | State | Result |
 |---|---|---|
-| `verify-evidence.py` | the working tree with the final E3 evidence | 91 of 91 checks (20 for E3) |
-| `verify-evidence.py --self-test` | same | 46 of 46 corruptions caught (19 earlier, 26 new on the E3 evidence, 1 on the lock) |
-| E3 final image, 3 clean boots under QEMU 11.1.3 TCG | `external/e3-build/image.elf` `0460ce1d…` | `E3_PASS` in 3 of 3; logs identical apart from the harness footer |
-| E3 mutants | `external/e3-mutant-*` | 6 of 6 stop at their intended detector, `E3_PASS` never printed |
-| E2's recipe after D23 | scratch directory, bare environment (`E3_TASK_ELF` and the others unset) | `build-e2.sh`'s two cargo commands (as edited) succeed; without `--bin` on the root task, the same command fails (control). **This checks the recipe, not a rebuild to E2's recorded hashes** (reproduction of E2's hashes is a separate, pre-existing question; see E2.md) |
-| `cargo xtask check` | re-run before the PR (see "Next actions") | |
+| `verify-evidence.py` | the working tree with the A2a evidence | 100 of 100 checks (9 for A2a) |
+| `verify-evidence.py --self-test` | same | 60 of 60 corruptions caught (46 earlier, 13 new on the A2a evidence, 1 for its removal) |
+| `a2a-compare.py self-test` | same | the parser sample passes (4 of 4) |
+| A2a builds | `external/a2a-build/` and `a2a-build-repro/` | 8 of 8 exit 0; the function tables are byte-identical across the two builds of each configuration |
+| `cargo xtask check` | before this file's last edit | see "Next actions": rerun before any commit |
 
-An earlier version of this table said that E2 was rebuilt and booted with the E3 binaries present. That check had named `--bin e2-root-task` itself and so did not exercise `build-e2.sh`; the independent review found the break.
-`cargo xtask boot` was not run locally. **Not verified:** E3 on another QEMU version, host or accelerator; anything about hardware; clippy on the spike workspace (not installed for the pinned nightly).
+`cargo xtask boot` was not run (A2a boots nothing). **Not verified:** that the documentation's quotes are exact (they were read by a fetch agent); the macOS CI path; clippy on the spike workspace (not installed for the pinned nightly).
 
 ## Next actions
 
-1. The E3 PR: signed DCO commits (files staged by name; `.agents/` and `.codex/` stay out), push `spike/e3-revocation`, a PR that includes this file and **states that `unsafe` code was added** (`e3_spawn.rs`: an `unsafe extern` declaration and a `static mut`, both copied). Merge only when the required CI checks pass on the final reviewed head and no material finding remains; then report the `main` commit and stop.
-2. After the merge: the owner's final acceptance of E3, the D23 decision, and the outstanding S1 gates (see "Milestone status"). Do not start another experiment.
-3. Known, left as is: the low and editorial points of the second review (E3.md, "Limitations"), none of which changes the evidence.
+1. Report to the owner (done in the session); wait for the decisions in "Pending approvals". Do not push, open a PR, or start Stage B, A4 or A5 on this file's say-so.
+2. If the owner authorizes the push: run `cargo xtask check`, the verifier and its self-test; request an independent `reviewer` pass on the A2a tooling if the owner wants one (D24 is not reviewed); signed DCO commits staged by name; the PR description should mention the new Python/shell tooling and that no `unsafe` was added.
+3. Smallest concrete engineering step after the decisions: if the owner authorizes the A5 probe, its step 0 (can the root task reach the SMMU's MMIO as a device untyped on the E1-H kernel, and does `-machine virt,iommu=smmuv3` with `edu` start under the existing harness). If instead release variants are authorized: `build-a2a.sh` gains three more IDs and the comparison is rerun.
 
 ## Context not recorded elsewhere
 
-- E3 build output is in the gitignored `spikes/sel4-feasibility/external/e3-build/` (and `e3-mutant-*`); raw logs in `results-raw/E3/`; the superseded runs in `external/e3-superseded-first-run/`, `external/e3-superseded-second-run/` and `results-raw/E3-superseded-*`. The evidence procedure is `run-e3-evidence.sh`, then `sanitize-run.py E3`, then `verify-evidence.py`.
-  The E3 root-task ELF embeds a build-script directory name (and the symbol-hash suffixes of the ELFs depend on the build directory): **publish hashes, never the binary.**
-- E2 build output is in the gitignored `spikes/sel4-feasibility/external/e2-build/`; raw logs in `results-raw/E2/`; the superseded first run in
-  `external/e2-superseded-first-run/`. A root-task ELF embeds the build path: **publish hashes, never the binary.**
+- Build output of E2, E3 and A2a is in the gitignored `spikes/sel4-feasibility/external/` (`e2-build`, `e3-build`, `e3-mutant-*`, `a2a-build`, `a2a-build-repro`, the `*-superseded-*` runs); raw logs in `results-raw/`. The A2a procedure is `run-a2a-evidence.sh`, then `sanitize-run.py A2a`, then `verify-evidence.py`; the E3 one is `run-e3-evidence.sh`.
+  The ELFs embed build-dependent data: **publish hashes, never the binary.** The A2a `kernel_all_pp.c` files are not published (about 1 MB each, absolute paths); the tables derived from them are.
 - **Unsanitized history** is on `local-only/s1-workspace-unsanitized` (at `81a2ca7`, `pushremote=no_push_remote`), retained on the owner's instruction, with a
   backup tarball (SHA-256 `768af917…`) beside the repository. **Never push it.** A local `pre-push` guard (`core.hooksPath` = `.git/fyrkat-hooks/`) refuses it;
   it covers ancestry and ref names only. Undo: `git config --local --unset core.hooksPath && rm -rf .git/fyrkat-hooks`.
 - Commits are signed with SSH; `git log --show-signature` fails locally because `gpg.ssh.allowedSignersFile` is not set; GitHub verifies them. A project hook
   mistakes shell commands that mention the ADR directory for writes: use Edit or Read for ADRs. For privacy scans use `git ls-files`, not `grep -r`. The `reviewer`
-  and `researcher` agents have Bash: check `git status` after they run. Start with `/fyrkat-resume`.
+  and `researcher` agents have Bash: check `git status` after they run. A zsh quirk: unquoted `$VAR` is not word-split, so run multi-word variable expansions under `bash`. Start with `/fyrkat-resume`.
