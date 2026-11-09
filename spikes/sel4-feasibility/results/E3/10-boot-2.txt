@@ -1,0 +1,132 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel external/e3-build/image.elf
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602edcd8
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff95000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd95000,
+        v_entry: 0x230814,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff93000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff95000 (filesz = 0x135ac, memsz = 0x135ac)
+seL4 kernel loader | DEBUG      0x7ffb85b0 (filesz = 0x14718, memsz = 0x14718)
+seL4 kernel loader | DEBUG      0x7ffdccc8 (filesz = 0x22380, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff93000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff93000..807ff94fb3)
+  [807ff95000..8080000000)
+Booting all finished, dropped to user space
+E3_ROOT start
+E3_ROOT mutant=none
+E3_ROOT built: P, Q, 2 tasks with derived, copy and control capabilities
+E3_ROOT before: task 1 slot 1 copy ok
+E3_ROOT before: task 1 slot 2 copy ok
+E3_ROOT before: task 1 slot 3 copy ok
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT before: task 1 slot 6 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT before: task 1 slot 7 copy refused (FailedLookup)
+E3_ROOT before: task 2 slot 1 copy ok
+E3_ROOT before: task 2 slot 2 copy ok
+E3_ROOT before: task 2 slot 3 copy ok
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT before: task 2 slot 6 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT before: task 2 slot 7 copy refused (FailedLookup)
+E3_ROOT before: P in the root task's CNode copy ok
+E3_ROOT recv on P: task 1 badge=0xb301 code=0x100
+E3_TASK 1 before: derived slot served
+E3_ROOT recv on P: task 1 badge=0xb301 code=0x200
+E3_TASK 1 before: copy slot served
+E3_ROOT recv on Q: task 1 badge=0xd301 code=0x300
+E3_TASK 1 before: control slot served
+E3_ROOT event from task 1
+E3_ROOT recv on P: task 2 badge=0xb302 code=0x100
+E3_TASK 2 before: derived slot served
+E3_ROOT recv on P: task 2 badge=0xb302 code=0x200
+E3_TASK 2 before: copy slot served
+E3_ROOT recv on Q: task 2 badge=0xd302 code=0x300
+E3_TASK 2 before: control slot served
+E3_ROOT event from task 2
+E3_ROOT revoke step
+E3_ROOT revoke P
+E3_ROOT revoke returned
+E3_ROOT after: P in the root task's CNode copy ok
+E3_ROOT after: Q in the root task's CNode copy ok
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 1 slot 1 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 1 slot 2 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 1 slot 6 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 1 slot 7 copy refused (FailedLookup)
+E3_ROOT after: task 1 slot 3 copy ok
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x807003cc00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #1.>>[0m
+E3_TASK 1 after: derived slot refused label=2
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x807003cc00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #2.>>[0m
+E3_TASK 1 after: copy slot refused label=2
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x807003cc00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #6.>>[0m
+E3_TASK 1 after: never-populated slot refused label=2
+E3_ROOT event from task 1
+E3_ROOT recv on Q: task 1 badge=0xd301 code=0x700
+E3_TASK 1 after: control slot served
+E3_ROOT event from task 1
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 2 slot 1 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 2 slot 2 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 2 slot 6 copy refused (FailedLookup)
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff89400 "rootserver" @231680]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+E3_ROOT after: task 2 slot 7 copy refused (FailedLookup)
+E3_ROOT after: task 2 slot 3 copy ok
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x8070079c00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #1.>>[0m
+E3_TASK 2 after: derived slot refused label=2
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x8070079c00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #2.>>[0m
+E3_TASK 2 after: copy slot refused label=2
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x8070079c00 "child of: 'rootserver'" @2139b0]: Attempted to invoke a null cap #6.>>[0m
+E3_TASK 2 after: never-populated slot refused label=2
+E3_ROOT event from task 2
+E3_ROOT recv on Q: task 2 badge=0xd302 code=0x700
+E3_TASK 2 after: control slot served
+E3_ROOT event from task 2
+E3_ROOT fresh: task 1 slot 7 copy ok
+E3_ROOT recv on P: task 1 badge=0xf301 code=0x800
+E3_TASK 1 after: fresh slot served
+E3_ROOT event from task 1
+E3_ROOT fresh: task 2 slot 7 copy ok
+E3_ROOT recv on P: task 2 badge=0xf302 code=0x800
+E3_TASK 2 after: fresh slot served
+E3_ROOT event from task 2
+E3_PASS
+
+[boot-image] marker 'E3_PASS' SEEN after 0.10s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)

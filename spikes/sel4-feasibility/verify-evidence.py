@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-check the A1, A3, E1 and E2 conclusions against the sanitized public evidence in results/.
+"""Re-check the A1, A3, E1, E2 and E3 conclusions against the sanitized public evidence in results/.
 
     verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
@@ -14,6 +14,7 @@ check passes. Spike code, stdlib only.
 import argparse
 import getpass
 import hashlib
+import importlib.util
 import json
 import re
 import socket
@@ -21,6 +22,7 @@ import sys
 import tomllib
 from collections.abc import Callable
 from pathlib import Path
+from types import ModuleType, SimpleNamespace
 
 
 def read(res: Path, rel: str) -> str:
@@ -207,6 +209,22 @@ def verify_e2(res: Path, lock_text: str, e1_post: str, check: Callable[[str, boo
           mut.count("marker 'E2_PASS' NOT seen") == 2 and "marker 'E2_PASS' SEEN" not in mut
           and "E2_FAIL client: read of the server's secret did not fault" in mut
           and "E2_FAIL client: empty slot was not refused with InvalidCapability" in mut)
+
+
+def load_e3() -> ModuleType:
+    """The E3 checks (verify_e3.py, next to this file), loaded by path so that `python3 -I` works too."""
+    path = Path(__file__).resolve().parent / "verify_e3.py"
+    spec = importlib.util.spec_from_file_location("verify_e3", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def e3_helpers() -> SimpleNamespace:
+    return SimpleNamespace(read=read, sums=sums, in_order=in_order, guest_output=guest_output, section=section,
+                           E1_PINS=E1_PINS)
 
 
 def verify_e1(res: Path, lock_hash: str, a1rerun: dict[str, str], check: Callable[[str, bool], None]) -> None:
@@ -406,6 +424,12 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         e1cfg_ok = (res / "E1/02-kernel-gen_config.json").is_file()
         verify_e2(res, lock_text, e1_post, check, e1cfg_ok)
 
+    # ---- E3: capability revocation. Label U.
+    check("E3 evidence directory is present", (res / "E3").is_dir())
+    if (res / "E3").is_dir():
+        e1_post = read(res, "E1/04-post-checks.txt") if (res / "E1/04-post-checks.txt").is_file() else ""
+        load_e3().verify_e3(res, lock_text, e1_post, check, (res / "E1/02-kernel-gen_config.json").is_file(), e3_helpers())
+
     # ---- integrity and privacy
     listed: set[str] = set()
     bad = []
@@ -417,9 +441,9 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2", "E3") for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/ and E2/ (one README note aside)",
+    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/, E2/ and E3/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -490,6 +514,9 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_e2(root: Path) -> None:
         shutil.rmtree(root / "E2")
 
+    def remove_e3(root: Path) -> None:
+        shutil.rmtree(root / "E3")
+
     def drop_line(prefix: str) -> Callable[[str], str]:
         return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
 
@@ -526,6 +553,8 @@ def self_test(res: Path, lock_path: Path) -> int:
         ("a mutant is recorded as having passed", edit("E2/06-mutation-checks.txt", lambda t: t.replace(
             "marker 'E2_PASS' NOT seen", "marker 'E2_PASS' SEEN", 1)), "both mutants were refused"),
         ("the E2 evidence is removed", remove_e2, "E2 evidence directory is present"),
+        ("the E3 evidence is removed", remove_e3, "E3 evidence directory is present"),
+        *load_e3().self_test_cases(edit, every_boot, drop_line),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -564,6 +593,8 @@ def self_test(res: Path, lock_path: Path) -> int:
             ("the lock has an extra package", extra_package, "the lock file in the repository is the corrected one"),
             ("object's checksum in the lock is changed", other_checksum, "E2 Cargo.lock"),
             ("e2-task gains a dependency in the lock", e2_task_extra_dep, "E2 Cargo.lock"),
+            ("the lock has an extra package (E3 inputs check: the lock is the one the E3 records name)", extra_package,
+             "E3 inputs"),
         ]
         for label, mutate_lock, expect in lock_cases:
             bad_lock = Path(tmp) / "Cargo.lock"
@@ -583,7 +614,7 @@ def main() -> int:
     ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
     ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
     ap.add_argument("--self-test", action="store_true",
-                    help="corrupt a temporary copy of the evidence and require the E1 and E2 checks to fail")
+                    help="corrupt a temporary copy of the evidence and require the E1, E2 and E3 checks to fail")
     ns = ap.parse_args()
     res, lock_path = Path(ns.results), Path(ns.lock)
     if ns.self_test:
