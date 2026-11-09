@@ -1,0 +1,20 @@
+## K0
+# K0: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -C <REPO>/spikes/sel4-feasibility/external/seL4/configs/AARCH64_verified.cmake -S external/seL4 -B <REPO>/spikes/sel4-feasibility/external/a2a-build/K0/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K0/sel4 kernel.elf
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K0/sel4 kernel_all_pp_wrapper
+## K1
+# K1: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -S external/seL4 -B <REPO>/spikes/sel4-feasibility/external/a2a-build/K1/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K1/sel4 kernel.elf
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K1/sel4 kernel_all_pp_wrapper
+## K2
+# K2: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -S external/seL4 -B <REPO>/spikes/sel4-feasibility/external/a2a-build/K2/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K2/sel4 kernel.elf
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/K2/sel4 kernel_all_pp_wrapper
+## E1H
+# E1H: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=ON -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -S external/seL4 -B <REPO>/spikes/sel4-feasibility/external/a2a-build/E1H/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/E1H/sel4 kernel.elf
+ninja -C <REPO>/spikes/sel4-feasibility/external/a2a-build/E1H/sel4 kernel_all_pp_wrapper

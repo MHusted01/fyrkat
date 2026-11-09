@@ -1,0 +1,345 @@
+# property	file	function	K0	E1H	K1	K2	(status against K0: = identical text, ! different text, - absent; K0 column: + present, - absent)
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	APFromVMRights	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_createObject	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_decodeInvocation	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_deriveCap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_finaliseCap	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_getObjectSize	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_isFrameType	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_maskCapRights	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_prepareThreadDelete	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_sameObjectAs	+	=	=	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_sameRegionAs	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/object/objecttype.c	Arch_updateCapData	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	Arch_userStackTrace	-	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	activate_kernel_vspace	+	=	!	!
+P1 address-space isolation	src/object/untyped.c	alignUp	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	arch_get_n_paging	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	checkVPAlignment	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	checkValidIPCBuffer	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_it_address_space	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_it_frame_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_it_pd_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_it_pt_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_it_pud_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_mapped_it_frame_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	create_unmapped_it_frame_cap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	decodeARMFrameInvocation	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	decodeARMMMUInvocation	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	decodeARMPageTableInvocation	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	decodeARMVSpaceRootInvocation	+	!	!	!
+P1 address-space isolation	src/object/untyped.c	decodeUntypedInvocation	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	deleteASID	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	deleteASIDPool	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	doFlush	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	findFreeHWASID	+	=	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	findMapForASID	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	findVSpaceForASID	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	getASIDMap	+	!	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	getHWASID	+	=	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	getPoolPtr	+	=	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	handleVMFault	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	invalidateASID	+	!	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	invalidateASIDEntry	+	=	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	invalidateTLBByASID	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	invalidateTLBByASIDVA	+	=	!	!
+P1 address-space isolation	src/object/untyped.c	invokeUntyped_Retype	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	isVTableRoot	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	isValidNativeRoot	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	isValidVTableRoot	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	kernelDataAbort	-	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	kernelPrefetchAbort	-	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	lookupIPCBuffer	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	lookupPTSlot	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	makeUserPagePTE	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_it_frame_cap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_it_pd_cap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_it_pt_cap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_it_pud_cap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_kernel_elf_image	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_kernel_frame	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_kernel_physical_window	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	map_kernel_window	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	maskVMRights	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performASIDControlInvocation	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageFlush	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageGetAddress	+	=	=	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageInvocationMap	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageInvocationUnmap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageTableInvocationMap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performPageTableInvocationUnmap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	performVSpaceFlush	+	=	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	pte_get_AP	-	-	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	readWordFromVSpace	-	!	!	!
+P1 address-space isolation	src/object/untyped.c	resetUntypedCap	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	setASIDMap	+	!	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	setVMRoot	+	=	=	=
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	setVMRootForFlush	+	=	=	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	storeHWASID	+	!	-	-
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	unmapPage	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	unmapPageTable	+	!	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	vmRightsFromPTE	-	-	!	!
+P1 address-space isolation	src/arch/arm/64/kernel/vspace.c	write_it_asid_pool	+	=	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_createObject	+	!	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_decodeInvocation	+	!	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_deriveCap	+	!	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_finaliseCap	+	=	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_getObjectSize	+	!	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_isFrameType	+	=	=	=
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_maskCapRights	+	=	=	=
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_prepareThreadDelete	+	=	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_sameObjectAs	+	=	=	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_sameRegionAs	+	!	!	!
+P2 authority integrity	src/arch/arm/64/object/objecttype.c	Arch_updateCapData	+	!	!	!
+P2 authority integrity	src/object/notification.c	bindNotification	+	=	=	=
+P2 authority integrity	src/object/endpoint.c	cancelAllIPC	+	=	=	!
+P2 authority integrity	src/object/notification.c	cancelAllSignals	+	=	=	!
+P2 authority integrity	src/object/endpoint.c	cancelBadgedSends	+	!	!	!
+P2 authority integrity	src/object/endpoint.c	cancelIPC	+	!	!	!
+P2 authority integrity	src/object/notification.c	cancelSignal	+	!	!	!
+P2 authority integrity	src/object/cnode.c	capCyclicZombie	+	=	=	=
+P2 authority integrity	src/object/cnode.c	capRemovable	+	!	!	!
+P2 authority integrity	src/object/cnode.c	capSwapForDelete	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	cap_get_capIsPhysical	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	cap_get_capPtr	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	cap_get_capSizeBits	+	=	=	=
+P2 authority integrity	src/object/notification.c	completeSignal	+	!	!	!
+P2 authority integrity	src/object/objecttype.c	createNewObjects	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	createObject	+	!	!	!
+P2 authority integrity	src/object/cnode.c	cteDelete	+	=	=	=
+P2 authority integrity	src/object/cnode.c	cteDeleteOne	+	!	!	!
+P2 authority integrity	src/object/cnode.c	cteInsert	+	!	!	!
+P2 authority integrity	src/object/cnode.c	cteMove	+	!	!	!
+P2 authority integrity	src/object/cnode.c	cteRevoke	+	=	=	=
+P2 authority integrity	src/object/cnode.c	cteSwap	+	=	=	=
+P2 authority integrity	src/object/cnode.c	decodeCNodeInvocation	+	!	!	!
+P2 authority integrity	src/object/objecttype.c	decodeInvocation	+	!	!	!
+P2 authority integrity	src/object/objecttype.c	deriveCap	+	=	=	=
+P2 authority integrity	src/object/notification.c	doUnbindNotification	+	=	=	=
+P2 authority integrity	src/object/cnode.c	emptySlot	+	=	=	=
+P2 authority integrity	src/object/cnode.c	ensureEmptySlot	+	=	=	=
+P2 authority integrity	src/object/cnode.c	ensureNoChildren	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	finaliseCap	+	!	!	!
+P2 authority integrity	src/object/cnode.c	finaliseSlot	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	getObjectSize	+	!	!	!
+P2 authority integrity	src/object/cnode.c	getReceiveSlots	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	hasCancelSendRights	+	=	=	=
+P2 authority integrity	src/object/cnode.c	insertNewCap	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeCancelBadgedSends	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeDelete	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeInsert	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeMove	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeRevoke	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeRotate	+	=	=	=
+P2 authority integrity	src/object/cnode.c	invokeCNodeSaveCaller	+	!	!	!
+P2 authority integrity	src/object/objecttype.c	isCapRevocable	+	=	=	=
+P2 authority integrity	src/object/cnode.c	isFinalCapability	+	=	=	=
+P2 authority integrity	src/object/cnode.c	isMDBParentOf	+	=	=	=
+P2 authority integrity	src/object/cnode.c	loadCapTransfer	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupCap	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupCapAndSlot	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupPivotSlot	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupSlot	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupSlotForCNodeOp	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupSourceSlot	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	lookupTargetSlot	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	maskCapRights	+	!	!	!
+P2 authority integrity	src/object/notification.c	ntfn_ptr_get_queue	+	=	=	=
+P2 authority integrity	src/object/notification.c	ntfn_ptr_set_queue	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	performInvocation_Endpoint	+	=	=	!
+P2 authority integrity	src/object/objecttype.c	performInvocation_Notification	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	performInvocation_Reply	+	=	=	!
+P2 authority integrity	src/object/endpoint.c	receiveIPC	+	!	!	!
+P2 authority integrity	src/object/notification.c	receiveSignal	+	=	=	=
+P2 authority integrity	src/object/cnode.c	reduceZombie	+	!	!	!
+P2 authority integrity	src/object/endpoint.c	replyFromKernel_error	+	=	=	=
+P2 authority integrity	src/object/endpoint.c	replyFromKernel_success_empty	+	=	=	=
+P2 authority integrity	src/kernel/cspace.c	resolveAddressBits	+	!	!	!
+P2 authority integrity	src/object/objecttype.c	sameObjectAs	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	sameRegionAs	+	=	=	=
+P2 authority integrity	src/object/endpoint.c	sendIPC	+	!	!	!
+P2 authority integrity	src/object/notification.c	sendSignal	+	!	!	!
+P2 authority integrity	src/object/cnode.c	setUntypedCapAsFull	+	=	=	=
+P2 authority integrity	src/object/cnode.c	setupReplyMaster	+	=	=	=
+P2 authority integrity	src/object/cnode.c	slotCapLongRunningDelete	+	=	=	=
+P2 authority integrity	src/object/notification.c	unbindMaybeNotification	+	=	=	=
+P2 authority integrity	src/object/notification.c	unbindNotification	+	=	=	=
+P2 authority integrity	src/object/objecttype.c	updateCapData	+	=	=	=
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_createObject	+	!	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_decodeInvocation	+	!	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_deriveCap	+	!	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_finaliseCap	+	=	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_getObjectSize	+	!	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_isFrameType	+	=	=	=
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_maskCapRights	+	=	=	=
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_prepareThreadDelete	+	=	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_sameObjectAs	+	=	=	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_sameRegionAs	+	!	!	!
+P3 revocation and reclamation	src/arch/arm/64/object/objecttype.c	Arch_updateCapData	+	!	!	!
+P3 revocation and reclamation	src/object/untyped.c	alignUp	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	capCyclicZombie	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	capRemovable	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	capSwapForDelete	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	cap_get_capIsPhysical	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	cap_get_capPtr	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	cap_get_capSizeBits	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	createNewObjects	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	createObject	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	cteDelete	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	cteDeleteOne	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	cteInsert	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	cteMove	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	cteRevoke	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	cteSwap	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	decodeCNodeInvocation	+	!	!	!
+P3 revocation and reclamation	src/object/objecttype.c	decodeInvocation	+	!	!	!
+P3 revocation and reclamation	src/object/untyped.c	decodeUntypedInvocation	+	!	!	!
+P3 revocation and reclamation	src/object/objecttype.c	deriveCap	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	emptySlot	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	ensureEmptySlot	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	ensureNoChildren	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	finaliseCap	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	finaliseSlot	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	getObjectSize	+	!	!	!
+P3 revocation and reclamation	src/object/cnode.c	getReceiveSlots	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	hasCancelSendRights	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	insertNewCap	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeCancelBadgedSends	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeDelete	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeInsert	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeMove	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeRevoke	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeRotate	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	invokeCNodeSaveCaller	+	!	!	!
+P3 revocation and reclamation	src/object/untyped.c	invokeUntyped_Retype	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	isCapRevocable	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	isFinalCapability	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	isMDBParentOf	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	loadCapTransfer	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupCap	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupCapAndSlot	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupPivotSlot	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupSlot	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupSlotForCNodeOp	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupSourceSlot	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	lookupTargetSlot	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	maskCapRights	+	!	!	!
+P3 revocation and reclamation	src/object/objecttype.c	performInvocation_Endpoint	+	=	=	!
+P3 revocation and reclamation	src/object/objecttype.c	performInvocation_Notification	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	performInvocation_Reply	+	=	=	!
+P3 revocation and reclamation	src/object/cnode.c	reduceZombie	+	!	!	!
+P3 revocation and reclamation	src/object/untyped.c	resetUntypedCap	+	=	=	=
+P3 revocation and reclamation	src/kernel/cspace.c	resolveAddressBits	+	!	!	!
+P3 revocation and reclamation	src/object/objecttype.c	sameObjectAs	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	sameRegionAs	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	setUntypedCapAsFull	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	setupReplyMaster	+	=	=	=
+P3 revocation and reclamation	src/object/cnode.c	slotCapLongRunningDelete	+	=	=	=
+P3 revocation and reclamation	src/object/objecttype.c	updateCapData	+	=	=	=
+P4 kernel integrity	src/arch/arm/api/faults.c	Arch_handleFaultReply	+	!	!	!
+P4 kernel integrity	src/arch/arm/api/faults.c	Arch_setMRs_fault	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_data_fault	+	=	=	=
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_fastpath_call	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_fastpath_reply_recv	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_instruction_fault	+	=	=	=
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_interrupt	+	!	!	!
+P4 kernel integrity	src/arch/arm/64/c_traps.c	c_handle_invalid_vector_entry	-	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_syscall	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_undefined_instruction	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_vcpu_fault	+	!	-	-
+P4 kernel integrity	src/arch/arm/c_traps.c	c_handle_vm_fault	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	checkInterrupt	+	!	!	!
+P4 kernel integrity	src/api/faults.c	copyMRsFault	+	=	=	=
+P4 kernel integrity	src/api/faults.c	copyMRsFaultReply	+	=	=	=
+P4 kernel integrity	src/fastpath/fastpath.c	fastpath_call	+	=	!	!
+P4 kernel integrity	src/fastpath/fastpath.c	fastpath_reply_recv	+	=	!	!
+P4 kernel integrity	src/kernel/faulthandler.c	handleDoubleFault	+	!	!	!
+P4 kernel integrity	src/kernel/faulthandler.c	handleFault	+	=	=	=
+P4 kernel integrity	src/api/faults.c	handleFaultReply	+	=	=	=
+P4 kernel integrity	src/api/syscall.c	handleInterruptEntry	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	handleInvocation	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	handleRecv	+	=	=	!
+P4 kernel integrity	src/api/syscall.c	handleReply	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	handleSyscall	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	handleUnknownSyscall	+	!	!	!
+P4 kernel integrity	src/api/syscall.c	handleUserLevelFault	+	=	=	!
+P4 kernel integrity	src/api/syscall.c	handleVMFaultEvent	+	=	=	!
+P4 kernel integrity	src/api/syscall.c	handleYield	+	=	=	!
+P4 kernel integrity	src/kernel/faulthandler.c	print_fault	-	!	!	!
+P4 kernel integrity	src/arch/arm/64/c_traps.c	restore_user_context	+	=	!	!
+P4 kernel integrity	src/kernel/faulthandler.c	sendFaultIPC	+	=	=	=
+P4 kernel integrity	src/api/faults.c	setMRs_fault	+	=	=	=
+P4 kernel integrity	src/api/faults.c	setMRs_lookup_failure	+	!	!	!
+P4 kernel integrity	src/arch/arm/c_traps.c	slowpath	+	!	!	!
+P4 kernel integrity	src/arch/arm/64/c_traps.c	vect_offset_to_name	-	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_createObject	+	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_decodeInvocation	+	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_deriveCap	+	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_finaliseCap	+	=	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_getObjectSize	+	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_isFrameType	+	=	=	=
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_maskCapRights	+	=	=	=
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_prepareThreadDelete	+	=	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_sameObjectAs	+	=	=	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_sameRegionAs	+	!	!	!
+P5 DMA confinement (kernel part)	src/arch/arm/64/object/objecttype.c	Arch_updateCapData	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/untyped.c	alignUp	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	capCyclicZombie	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	capRemovable	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	capSwapForDelete	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	cap_get_capIsPhysical	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	cap_get_capPtr	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	cap_get_capSizeBits	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	createNewObjects	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	createObject	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteDelete	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteDeleteOne	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteInsert	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteMove	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteRevoke	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	cteSwap	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	decodeCNodeInvocation	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/objecttype.c	decodeInvocation	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/untyped.c	decodeUntypedInvocation	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/objecttype.c	deriveCap	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	emptySlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	ensureEmptySlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	ensureNoChildren	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	finaliseCap	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	finaliseSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	getObjectSize	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	getReceiveSlots	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	hasCancelSendRights	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	insertNewCap	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeCancelBadgedSends	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeDelete	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeInsert	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeMove	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeRevoke	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeRotate	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	invokeCNodeSaveCaller	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/untyped.c	invokeUntyped_Retype	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	isCapRevocable	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	isFinalCapability	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	isMDBParentOf	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	loadCapTransfer	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupCap	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupCapAndSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupPivotSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupSlotForCNodeOp	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupSourceSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	lookupTargetSlot	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	maskCapRights	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/objecttype.c	performInvocation_Endpoint	+	=	=	!
+P5 DMA confinement (kernel part)	src/object/objecttype.c	performInvocation_Notification	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	performInvocation_Reply	+	=	=	!
+P5 DMA confinement (kernel part)	src/object/cnode.c	reduceZombie	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/untyped.c	resetUntypedCap	+	=	=	=
+P5 DMA confinement (kernel part)	src/kernel/cspace.c	resolveAddressBits	+	!	!	!
+P5 DMA confinement (kernel part)	src/object/objecttype.c	sameObjectAs	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	sameRegionAs	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	setUntypedCapAsFull	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	setupReplyMaster	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/cnode.c	slotCapLongRunningDelete	+	=	=	=
+P5 DMA confinement (kernel part)	src/object/objecttype.c	updateCapData	+	=	=	=

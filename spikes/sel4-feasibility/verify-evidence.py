@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-check the A1, A3, E1, E2 and E3 conclusions against the sanitized public evidence in results/.
+"""Re-check the A1, A3, E1, E2, E3 and A2a conclusions against the sanitized public evidence in results/.
 
     verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
@@ -222,6 +222,17 @@ def load_e3() -> ModuleType:
     return module
 
 
+def load_a2a() -> ModuleType:
+    """The A2a checks (verify_a2a.py, next to this file), loaded by path like the E3 ones."""
+    path = Path(__file__).resolve().parent / "verify_a2a.py"
+    spec = importlib.util.spec_from_file_location("verify_a2a", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def e3_helpers() -> SimpleNamespace:
     return SimpleNamespace(read=read, sums=sums, in_order=in_order, guest_output=guest_output, section=section,
                            E1_PINS=E1_PINS)
@@ -430,6 +441,11 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         e1_post = read(res, "E1/04-post-checks.txt") if (res / "E1/04-post-checks.txt").is_file() else ""
         load_e3().verify_e3(res, lock_text, e1_post, check, (res / "E1/02-kernel-gen_config.json").is_file(), e3_helpers())
 
+    # ---- A2a: assurance classification inputs (no boot). Label U for the builds, no formal-verification claim.
+    check("A2a evidence directory is present", (res / "A2a").is_dir())
+    if (res / "A2a").is_dir():
+        load_a2a().verify_a2a(res, check, e3_helpers())
+
     # ---- integrity and privacy
     listed: set[str] = set()
     bad = []
@@ -441,9 +457,9 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2", "E3") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a") for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/, E2/ and E3/ (one README note aside)",
+    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/, E2/, E3/ and A2a/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -517,6 +533,9 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_e3(root: Path) -> None:
         shutil.rmtree(root / "E3")
 
+    def remove_a2a(root: Path) -> None:
+        shutil.rmtree(root / "A2a")
+
     def drop_line(prefix: str) -> Callable[[str], str]:
         return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
 
@@ -555,6 +574,8 @@ def self_test(res: Path, lock_path: Path) -> int:
         ("the E2 evidence is removed", remove_e2, "E2 evidence directory is present"),
         ("the E3 evidence is removed", remove_e3, "E3 evidence directory is present"),
         *load_e3().self_test_cases(edit, every_boot, drop_line),
+        ("the A2a evidence is removed", remove_a2a, "A2a evidence directory is present"),
+        *load_a2a().self_test_cases(edit),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -614,7 +635,7 @@ def main() -> int:
     ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
     ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
     ap.add_argument("--self-test", action="store_true",
-                    help="corrupt a temporary copy of the evidence and require the E1, E2 and E3 checks to fail")
+                    help="corrupt a temporary copy of the evidence and require the E1, E2, E3 and A2a checks to fail")
     ns = ap.parse_args()
     res, lock_path = Path(ns.results), Path(ns.lock)
     if ns.self_test:
