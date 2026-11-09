@@ -1189,3 +1189,66 @@ Source: the agent, after the independent `reviewer` run the owner authorized. Th
 | E2.md on log identity | The `\r\n` difference described belonged to the superseded first run. In the evidence run, boots 2 and 3 are byte-identical and boot 1 differs only in the elapsed time |
 | Source change after the evidence build | Doc comments only, in `crates/e2-root-task/src/main.rs` and `crates/e2-task/src/bin/client.rs`, with unchanged line counts; the binaries were not rebuilt. Known and left as is: the server prints "secret mapped and readable" even after a readback mismatch (its `E2_FAIL` line fails the verifier); there is no mutant for the mint test; the verifier does not check the kernel's reason lines |
 | Dependency policy check | `cargo deny --frozen check advisories bans sources` passed offline against a local advisory database for the new `object` dependency [Measured by the reviewer] |
+
+### 2026-11-09 (after the review): E2 finally accepted as Pass (U); E3 authorized
+
+Source: the owner's message of 2026-11-09 in the working session. The text below records what the owner decided; the agent's measurement is in the next entry and is not repeated as a decision.
+
+| Item | Owner decision |
+|---|---|
+| E2 outcome | **Finally accepted** as Pass (U), limited to its demonstrated functional and capability-isolation probes. It does not establish verified kernel-generated fault delivery |
+| E3 | **Authorized**: the capability-revocation experiment, with the corrected recommendation in the session handoff as the baseline scope. Objective: demonstrate that `seL4_CNode_Revoke` removes previously usable derived capability authority while preserving the parent capability and unrelated capabilities |
+| Required evidence | (1) a derived endpoint capability in the server's CNode that works before the revoke; (2) the same slot populated and usable before; (3) revoke from the correct ancestor held by the root task; (4) the derived capability unusable afterwards; (5) the original and an unrelated control capability still functional; (6) the relevant derived capability in the client's CNode also removed, where the derivation topology supports that; (7) a no-op-revoke mutation that fails the test; (8) the exact seL4 error behaviour verified experimentally, without requiring distinct codes for revoked and never-populated slots unless the API guarantees them |
+| Implementation authority | A development branch from `origin/main`, preserving the uncommitted handoff; Rust userspace code; routine changes to scripts, verifier checks, tests and experiment documentation; the existing pinned toolchain and dependencies; QEMU TCG runs. Record deviations without weakening earlier checks |
+| Not authorized | New dependencies, kernel or bootloader modifications, unapproved tools, changes to ADR statuses. A substantive security or architectural issue outside the approved scope: stop and report the smallest decision required |
+| Quality and delivery | Positive controls, negative controls and mutation tests; three clean boots of the final image, the evidence verifier and `cargo xtask check`. Report results, deviations, limitations and decisions needed. **No push, PR or merge without further authorization** |
+
+### 2026-11-09 (E3 run): the agent's measurement, for the owner's decision
+
+Source: the agent. **No earlier criterion or outcome is changed and no ADR is accepted.** E3 is a precursor, **not** Stage B, P1 or P2 evidence: A2a has not run.
+
+| Item | Entry |
+|---|---|
+| Configuration | E1-H (hypervisor-enabled seL4 17.0.0, `qemu-arm-virt`, Cortex-A57, 1 node, non-MCS), label U; the same 156 kernel keys as E1 [Measured] |
+| What ran | A root task builds two identical tasks, each with its own address space and CNode and no capability to its own CNode. Each holds a badged mint of the root task's endpoint capability `P`, a copy of that mint, and a mint of an unrelated endpoint `Q`. Both are shown usable and populated; the root task calls `seL4_CNode_Revoke` on `P`; both are shown empty and refused while `P`, `Q`'s mints and a new mint of `P` work |
+| Result | **Pass, label U, functional only: 3 of 3 boots** printed the full sequence and `E3_PASS`. Three mutants (a no-op instead of the revoke; a revoke of `Q`; a no-op with two probes left out) each fail as they should. Verifier 89 of 89 (18 for E3), `--self-test` 35 of 35. Record: [E3](../../spikes/sel4-feasibility/results/E3.md) |
+| Error behaviour (required item 8) | After the revoke a call through a revoked slot returns label 2 (`InvalidCapability`), **the same as a call through a never-populated slot**; a root-side `Copy` from either fails with `FailedLookup`. The record does not rely on the codes being equal or distinct [Measured] |
+| Departures from the recommendation | The two tasks are symmetric, each with a mint and a copy of it (the recommendation had a mint for the server and a copy for the client); the control `Q` is shared by both; the new mint of `P` after the revoke is tested for both tasks. Task events reach the root task through a notification bound to its TCB |
+| New spike code | D21 (E3 binaries in the existing `e2-task` and `e2-root-task` crates, `build-e3.sh`; `Cargo.toml` and `Cargo.lock` unchanged) and D22 (`verify_e3.py`, `sanitize-run.py`), both in `deviations.md`, both under the owner's "routine" authority and not individually reviewed |
+| Not shown | HVF, SMP, performance, hardware, revoking a badged child, revoking an untyped, a deeper chain, a thread blocked on the endpoint, other object types, a preempted revoke, a revoke by a task, side channels, formal assurance. The kernel is a debug build |
+| Not done | **No independent review** (none was authorized). Nothing was committed, pushed or opened as a PR |
+| Stop condition | Unchanged: A2a, A4, A5, the comparator and Class 3 kernel modifications stay blocked, and no experiment other than E1, E2 and E3 is authorized. E3 stops here pending the owner |
+
+### 2026-11-09 (after the E3 report): E3 provisionally accepted as Pass (U); D21 and D22 approved for E3; independent review, PR and merge authorized with conditions
+
+Source: the owner's message of 2026-11-09 in the working session. The text below records what the owner decided.
+
+| Item | Owner decision |
+|---|---|
+| E3 outcome | Provisionally accepted as **Pass (U)**, limited to the tested capability-revocation behaviour under QEMU TCG, **pending independent review** |
+| D21, D22 | Approved **for E3 only**. "Keep the existing crate organization. Separate crates are not required for this feasibility experiment" |
+| Review | An independent review of E3, with emphasis on: (1) seL4 derivation and revocation semantics, including the two badged mints and their copies; (2) whether the pre-revoke and post-revoke controls show selective authority removal; (3) whether the mutants test the stated security properties and whether the recorded binaries and evidence are consistent; (4) the copied `unsafe extern` block and `static mut` (soundness, initialization, concurrency, safer alternatives); (5) whether the verifier can pass altered evidence, including regressions affecting A1, E1 and E2; (6) whether the claims, limitations, deviation records and acceptance labels reflect the evidence. Address all material findings; rebuild and rerun the affected evidence when implementation changes require it; no repeated review cycles for editorial issues |
+| After a MERGE-READY verdict on the final implementation | Run the full evidence verifier, its self-tests and `cargo xtask check`; create signed, DCO-compliant commits; push `spike/e3-revocation` and open a PR that includes the updated `SESSION_HANDOFF.md`; **merge only when the required CI checks pass on the final reviewed head and no material finding remains**. Then report the resulting `main` commit, the remaining limitations and the outstanding S1 gates, and stop |
+| Not authorized | Changing ADR statuses, changing dependencies, beginning another experiment. Stale local branches may be deleted only after verifying that they hold no unique commits or uncommitted work; unrelated untracked directories are not to be touched |
+
+### 2026-11-09 (E3 review): the baseline recommendation as authorized, and corrections to the E3 entry above
+
+Source: the agent, after the first independent `reviewer` run the owner authorized (verdict NOT MERGE-READY; its findings and their treatment are in [E3](../../spikes/sel4-feasibility/results/E3.md), "The independent review"). These are corrections to the agent's own wording and to its own evidence. They change no criterion and no owner decision; the E3 entry above stays as written.
+
+**The baseline the owner authorized** ("using the corrected recommendation in SESSION_HANDOFF.md as the baseline scope", owner message of 2026-11-09). The review found this text had been overwritten in the working-tree handoff; it is quoted here as the handoff had it at the start of the session (it is the agent's recommendation, not an owner decision):
+
+> 2. If E3 is authorized, the agent's recommendation [Inferred: nothing below has been run; exact error codes must be checked on the first run]. It reuses the E2 crates, with no kernel change and no new dependency.
+>    - Setup: the root task keeps an unbadged endpoint capability `P` and mints a badged child `C` into the server's slot `s`. A control child `D` of a separate endpoint `Q` sits in slot `t`. Optionally a copy `C2` of `C` also goes in the client's CNode.
+>    - Before: the server sends on `C` and the root receives it (positive control). The root `Copy`s the server's slot `s` into its own CNode, which succeeds (the root holds the server's CNode capability); it then deletes that copy.
+>    - Revoke: the root revokes `P`. This deletes derived capabilities and keeps `P`.
+>    - After: (a) the same root-side `Copy` from slot `s` now fails, so a slot that was live and copyable is empty; (b) the server's send on `s` returns an error and the root receives nothing; (c) `P` still works (the root mints a new child and a round trip succeeds); (d) `D` still works; (e) `C2`, if used, is gone too, which deleting the server's slot alone would not do.
+>    - Distinguishing revocation from an invalid lookup: the post-revoke error for a revoked slot is probably the **same** error as E2's empty slot (label 2), so the error code alone proves nothing. The evidence is the before/after pair on the same slot, the surviving parent and control capabilities, and a mutant that replaces the revoke with a no-op, after which the post-revoke send must succeed and the test must fail. The server must hold no CNode capability, so it cannot have emptied the slot itself. The same debug-kernel caveat as E2 applies, and a fault message must not be used as evidence.
+>    - Size: a few dozen lines in the E2 crates, plus verifier markers and a self-test. It still needs a deviation row for the new code and an independent review before a PR.
+
+| Item | Correction |
+|---|---|
+| "Departures from the recommendation" | The tasks use `Call`, not `Send`, so that a refusal is visible as a reply label (a refused `Send` is silent); both tasks get a mint of `P` and a copy of that mint in their own CNode, rather than a mint for the server and a copy in the client's CNode, so the two CNodes' capabilities are siblings, not a chain; a mint of `P` after the revoke is tested for both tasks (the recommendation's (c)); the control `Q` is shared. Point (e), that the client's copy is gone and a removal in the server's CNode alone would not do it, is shown by the mutant that deletes only task 1's slots (M5) |
+| "Three mutants", "89 of 89", "35 of 35" | Six mutants (a no-op, a revoke of `Q`, a no-op without two probes, a revoke of `P` and `Q`, a removal from task 1 only, a root task that answers the refused call); the verifier has 91 checks (20 for E3) and the self-test 46 corruptions. The detectors behind the control probe, the second task and the task's own refusal check are shown to fail |
+| "No independent review" | A first review was done (NOT MERGE-READY); its findings were addressed and the evidence rerun; a second review of the final state returned MERGE-READY with no material finding. The owner's final acceptance is pending |
+| "D21 and D22 ... not individually reviewed" | Approved by the owner for E3 only; reviewed by the `reviewer`. D23 (new) repairs `build-e2.sh`, which the E3 binaries had broken (E2's root-task build compiled `e3_root_task` too and failed): E2's evidence is unaffected, but the E2 build script's recorded hash is no longer the file's |
+| E2 acceptance | The owner finally accepted E2 as Pass (U) (entry above). The E2 record is not otherwise changed; its build script now names the binaries it builds (D23) |

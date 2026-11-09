@@ -53,7 +53,7 @@ Exit criteria:
 
 ## S1: Kernel foundation spike
 
-**Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1 and E2 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
+**Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1, E2 and E3 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
 A3, A4 and the A2a interpretation conditionally on 2026-11-08.
 
@@ -74,10 +74,12 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08.
   **The agent's reading is Pass, label U, functional only: 3 of 3 boots reached `TEST_PASS`** ([E1](../spikes/sel4-feasibility/results/E1.md)).
   An independent review found it acceptable with corrections (applied); the owner conditionally accepted it, subject to a final review of those corrections. It shows nothing about HVF, SMP, performance, hardware or assurance, and its kernel has half the RAM of A1's.
 - **E2 (owner-authorized, 2026-11-09):** two isolated Rust tasks over seL4 IPC, with two invalid invocations and two refused attempts to exceed their authority (badge forgery, a read of the other task's memory), on the E1 kernel
-  configuration. **The agent's reading is Pass, label U, functional only: 3 of 3 boots** ([E2](../spikes/sel4-feasibility/results/E2.md)). It is a
-  precursor, not Stage B evidence (A2a has not run), and it does not test revocation, rights amplification, hardware or assurance. The owner provisionally
-  accepted it as Pass (U), subject to independent review, and approved D19 and D20 for E2's scope only.
-- **Next:** independent review of E2, then (on MERGE-READY) a PR. No further experiment is authorized.
+  configuration. **Pass, label U, functional only: 3 of 3 boots** ([E2](../spikes/sel4-feasibility/results/E2.md)), **finally accepted by the owner** (after an independent review) as limited to its demonstrated
+  functional and capability-isolation probes; it does not establish verified kernel-generated fault delivery. It is a precursor, not Stage B evidence (A2a has not run), and it does not test revocation, rights amplification, hardware or assurance.
+- **E3 (owner-authorized, 2026-11-09):** capability revocation on the same configuration: after `seL4_CNode_Revoke` on the root task's endpoint capability, the mints of it and their copies in two tasks' CNodes are gone, while the ancestor, an unrelated control and a new mint work.
+  **The agent's reading is Pass, label U, functional only: 3 of 3 boots, six mutants fail as they should** ([E3](../spikes/sel4-feasibility/results/E3.md)). **Provisionally accepted by the owner**, limited to the tested revocation behaviour under QEMU TCG, pending independent review (a first review found defects, since fixed and the evidence rerun; a second review of the final state returned MERGE-READY; the owner's final acceptance is pending).
+  A call through a revoked slot returns the same error as one through a never-populated slot, so the error code is not evidence. It does not test revoking a badged child, an untyped, a deeper chain, or any other object type, and it is not Stage B evidence.
+- **Next:** the E3 PR, then the owner's final acceptance of E3. No further experiment is authorized.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 
