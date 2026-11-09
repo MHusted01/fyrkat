@@ -1,0 +1,20 @@
+#
+# Copyright 2024, Colias Group, LLC (adapted from seL4/rust-sel4 spawn-task, tag v6.0.0)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# E2 spike: the root task that builds two isolated tasks, supervises their faults and reports the result.
+#
+
+[package]
+name = "e2-root-task"
+version = "0.1.0"
+edition = "2024"
+license = "BSD-2-Clause"
+publish = false
+
+[dependencies]
+e2-task = { path = "../e2-task" }
+object = { version = "=0.40.0", default-features = false, features = ["read"] }
+sel4 = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }
+sel4-root-task = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }

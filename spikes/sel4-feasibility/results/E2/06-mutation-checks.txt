@@ -1,0 +1,127 @@
+# E2 mutation checks: can the tests fail? Run 2026-11-09T10:36:12Z. Mutant images were built in a scratch directory with the same recipe and the evidence build (external/e2-build) was not touched.
+# M1: crates/e2-root-task/src/main.rs, one added line before spawning the client: map_secret(&mut allocator, client.vspace, SECRET_ADDR)?;
+# M2: crates/e2-task/src/abi.rs: SLOT_EMPTY = 1 instead of 5 (the 'empty' slot is the live endpoint)
+# Sources were restored afterwards (checked byte-for-byte). Expected: no E2_PASS, and an E2_FAIL naming the check.
+
+## M1 image sha256: dc9719d9a3a87eb5a0260003c932573d30f4e5e0727e8ac9a52e936fe5bdf502
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <SCRATCH>
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602f8b30
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff8b000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd8b000,
+        v_entry: 0x23c1c8,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff89000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff8b000 (filesz = 0x20aa8, memsz = 0x20aa8)
+seL4 kernel loader | DEBUG      0x7ffbbaa8 (filesz = 0x12070, memsz = 0x12070)
+seL4 kernel loader | DEBUG      0x7ffddb18 (filesz = 0x21530, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff89000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff89000..807ff8afb3)
+  [807ff8b000..8080000000)
+Booting all finished, dropped to user space
+E2_ROOT start
+E2_SERVER secret mapped and readable
+E2_SERVER ready
+E2_SERVER got request=41 badge=0xa11ce served=1
+E2_CLIENT call ok reply=42 served=1 badge=0xa11ce
+<<seL4(CPU 0) [decodeInvocation/643 T0x8070082c00 "child of: 'rootserver'" @212fac]: Attempted to invoke a null cap #5.>>
+E2_CLIENT empty-slot refused label=2
+<<seL4(CPU 0) [decodeCNodeInvocation/54 T0x8070082c00 "child of: 'rootserver'" @213040]: CNodeCap: Illegal Operation attempted.>>
+E2_CLIENT wrong-type refused label=3
+<<seL4(CPU 0) [decodeCNodeInvocation/182 T0x8070082c00 "child of: 'rootserver'" @21441c]: CNode Copy/Mint/Move/Mutate: Mutated cap would be invalid.>>
+E2_CLIENT badge-forge refused
+E2_SERVER got request=100 badge=0xa11ce served=2
+E2_CLIENT second call ok served=2
+E2_CLIENT reading server memory
+E2_FAIL client read the server's memory: 0x0
+E2_FAIL client: read of the server's secret did not fault
+
+[boot-image] marker 'E2_PASS' NOT seen after 25.05s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)
+
+## M2 image sha256: ec86b7bb18fd953ac2bb89bd92d54914c814b0d25c65e03a7a335ef116a9e423
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <SCRATCH>
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602f8ae0
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff8b000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd8b000,
+        v_entry: 0x23c17c,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff89000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff8b000 (filesz = 0x20a54, memsz = 0x20a54)
+seL4 kernel loader | DEBUG      0x7ffbba58 (filesz = 0x12078, memsz = 0x12078)
+seL4 kernel loader | DEBUG      0x7ffddad0 (filesz = 0x21578, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff89000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff89000..807ff8afb3)
+  [807ff8b000..8080000000)
+Booting all finished, dropped to user space
+E2_ROOT start
+E2_SERVER secret mapped and readable
+E2_SERVER ready
+E2_SERVER got request=41 badge=0xa11ce served=1
+E2_CLIENT call ok reply=42 served=1 badge=0xa11ce
+E2_SERVER got request=42 badge=0xa11ce served=2
+E2_FAIL client: empty slot was not refused with InvalidCapability
+
+[boot-image] marker 'E2_PASS' NOT seen after 25.01s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)

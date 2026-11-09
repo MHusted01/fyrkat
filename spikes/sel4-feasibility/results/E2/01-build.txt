@@ -1,0 +1,495 @@
+== seL4 kernel (hypervisor support ON)
+-- platform qemu-arm-virt supports multiple architectures, none was given
+--   defaulting to: aarch64
+-- Extracting device tree from QEMU
+-- The C compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- <REPO>/spikes/sel4-feasibility/external/e2-build/sel4/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- Configuring done (0.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4
+ninja: Entering directory `<REPO>/spikes/sel4-feasibility/external/e2-build/sel4'
+[1/44] Creating C input file for preprocessor
+[2/44] Generate dummy headers for prune compilation
+[3/44] Creating C input file for preprocessor
+[4/44] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[5/44] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[6/44] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[7/44] Generating include/sel4/shared_types.pbf
+[8/44] Generating generated/invocations_all.json
+[9/44] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[10/44] Generate invocation header gen_headers/api/invocation.h
+[11/44] Generate invocation header gen_headers/arch/api/invocation.h
+[12/44] Generate syscall invocations
+[13/44] Generating from <REPO>/spikes/sel4-feasibility/external/e2-build/sel4/libsel4/include/sel4/shared_types.pbf
+[14/44] Generate sel4_client.h
+[15/44] Generating from <REPO>/spikes/sel4-feasibility/external/e2-build/sel4/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[16/44] Creating C input file for preprocessor
+[17/44] Generate invocation header include/sel4/invocation.h
+[18/44] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[19/44] Building C object CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[20/44] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[21/44] Generating generated/arch/object/structures.bf.pbf
+[22/44] Generate syscall.h
+[23/44] Concatenating C files
+[24/44] Creating C input file for preprocessor
+[25/44] Building C object CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[26/44] Generating kernel_all_pp_prune.c
+[27/44] Generating from generated/arch/object/structures.bf.pbf
+[28/44] Creating C input file for preprocessor
+[29/44] Building C object CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[30/44] Generating generated/sel4/shared_types.bf.pbf
+[31/44] Generating from generated/sel4/shared_types.bf.pbf
+[32/44] Creating C input file for preprocessor
+[33/44] Creating C input file for preprocessor
+[34/44] Building C object CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[35/44] Generating linker.lds_pp
+[36/44] Building C object CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[37/44] Generating kernel_all.i
+[38/44] Generating circular_includes_valid
+[39/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[40/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[41/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[42/44] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[43/44] Building C object CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[44/44] Linking C executable kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel.elf has a LOAD segment with RWX permissions
+ninja: Entering directory `<REPO>/spikes/sel4-feasibility/external/e2-build/sel4'
+[0/1] Install the project...
+-- Install configuration: "None"
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/bin/kernel.elf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/benchmark_utilisation_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/bootinfo_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/bootinfo.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/config.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/errors.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/benchmark_track_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/benchmark_tracepoints_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/syscalls_master.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/debug_assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/syscalls_mcs.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/macros.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/functions.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/virtual_client.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/simple_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/api
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/api/syscall.xsd
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/api/syscall.xml
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces/object-api.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a53.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a76.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a8.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a72.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a57.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a35.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a15.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a55.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a7.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/constants_cortex_a9.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces/object-api-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces/object-api-sel4-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/plat
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/plat/api
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/plat/api/constants.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/mode
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/mode/types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/shared_types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/shared_types_gen.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/syscall.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/interfaces/sel4_client.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/arch/invocation.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/sel4_arch/types_gen.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/kernel
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/kernel/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/kernel/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/sel4/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/include/autoconf.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/src
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/libsel4/src/sel4_bootinfo.c
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/support/kernel.dtb
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/support/platform_gen.yaml
+-- Installing: <REPO>/spikes/sel4-feasibility/external/e2-build/sel4-install/support/platform_gen.json
+== kernel loader and add-payload (from the rust-sel4 checkout, with its own lock)
+   Compiling compiler_builtins v0.1.160 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling core v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/core)
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling zmij v1.0.23
+   Compiling serde_json v1.0.154
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sel4-build-env v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/build-env)
+   Compiling prettyplease v0.3.0
+   Compiling hashbrown v0.17.1 (https://github.com/coliasgroup/hashbrown.git?rev=c284cda40a72b0e9ddb1f9a8ea490d4f73473483#c284cda4)
+   Compiling fallible-iterator v0.3.0
+   Compiling equivalent v1.0.3
+   Compiling thiserror v2.0.21
+   Compiling ryu v1.0.23
+   Compiling unsafe-libyaml v0.2.11
+   Compiling autocfg v1.5.1
+   Compiling crc32fast v1.5.3
+   Compiling adler2 v2.0.1
+   Compiling indexmap v2.14.2
+   Compiling cfg-if v1.0.5
+   Compiling num-traits v0.2.19
+   Compiling heapless v0.9.1
+   Compiling simd-adler32 v0.3.10
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling miniz_oxide v0.9.1
+   Compiling twox-hash v2.1.5
+   Compiling rend v0.5.4
+   Compiling ruzstd v0.9.1
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling flate2 v1.1.10
+   Compiling cc v1.10.0
+   Compiling glob v0.3.4
+   Compiling object v0.40.0
+   Compiling serde_derive v1.0.229
+   Compiling ptr_meta_derive v0.3.2
+   Compiling thiserror-impl v2.0.21
+   Compiling rkyv_derive v0.8.18
+   Compiling munge_macro v0.4.7
+   Compiling ptr_meta v0.3.2
+   Compiling munge v0.4.7
+   Compiling rancor v0.1.3
+   Compiling rkyv v0.8.18
+   Compiling cobs v0.3.0
+   Compiling sel4-config-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/config/types)
+   Compiling sel4-platform-info-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-platform-info/types)
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling postcard v1.1.3
+   Compiling sel4-config-data v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/config/data)
+   Compiling sel4-kernel-loader-payload-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-kernel-loader/payload-types)
+   Compiling sel4-config v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/config)
+   Compiling sel4-config-macros v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/config/macros)
+   Compiling sel4-platform-info v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-platform-info)
+   Compiling sel4-kernel-loader v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-kernel-loader)
+   Compiling alloc v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc)
+   Compiling scopeguard v1.2.0
+   Compiling byteorder v1.5.0
+   Compiling embedded-hal v1.0.0
+   Compiling stable_deref_trait v1.2.1
+   Compiling nb v1.1.0
+   Compiling tock-registers v0.10.1
+   Compiling lock_api v0.4.14
+   Compiling sel4-phdrs-constants v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-phdrs/constants)
+   Compiling embedded-hal-nb v1.0.0
+   Compiling hash32 v0.3.1
+   Compiling sel4-phdrs v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-phdrs)
+   Compiling sel4-rodata-static v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-rodata-static)
+   Compiling log v0.4.34
+   Compiling spin v0.12.3
+   Compiling sel4-phdrs-patched v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-phdrs/patched)
+   Compiling smccc v0.2.3
+   Compiling chrono v0.4.45
+   Compiling sel4-logging v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-logging)
+   Compiling aarch64-cpu v11.2.0
+   Compiling sel4-stack v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-stack)
+   Compiling sel4-no-allocator v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-no-allocator)
+   Compiling sel4-immutable-cell v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-immutable-cell)
+   Compiling rtcc v0.4.0
+   Compiling sel4-driver-interfaces v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/experimental/sel4-driver-interfaces)
+   Compiling sel4-pl011-driver v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/drivers/pl011)
+   Compiling sel4-bcm2835-aux-uart-driver v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/drivers/bcm2835-aux-uart)
+    Finished `release` profile [optimized] target(s) in 12.74s
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling serde v1.0.229
+   Compiling crc32fast v1.5.3
+   Compiling hashbrown v0.17.1 (https://github.com/coliasgroup/hashbrown.git?rev=c284cda40a72b0e9ddb1f9a8ea490d4f73473483#c284cda4)
+   Compiling simdutf8 v0.1.5
+   Compiling simd-adler32 v0.3.10
+   Compiling adler2 v2.0.1
+   Compiling utf8parse v0.2.2
+   Compiling cfg-if v1.0.5
+   Compiling num-traits v0.2.19
+   Compiling anstyle-parse v1.0.0
+   Compiling miniz_oxide v0.9.1
+   Compiling zmij v1.0.23
+   Compiling twox-hash v2.1.5
+   Compiling memchr v2.8.3
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling colorchoice v1.0.5
+   Compiling anstyle-query v1.1.5
+   Compiling anstyle v1.0.14
+   Compiling ruzstd v0.9.1
+   Compiling flate2 v1.1.10
+   Compiling anstream v1.0.0
+   Compiling equivalent v1.0.3
+   Compiling serde_json v1.0.154
+   Compiling syn v3.0.9
+   Compiling syn v2.0.119
+   Compiling itoa v1.0.18
+   Compiling anyhow v1.0.104
+   Compiling heck v0.5.0
+   Compiling strsim v0.11.1
+   Compiling clap_lex v1.1.1
+   Compiling object v0.40.0
+   Compiling num-integer v0.1.47
+   Compiling clap_builder v4.6.7
+   Compiling num-bigint v0.4.8
+   Compiling num-iter v0.1.46
+   Compiling num-complex v0.4.6
+   Compiling indexmap v2.14.2
+   Compiling unsafe-libyaml v0.2.11
+   Compiling ryu v1.0.23
+   Compiling sel4-phdrs-constants v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-phdrs/constants)
+   Compiling num-rational v0.4.2
+   Compiling num v0.4.3
+   Compiling ptr_meta_derive v0.3.2
+   Compiling serde_derive v1.0.229
+   Compiling bytecheck_derive v0.8.3
+   Compiling munge_macro v0.4.7
+   Compiling ptr_meta v0.3.2
+   Compiling rkyv_derive v0.8.18
+   Compiling rancor v0.1.3
+   Compiling munge v0.4.7
+   Compiling clap_derive v4.6.7
+   Compiling bytecheck v0.8.3
+   Compiling bitfield-macros v0.19.5
+   Compiling rend v0.5.4
+   Compiling bitfield v0.19.5
+   Compiling clap v4.6.7
+   Compiling sel4-patch-elf v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-patch-elf)
+   Compiling sel4-platform-info-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-platform-info/types)
+   Compiling sel4-config-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4/config/types)
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling rkyv v0.8.18
+   Compiling sel4-kernel-loader-payload-types v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-kernel-loader/payload-types)
+   Compiling sel4-kernel-loader-add-payload v0.1.0 (<REPO>/spikes/sel4-feasibility/external/rust-sel4/crates/sel4-kernel-loader/add-payload)
+    Finished `release` profile [optimized] target(s) in 8.28s
+== tasks (client and server, spike workspace, locked)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling memchr v2.8.3
+   Compiling compiler_builtins v0.1.160 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling serde_core v1.0.229
+   Compiling core v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/core)
+   Compiling serde v1.0.229
+   Compiling find-msvc-tools v0.1.15
+   Compiling shlex v2.0.1
+   Compiling zmij v1.0.23
+   Compiling cc v1.10.0
+   Compiling serde_json v1.0.154
+   Compiling itoa v1.0.18
+   Compiling libc v0.2.191
+   Compiling sel4-build-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling cfg-if v1.0.5
+   Compiling prettyplease v0.3.0
+   Compiling pest_stack_guard v1.0.0
+   Compiling glob v0.3.4
+   Compiling ucd-trie v0.1.7
+   Compiling prettyplease v0.2.37
+   Compiling clang-sys v1.9.1
+   Compiling aho-corasick v1.1.5
+   Compiling rustversion v1.0.23
+   Compiling fallible-iterator v0.3.0
+   Compiling regex-syntax v0.8.11
+   Compiling syn v3.0.9
+   Compiling minimal-lexical v0.2.1
+   Compiling syn v2.0.119
+   Compiling nom v7.1.3
+   Compiling libloading v0.8.9
+   Compiling psm v0.1.24
+   Compiling stacker v0.1.25
+   Compiling either v1.19.0
+   Compiling bindgen v0.72.1
+   Compiling itertools v0.13.0
+   Compiling regex-automata v0.4.18
+   Compiling pest v2.9.5
+   Compiling cexpr v0.6.0
+   Compiling rustc-hash v2.1.3
+   Compiling log v0.4.34
+   Compiling bitflags v2.13.2
+   Compiling shlex v1.3.0
+   Compiling xml v1.4.0
+   Compiling sel4-bitfield-ops v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling pest_meta v2.9.5
+   Compiling serde_derive v1.0.229
+   Compiling xmltree v0.12.0
+   Compiling regex v1.13.1
+   Compiling pest_generator v2.9.5
+   Compiling pest_derive v2.9.5
+   Compiling sel4-config-types v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-data v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-macros v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-sys v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling alloc v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc)
+   Compiling sel4-phdrs-constants v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-panicking-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-stack v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-ctors-dtors v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-immutable-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-alloca v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-phdrs v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-immediate-sync-once-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-panicking v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-initialize-tls v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4 v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-runtime-common v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling e2-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-task)
+    Finished `release` profile [optimized] target(s) in 10.64s
+== root task (embeds the two task ELFs)
+   Compiling compiler_builtins v0.1.160 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling memchr v2.8.3
+   Compiling core v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/core)
+   Compiling serde_core v1.0.229
+   Compiling shlex v2.0.1
+   Compiling zmij v1.0.23
+   Compiling find-msvc-tools v0.1.15
+   Compiling serde v1.0.229
+   Compiling cc v1.10.0
+   Compiling serde_json v1.0.154
+   Compiling itoa v1.0.18
+   Compiling libc v0.2.191
+   Compiling sel4-build-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling cfg-if v1.0.5
+   Compiling prettyplease v0.3.0
+   Compiling pest_stack_guard v1.0.0
+   Compiling glob v0.3.4
+   Compiling ucd-trie v0.1.7
+   Compiling prettyplease v0.2.37
+   Compiling clang-sys v1.9.1
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling minimal-lexical v0.2.1
+   Compiling syn v3.0.9
+   Compiling rustversion v1.0.23
+   Compiling fallible-iterator v0.3.0
+   Compiling nom v7.1.3
+   Compiling psm v0.1.24
+   Compiling stacker v0.1.25
+   Compiling syn v2.0.119
+   Compiling libloading v0.8.9
+   Compiling either v1.19.0
+   Compiling bindgen v0.72.1
+   Compiling itertools v0.13.0
+   Compiling regex-automata v0.4.18
+   Compiling cexpr v0.6.0
+   Compiling pest v2.9.5
+   Compiling rustc-hash v2.1.3
+   Compiling bitflags v2.13.2
+   Compiling shlex v1.3.0
+   Compiling log v0.4.34
+   Compiling xml v1.4.0
+   Compiling sel4-bitfield-ops v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling serde_derive v1.0.229
+   Compiling sel4-root-task-macros v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling pest_meta v2.9.5
+   Compiling regex v1.13.1
+   Compiling xmltree v0.12.0
+   Compiling pest_generator v2.9.5
+   Compiling pest_derive v2.9.5
+   Compiling sel4-config-types v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-data v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-macros v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-sys v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling alloc v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc)
+   Compiling sel4-panicking-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-immediate-sync-once-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling scopeguard v1.2.0
+   Compiling sel4-phdrs-constants v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-ctors-dtors v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-alloca v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling lock_api v0.4.14
+   Compiling sel4-phdrs v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-immutable-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-stack v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-panicking v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling dlmalloc v0.2.14
+   Compiling sel4-initialize-tls v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-dlmalloc v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4 v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling object v0.40.0
+   Compiling sel4-runtime-common v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-sync v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling e2-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-task)
+   Compiling sel4-root-task v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling e2-root-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-root-task)
+    Finished `release` profile [optimized] target(s) in 12.90s
+== image
+== checksums
+9b15a9d8698fa6d5a87c46d1026729452f5f4329098889128fcf91b7fcc92db5  kernel.elf
+8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159  sel4-kernel-loader.elf
+a1193a41ad08024d2dbbcae292141f8f6f968217298116003c77aa37aef40872  e2-client.elf
+6ca8553a74e9f91c067a432a867afb038d8e3a9164527e1446f117acbaecc055  e2-server.elf
+de259ffde214bd14cc26908d2bc5b37e29d6d4bd6a2bf4fa0ba97a70b304ecb0  e2-root-task.elf
+b4aec7616c52fd978f9b419f9bbde1f271225d8afa8704c165a3ad0e4ae4544f  image.elf
+BUILD_EXIT=0

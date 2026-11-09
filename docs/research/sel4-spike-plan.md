@@ -1146,3 +1146,46 @@ accepted.**
 | PR 9 | **Do not merge it and do not dismiss its alerts.** Preserve the existing dependency pin while a compatible remediation is evaluated. **No additional `protobuf` experiments are authorized** | No change to `requirements.txt` or to the alerts |
 | Next milestone | The owner's priority is two isolated Rust userspace tasks communicating through seL4 IPC, with a negative capability-isolation test. **Not to be implemented yet.** The agent is to identify the minimum existing S1 gates and propose the smallest executable scope, concisely, with no new documentation or approval cycle unless a real architectural or security boundary requires one | A proposal in the session only. Nothing is authorized to start |
 | Stop condition | A2a, A4, A5, the comparator and Class 3 kernel modifications stay blocked. No experiment other than E1 is authorized | In force |
+
+### 2026-11-09: E2 authorized and run (two isolated tasks over seL4 IPC), the agent's measurement, for independent review and the owner's decision
+
+Source: the owner's messages of 2026-11-09 in the working session ("go ahead" in reply to the agent's proposal, then "Option 1, approve object"
+in reply to the agent's correction that the proposal's recipe needs a new dependency). **No earlier criterion or outcome is changed and no ADR is
+accepted.** E2 is a precursor, **not** Stage B, P1 or P2 evidence: A2a has not run.
+
+| Item | Entry |
+|---|---|
+| Authorization | The proposal as stated to the owner (two isolated Rust tasks communicating through seL4 IPC, with negative capability-isolation checks; the smallest executable scope), the gated files `Cargo.toml` and `Cargo.lock`, and the new dependency `object` 0.40.0 (`read` feature only), for S1 only. Commit, push and PR were **not** authorized by these messages |
+| Configuration | E1-H (hypervisor-enabled seL4 17.0.0, `qemu-arm-virt`, Cortex-A57, 1 node, non-MCS), label U; the same 156 kernel keys as E1 [Measured] |
+| What ran | A root task builds a client and a server, each with its own address space, CNode, TCB and IPC buffer, one shared endpoint, and the root task as fault supervisor. The client makes a legitimate call, then invokes an empty slot, invokes a wrong-type capability, tries to forge a badge by minting, makes a second legitimate call, and reads a server-only address |
+| Result | **Pass, label U, functional only: 3 of 3 boots** printed the full sequence and `E2_PASS`; each refusal returned the expected error code, no message reached the server from the refused attempts, and the root task received exactly one fault, the client's VM fault at the server's secret address [Measured]. Verifier 71 of 71 (16 for E2), `--self-test` 14 of 14. Two mutants (the client given the secret's mapping; the "empty" slot made live) each failed as they should. Record: [E2](../../spikes/sel4-feasibility/results/E2.md) |
+| Departures from the proposal | Rights amplification through mint is **not tested** (mint masks rights, it does not reject, and seeing it needs a second fault round-trip); the tasks are two separate binaries, not one shared ELF; a positive control (the server reads its own secret) was added after a first, superseded run; the code is two crates, not one |
+| New spike code | D19 (the two crates, `build-e2.sh`, `Cargo.toml`, `Cargo.lock`, `object`) and D20 (the verifier's E2 checks and its lock-aware checks), both in `deviations.md`; **D20 is not yet approved** |
+| Not shown | HVF, SMP, performance, hardware, revocation, use after revoke, anything about untyped or IRQ authority, a second fault, side channels, reproducibility beyond one directory, formal assurance, or the broader hypothesis. The kernel is a debug build in which every task can print |
+| Stop condition | Unchanged: A2a, A4, A5, the comparator and Class 3 kernel modifications stay blocked, and no experiment other than E1 and E2 is authorized. E2 stops here pending review |
+
+### 2026-11-09 (later): E2 provisionally accepted as Pass (U); D19 and D20 approved for E2's scope; independent review authorized
+
+Source: the owner's message of 2026-11-09 in the working session. The text below records what the owner decided; the agent's measurement is in the entry above and is not repeated as a decision.
+
+| Item | Owner decision |
+|---|---|
+| E2 outcome | Provisionally accepted as **Pass (U)**, limited to the specific functional and security probes performed under QEMU TCG, subject to independent review |
+| D19, D20 | Approved **for E2's experimental scope only**. They do not authorize broader dependency changes or future experiments. This covers D19's "two crates, not one" difference and D20's lock-aware verifier checks |
+| Review | A focused independent review of E2 (implementation, evidence, build configuration, capability distribution, isolation tests, mutation tests, `Cargo.lock` changes, verifier changes). Material findings are addressed and the affected tests rerun; purely editorial findings do not start a new loop |
+| After a MERGE-READY verdict on the final implementation | Run the complete checks, create signed DCO-compliant commits, push `spike/e2-ipc-isolation` and open a PR. Merging is **conditionally authorized** only if every required CI check passes on the final head, the evidence verifier passes and no material finding remains. Then report the final `main` commit and stop |
+| Not authorized | Revocation, A2a, A4, A5 and the custom-kernel comparator. The next milestone gets a short technical recommendation only, not a planning PR |
+
+### 2026-11-09 (after the independent review): corrections to the E2 entries above
+
+Source: the agent, after the independent `reviewer` run the owner authorized. These are corrections to the agent's own wording and to a verifier defect. They change no criterion and no owner decision; the earlier entries stay as written.
+
+| Item | Correction |
+|---|---|
+| "Four attempts to exceed its authority" | Two attempts to exceed authority (badge forgery, a read of the server's memory) and two invalid invocations (an empty slot; label 0 on the client's own CNode capability, which the kernel treats as an invalid CNode method). The empty-slot and CNode probes are not authority tests |
+| "The root task received the client's VM fault" [Measured] | The root task's check establishes that a VM-fault-shaped message at the secret address arrived through the client's badged fault capability. The client holds a send capability to that endpoint (non-MCS requires it), so a forged message would pass; the reviewer built such a client and it produced `E2_PASS`. That a real fault occurred rests on the client source [Inferred]. The tasks' fault capability has write and grant-reply rights, not write-only |
+| "Exactly one fault" | The root task waits for one fault message by design |
+| D20, "strictness is kept" | Not true as first written: the verifier normalised line endings of `Cargo.lock`. Fixed (bytes are hashed); 5 new self-tests cover the lock; self-test is now 19 of 19 |
+| E2.md on log identity | The `\r\n` difference described belonged to the superseded first run. In the evidence run, boots 2 and 3 are byte-identical and boot 1 differs only in the elapsed time |
+| Source change after the evidence build | Doc comments only, in `crates/e2-root-task/src/main.rs` and `crates/e2-task/src/bin/client.rs`, with unchanged line counts; the binaries were not rebuilt. Known and left as is: the server prints "secret mapped and readable" even after a readback mismatch (its `E2_FAIL` line fails the verifier); there is no mutant for the mint test; the verifier does not check the kernel's reason lines |
+| Dependency policy check | `cargo deny --frozen check advisories bans sources` passed offline against a local advisory database for the new `object` dependency [Measured by the reviewer] |
