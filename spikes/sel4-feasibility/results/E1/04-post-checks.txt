@@ -1,0 +1,22 @@
+# E1 post-run checks, 2026-11-08T18:54:27Z
+repo HEAD: 09f5dd5728736d748b77f70f20c87d934331a64b
+git status --short (repo):
+?? build-e1.sh
+tracked files changed vs HEAD: 0
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+rust-sel4 HEAD: c819c27b076130cba9821c4555f23773e4b0bffd; dirty files: 0
+Cargo.lock sha256: 56bd1e3e8a23d5da5d1688712e4b1bddded655ad75f07fc0f2a097f6d09245f7
+crates/root-task tracked diff vs HEAD: 0 lines
+brew pinned: aarch64-elf-binutils aarch64-elf-gcc cmake dtc lz4 ninja qemu 
+build-e1.sh sha256: a4a9b52604cec19db53271ae04fbae3a35ded6125984fceea9a45f4f904a9f9b
+boot-image.py sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644
+image used for the boots: external/e1-build/image.elf 4487ab9b08c9c3725b566f60af0aca826b8bbb6b6375b12108c6da2472257b93
+e1 1fee1dd675a578b04153e8290fb58021d911656967f0da27d35ca12c885ca9d0  kernel.elf
+e1 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159  sel4-kernel-loader.elf
+e1 58e723f336c641e2c94bd5aad87cb7643d77c446a0590283d7d5c693317b99f3  s1-root-task.elf
+e1 4487ab9b08c9c3725b566f60af0aca826b8bbb6b6375b12108c6da2472257b93  image.elf
+A1-rerun build (build/) for comparison:
+a1rerun 95891911d0bed9e4777c2b959a2ed9b718b8776eb3bacb2e15ed8018c7aeff70  kernel.elf
+a1rerun 8be9d6df5e569b1cfd6f39f7a36ab455396b61867241a71a100fe827481de979  sel4-kernel-loader.elf
+a1rerun 64fcc25c933418d0ea94c832e9166fe983e281eb58be1d79a21440b5d8698314  s1-root-task.elf
+a1rerun 388e120845f44049a2844d2198134a5c17a929328afc7949822b42e5955393df  image.elf
