@@ -1,0 +1,42 @@
+# E3 post-run checks, 2026-11-09T15:58:45Z
+repo HEAD: 59dc7cbfe29f2a7995280924ae37863541442d6e
+git status --short (repo):
+  M build-e2.sh
+  M crates/e2-task/src/lib.rs
+  M results/E2.md
+  M results/deviations.md
+  M results/evidence-manifest.txt
+  M verify-evidence.py
+ ?? build-e3.sh
+ ?? crates/e2-root-task/src/bin/
+ ?? crates/e2-root-task/src/e3_spawn.rs
+ ?? crates/e2-task/src/bin/e3_task.rs
+ ?? crates/e2-task/src/e3_abi.rs
+ ?? results/E3.md
+ ?? results/E3/
+ ?? run-e3-evidence.sh
+ ?? sanitize-run.py
+ ?? verify_e3.py
+tracked files changed vs HEAD: 6 (spikes/sel4-feasibility/build-e2.sh spikes/sel4-feasibility/crates/e2-task/src/lib.rs spikes/sel4-feasibility/results/E2.md spikes/sel4-feasibility/results/deviations.md spikes/sel4-feasibility/results/evidence-manifest.txt spikes/sel4-feasibility/verify-evidence.py )
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+rust-sel4 HEAD: c819c27b076130cba9821c4555f23773e4b0bffd; dirty files: 0
+Cargo.lock sha256: 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925
+Cargo.toml and Cargo.lock tracked diff vs HEAD: 0 lines
+crates/root-task tracked diff vs HEAD: 0 lines
+crates/*/Cargo.toml tracked diff vs HEAD: 0 lines
+E2 sources (crates/e2-task/src/abi.rs crates/e2-task/src/runtime.rs crates/e2-task/src/bin/client.rs crates/e2-task/src/bin/server.rs crates/e2-root-task/src/main.rs crates/e2-root-task/src/child_vspace.rs crates/e2-root-task/src/object_allocator.rs) tracked diff vs HEAD: 0 lines
+src sha256: 560af60efcc12f6d09b79d164c295460024e812c602a0493a2ebea5fa28c98e0  crates/e2-root-task/src/bin/e3_root_task.rs
+src sha256: 70a7152b0dca0366a86db9ac581961576c43ee9097813897adb5c123cd2bc9db  crates/e2-root-task/src/e3_spawn.rs
+src sha256: ad6c2bf418afe69aca1a215209d8ac41990f243becdbe5e01799554a11aa5045  crates/e2-task/src/bin/e3_task.rs
+src sha256: 046adbff664ce66069196581316301f79802908a7941bff83413387aca361a3e  crates/e2-task/src/e3_abi.rs
+src sha256: bb52fd69026b015517167ec363ee0262d1077df6825d4b56538ebab6e03252c1  crates/e2-task/src/lib.rs
+src sha256: 1c955bf65790a8abe204146002838d8924d031eeb70f1ff3a90dcb83c107ea7c  build-e3.sh
+src sha256: 47543f01a798d4fdfa74e1f4095975d21cb6a7c26e5965fb47c53bffd5a30e05  build-e2.sh
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py
+image used for the boots: external/e3-build/image.elf 0460ce1debb7978af0499fa9debf9902d0138971c15f28700b0dabbe1948cf8d
+e3 b1b63218368002fc59e58f70aa7b5c81521a3689d2a6001480e0d1862707d7aa  kernel.elf
+e3 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159  sel4-kernel-loader.elf
+e3 a2dc4483865dac897edabc3d35907ff424e2027c4672a77b3a90f69c501fab17  e3_task.elf
+e3 5394ebd10c8805f0ab2b661a666f04faf809cc40a4e997562b29b8d4b2a0ca6f  e3_root_task.elf
+e3 0460ce1debb7978af0499fa9debf9902d0138971c15f28700b0dabbe1948cf8d  image.elf
+E1 hashes for comparison (results/E1.md): kernel 1fee1dd675a578b04153e8290fb58021d911656967f0da27d35ca12c885ca9d0, loader 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159

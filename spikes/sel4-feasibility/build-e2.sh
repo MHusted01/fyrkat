@@ -69,7 +69,7 @@ add_payload="$B/rust-sel4-host-target/release/sel4-kernel-loader-add-payload"
 echo "== tasks (client and server, spike workspace, locked)"
 RUST_TARGET_PATH="$W/external/rust-sel4/support/targets" \
 RUSTFLAGS="-Zunstable-options" \
-cargo build --locked --release -p e2-task --bins \
+cargo build --locked --release -p e2-task --bin e2-client --bin e2-server \
     --target aarch64-sel4 \
     -Z unstable-options \
     -Z build-std=core,alloc,compiler_builtins \
@@ -82,7 +82,7 @@ E2_SERVER_ELF="$B/e2-server.elf" \
 E2_CLIENT_ELF="$B/e2-client.elf" \
 RUST_TARGET_PATH="$W/external/rust-sel4/support/targets" \
 RUSTFLAGS="-Zunstable-options" \
-cargo build --locked --release -p e2-root-task \
+cargo build --locked --release -p e2-root-task --bin e2-root-task \
     --target aarch64-sel4 \
     -Z unstable-options \
     -Z build-std=core,alloc,compiler_builtins \
