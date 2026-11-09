@@ -1,0 +1,51 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel external/e1-build/image.elf
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602cd850
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ffc8000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fdc8000,
+        v_entry: 0x213670,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ffc6000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ffc8000 (filesz = 0x3120, memsz = 0x3120)
+seL4 kernel loader | DEBUG      0x7ffdb120 (filesz = 0x4aec, memsz = 0x4aec)
+seL4 kernel loader | DEBUG      0x7ffefc10 (filesz = 0x10040, memsz = 0x10)
+seL4 kernel loader | DEBUG      0x7ffc6000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ffc6000..807ffc7fb3)
+  [807ffc8000..8080000000)
+Booting all finished, dropped to user space
+Hello, World!
+badge = 0x1337
+TEST_PASS
+
+[boot-image] marker 'TEST_PASS' SEEN after 0.09s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)

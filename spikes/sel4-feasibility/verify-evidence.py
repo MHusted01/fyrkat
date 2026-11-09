@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Re-check the A1 and A3 conclusions against the sanitized public evidence in results/.
+"""Re-check the A1, A3 and E1 conclusions against the sanitized public evidence in results/.
 
-    verify-evidence.py [--results DIR] [--lock FILE]
+    verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
 It reads the sanitized files (never results-raw/) and the spike's Cargo.lock, so anyone with a clone can run it. It checks
 that the measurements the records rely on are present and consistent, that the manifest's hashes match
@@ -14,10 +14,12 @@ check passes. Spike code, stdlib only.
 import argparse
 import getpass
 import hashlib
+import json
 import re
 import socket
 import sys
 import tomllib
+from collections.abc import Callable
 from pathlib import Path
 
 
@@ -62,12 +64,111 @@ def smp_build_ok(text: str, nodes: str, smp: bool) -> bool:
             and set(re.findall(r'method = "(\w+)";', text)) == {"hvc"})
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
-    ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
-    ns = ap.parse_args()
-    res, lock_path = Path(ns.results), Path(ns.lock)
+E1_ORDER = ("Bootstrapping kernel", "Booting all finished, dropped to user space", "Hello, World!",
+            "badge = 0x1337", "TEST_PASS")
+E1_FAILURE = re.compile(r"fault|halt|panic|exception|abort|assert|!!!", re.IGNORECASE)
+E1_PINS = {"seL4": "62e345c240a15671484530b4e6e069ce266c28d7",
+           "rust-sel4": "c819c27b076130cba9821c4555f23773e4b0bffd"}
+
+
+def in_order(text: str, needles: tuple[str, ...]) -> bool:
+    """True when every needle occurs, each after the previous one."""
+    pos = 0
+    for needle in needles:
+        pos = text.find(needle, pos)
+        if pos < 0:
+            return False
+        pos += len(needle)
+    return True
+
+
+def guest_output(log: str) -> str:
+    """The guest's serial output only: without the harness's own `+ command` line and `[boot-image]` footer.
+
+    The footer contains the marker text, so a check that read the whole log could be satisfied by the footer."""
+    lines = log.replace("\r", "").split("\n")
+    if lines and lines[0].startswith("+ "):
+        lines = lines[1:]
+    for i, line in enumerate(lines):
+        if line.startswith("[boot-image]"):
+            lines = lines[:i]
+            break
+    return "\n".join(lines)
+
+
+def through_marker(text: str) -> str:
+    """The boot output up to and including the success marker, CRs removed.
+
+    The harness stops reading as soon as the marker is in its buffer, so whether the line terminator after the
+    marker was captured depends on timing. It is not part of the guest's output that is compared."""
+    clean = text.replace("\r", "")
+    return clean[: clean.find("TEST_PASS") + len("TEST_PASS")] if "TEST_PASS" in clean else clean
+
+
+def verify_e1(res: Path, lock_path: Path, a1rerun: dict[str, str], check: Callable[[str, bool], None]) -> None:
+    """E1 checks. `check` records (name, ok). Reads only sanitized files in results/E1."""
+    cfg = json.loads(read(res, "E1/02-kernel-gen_config.json"))
+    check("E1 kernel config: hypervisor support on, qemu-arm-virt, Cortex-A57, 1 node, non-MCS, not a verification build",
+          cfg.get("ARM_HYPERVISOR_SUPPORT") is True and cfg.get("PLAT_QEMU_ARM_VIRT") is True
+          and cfg.get("ARM_CORTEX_A57") is True and cfg.get("MAX_NUM_NODES") == "1"
+          and cfg.get("KERNEL_MCS") is False and cfg.get("VERIFICATION_BUILD") is False)
+    a1cfg = json.loads(read(res, "A1/kernel-gen_config.json"))
+    changed = {k for k in set(a1cfg) | set(cfg) if a1cfg.get(k) != cfg.get(k)}
+    check("E1 kernel config differs from A1's published kernel config in exactly one key, ARM_HYPERVISOR_SUPPORT "
+          "(False in A1, True in E1)",
+          changed == {"ARM_HYPERVISOR_SUPPORT"} and a1cfg.get("ARM_HYPERVISOR_SUPPORT") is False
+          and cfg.get("ARM_HYPERVISOR_SUPPORT") is True)
+    diff = read(res, "E1/05-config-diff-vs-a1rerun.txt")
+    check("E1 the recorded config comparison (the A1 rerun's build) agrees: 156 keys each, one differs",
+          "156 keys in A1-rerun config, 156 in E1-H config, 1 differ:" in diff
+          and "ARM_HYPERVISOR_SUPPORT: A1-rerun=False  E1-H=True" in diff
+          and len(re.findall(r"(?m)^  \w+: A1-rerun=", diff)) == 1)
+    build = read(res, "E1/01-build.txt")
+    cache = read(res, "E1/03-kernel-cmake-cache.txt")
+    check("E1 build: succeeded (exit 0) with no error line, and the recorded CMake cache has the hypervisor option on",
+          "BUILD_EXIT=0" in build and not re.search(r"(?m)^error", build)
+          and "KernelArmHypervisorSupport:BOOL=ON" in cache and "KernelVerificationBuild:BOOL=OFF" in cache
+          and "KernelPlatform:STRING=qemu-arm-virt" in cache and "KernelMaxNumNodes:STRING=1" in cache)
+    post = read(res, "E1/04-post-checks.txt")
+    pre = read(res, "E1/00-preflight.txt")
+    lock_hash = hashlib.sha256(lock_path.read_bytes()).hexdigest() if lock_path.is_file() else ""
+    check("E1 inputs: seL4 and rust-sel4 at their pins and clean, no tracked file changed, Cargo.lock unchanged",
+          all(f"{n} HEAD: {sha}; dirty files: 0" in post for n, sha in E1_PINS.items())
+          and "tracked files changed vs HEAD: 0" in post and "crates/root-task tracked diff vs HEAD: 0 lines" in post
+          and f"Cargo.lock sha256: {lock_hash}" in post and f"Cargo.lock sha256: {lock_hash}" in pre)
+    check("E1 toolchain and host recorded (QEMU 11.1.3, GCC 16.2.0, CMake 4.4.5, nightly-2026-08-21 rustc, arm64 host)",
+          "QEMU emulator version 11.1.3" in pre and "aarch64-elf-gcc (GCC) 16.2.0" in pre
+          and "cmake version 4.4.5" in pre and "8925ea358 2026-08-20" in pre and "arm64" in pre)
+    built = sums(build)
+    names = {"kernel.elf", "sel4-kernel-loader.elf", "s1-root-task.elf", "image.elf"}
+    recorded = {m.group(2): m.group(1) for m in re.finditer(r"(?m)^e1 ([0-9a-f]{64})\s+(\S+)$", post)}
+    check("E1 hash table: the build log and the post-run record agree on the four outputs",
+          set(built) == names and built == recorded)
+    check("E1 hashes are its own: kernel, loader, root task and image all differ from the A1 rerun's",
+          all(built[n] != a1rerun[n] for n in names))
+    image_line = re.search(r"image used for the boots: \S+ ([0-9a-f]{64})", post)
+    boots = [read(res, f"E1/10-boot-{n}.txt") for n in (1, 2, 3)]
+    check("E1 boots: all three used the recorded image.elf",
+          image_line is not None and image_line.group(1) == built["image.elf"])
+    check("E1 boots: each run's command line and footer record virt,secure=off,gic-version=2,virtualization=on "
+          "under TCG, Cortex-A57, 1 vCPU",
+          all("-machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1" in b
+              and "accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True" in b for b in boots))
+    guests = [guest_output(b) for b in boots]
+    check("E1 boots: in the guest output of all three, the banner, Hello, World!, badge = 0x1337 and a TEST_PASS "
+          "line appear in that order",
+          all(in_order(g, E1_ORDER) and re.search(r"(?m)^TEST_PASS$", g) is not None for g in guests))
+    check("E1 boots: in all three, the harness reports the marker SEEN",
+          all("marker 'TEST_PASS' SEEN" in b for b in boots))
+    check("E1 boots: no fault, halt, panic, exception, abort, assertion or '!!!' in the guest output of any of the three",
+          not any(E1_FAILURE.search(g) for g in guests))
+    check("E1 boots: output through TEST_PASS identical across the three (the line terminator after the marker "
+          "depends on read timing and is excluded)",
+          len({through_marker(g) for g in guests}) == 1)
+
+
+def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
+    """Run every check against RES and return (name, passed) pairs."""
     results: list[tuple[str, bool]] = []
 
     def check(name: str, ok: bool) -> None:
@@ -184,6 +285,11 @@ def main() -> int:
     check("A3 the device trees name hvc as the only PSCI conduit, which the elfloader rejects",
           all(set(re.findall(r'method = "(\w+)";', t)) == {"hvc"} for t in (cfg1, cfg4)))
 
+    # ---- E1 (Route II): functional boot of a hypervisor-enabled kernel under TCG. Label U, functional only.
+    check("E1 evidence directory is present", (res / "E1").is_dir())
+    if (res / "E1").is_dir():
+        verify_e1(res, lock_path, r_sum2, check)
+
     # ---- integrity and privacy
     listed: set[str] = set()
     bad = []
@@ -195,9 +301,9 @@ def main() -> int:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1") for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/ and A3/ (one README note aside)",
+    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/ and E1/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -214,6 +320,106 @@ def main() -> int:
              if rx.search(t) or any(n.lower() in t.lower() for n in plain)]
     check("privacy: no home path, user name, host name or scratch path in results/", not leaks)
 
+    return results
+
+
+def rehash_manifest(res: Path) -> None:
+    """Rewrite the sanitized-hash column of the manifest for the files that exist, and drop lines for missing ones."""
+    path = res / "evidence-manifest.txt"
+    out: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#") or not line.strip():
+            out.append(line)
+            continue
+        raw, _clean, rel = line.split(None, 2)
+        target = res / rel
+        if target.is_file():
+            out.append(f"{raw}  {hashlib.sha256(target.read_bytes()).hexdigest()}  {rel}")
+    path.write_text("\n".join(out) + "\n", encoding="utf-8")
+
+
+def self_test(res: Path, lock_path: Path) -> int:
+    """Corrupt a temporary copy of the evidence in targeted ways, keeping the manifest consistent, and require the
+    named check to fail each time. The unmodified copy must pass every check. Nothing in RES is changed."""
+    import shutil
+    import tempfile
+
+    def edit(rel: str, fn: Callable[[str], str]) -> Callable[[Path], None]:
+        def apply(root: Path) -> None:
+            f = root / rel
+            f.write_text(fn(f.read_text(encoding="utf-8")), encoding="utf-8")
+        return apply
+
+    def every_boot(fn: Callable[[str], str]) -> Callable[[Path], None]:
+        steps = [edit(f"E1/10-boot-{n}.txt", fn) for n in (1, 2, 3)]
+
+        def apply(root: Path) -> None:
+            for step in steps:
+                step(root)
+        return apply
+
+    def drop_guest_marker(text: str) -> str:
+        return "\n".join(ln for ln in text.split("\n") if ln.rstrip("\r") != "TEST_PASS")
+
+    def marker_before_badge(text: str) -> str:
+        lines = text.split("\n")
+        i = next(n for n, ln in enumerate(lines) if ln.startswith("badge = "))
+        j = next(n for n, ln in enumerate(lines) if ln.rstrip("\r") == "TEST_PASS")
+        lines.insert(i, lines.pop(j))
+        return "\n".join(lines)
+
+    def remove_e1(root: Path) -> None:
+        shutil.rmtree(root / "E1")
+
+    cases: list[tuple[str, Callable[[Path], None], str]] = [
+        ("the guest never prints TEST_PASS (the footer still names it)", every_boot(drop_guest_marker),
+         "a TEST_PASS line appear in that order"),
+        ("TEST_PASS printed before the badge line", every_boot(marker_before_badge),
+         "a TEST_PASS line appear in that order"),
+        ("a loader exception line in boot 2", edit("E1/10-boot-2.txt", lambda t: t.replace(
+            "Booting all finished", "!!! Exception: instruction abort\nBooting all finished", 1)),
+         "no fault, halt, panic"),
+        ("a second kernel option differs from A1's", edit("E1/02-kernel-gen_config.json", lambda t: t.replace(
+            '"PRINTING": true', '"PRINTING": false', 1)), "in exactly one key"),
+        ("hypervisor support off in the E1 config", edit("E1/02-kernel-gen_config.json", lambda t: t.replace(
+            '"ARM_HYPERVISOR_SUPPORT": true', '"ARM_HYPERVISOR_SUPPORT": false', 1)), "hypervisor support on"),
+        ("a different image hash in the post-run record", edit("E1/04-post-checks.txt", lambda t: t.replace(
+            "image used for the boots: external/e1-build/image.elf 4487", "image used for the boots: external/e1-build/image.elf 0000", 1)),
+         "all three used the recorded image.elf"),
+        ("the E1 evidence is removed", remove_e1, "E1 evidence directory is present"),
+    ]
+    failures: list[str] = []
+    with tempfile.TemporaryDirectory() as tmp:
+        base = [n for n, ok in run_checks(res, lock_path) if not ok]
+        if base:
+            print(f"self-test cannot start: {len(base)} check(s) already fail on the real evidence")
+            return 2
+        for label, mutate, expect in cases:
+            work = Path(tmp) / "case"
+            shutil.rmtree(work, ignore_errors=True)
+            shutil.copytree(res, work)
+            mutate(work)
+            rehash_manifest(work)
+            failed = [n for n, ok in run_checks(work, lock_path) if not ok]
+            hit = any(expect in n for n in failed)
+            print(f"{'ok  ' if hit else 'MISS'}  {label}: failing checks = {len(failed)}")
+            if not hit:
+                failures.append(label)
+    print(f"\nself-test: {len(cases) - len(failures)} of {len(cases)} corruptions were caught")
+    return 1 if failures else 0
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
+    ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
+    ap.add_argument("--self-test", action="store_true",
+                    help="corrupt a temporary copy of the evidence and require the E1 checks to fail")
+    ns = ap.parse_args()
+    res, lock_path = Path(ns.results), Path(ns.lock)
+    if ns.self_test:
+        return self_test(res, lock_path)
+    results = run_checks(res, lock_path)
     width = max(len(n) for n, _ in results)
     for name, ok in results:
         print(f"{'PASS' if ok else 'FAIL'}  {name:<{width}}")

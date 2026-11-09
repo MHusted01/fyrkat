@@ -1115,3 +1115,34 @@ not quoted because the owner did not choose it. **If this entry and the quotatio
 > **Agent recommendation [Inferred; the owner decides].** Route II. Neither route boots the existing *binaries* (both rebuild the kernel; Route II also rebuilds the root task from the same source and lock), so that
 > advantage of Route I is gone. Route II is rust-sel4's own default, needs no new build glue, and has the fewest unknowns on the way to a first boot, which is the owner's stated objective. Its cost is one Amendment adding
 > the configuration. Choose Route I instead if the plan's configuration matrix must not grow.
+
+### 2026-11-08: E1 ran (Route II): the agent's measurement, for independent review and the owner's decision
+
+Recorded after E1 ran, as authorized by the entry above and after pull request 10 merged as `09f5dd5`. **This is the agent's
+measurement. It is not an owner decision or acceptance, no criterion is changed and no earlier outcome is relabelled.** A
+fresh-context `reviewer` returned "acceptable with corrections" and judged Pass justified (not Investigate); its corrections are applied
+in the record and the verifier. The full record is [E1](../../spikes/sel4-feasibility/results/E1.md).
+
+| Item | Result |
+|---|---|
+| Outcome (agent's reading) | **Pass, label U, functional validation only**, against the entry's four success criteria: inputs as pinned with no source change; the two banner strings, `Hello, World!`, `badge = 0x1337` and `TEST_PASS` in order in 3 of 3 boots; no failure observation in any boot; sanitized logs, a manifest entry and verifier checks (55 of 55 pass, 15 for E1, and `verify-evidence.py --self-test` catches 7 of 7 targeted corruptions) [Measured] |
+| Qualification on "identical output" | The output is identical through `TEST_PASS`. The raw files differ by 2 bytes: boots 1 and 2 captured the `\r\n` after `TEST_PASS` and boot 3 did not, because the harness stops reading at the marker. The agent reads this as timing, which the criterion excludes [Inferred from `boot-image.py`]. The reviewer agreed and reproduced one more boot with the same output through the marker [Measured by the independent reviewer; not reproducible from the repository]; the owner has not ruled on the reading |
+| Configuration | Exactly one of 156 kernel config keys differs from the A1 rerun's: `ARM_HYPERVISOR_SUPPORT` [Measured]. The A3 log 02 failure (a non-hypervisor kernel entered at EL2) did not recur: `kernel_entry` is `0xffc0000000`, not `0xffffffffc0000000` [Measured]. **The option also moves the kernel and halves the RAM:** seL4's CMake adds a device-tree overlay that reserves `0x40000000` to `0x60000000` for a VM, so usable RAM is one 512 MiB region at `0x60000000` and the kernel's physical base is `0x60000000` (A1: `0x40000000`) [Documented: seL4 `config.cmake`; Measured: boot 1, `readelf`]. It follows from the authorized option with no source change, so it is not stop condition (g) |
+| Hashes | Kernel `1fee1dd6…`, loader `8408ab23…`, root task `58e723f3…`, image `4487ab9b…` [Measured]. All differ from the A1 rerun's, as the entry disclosed. They name their configuration and lock. The root-task ELF also embeds its target-directory path, so its hash differs from A1's regardless of the kernel [Measured: `strings`] |
+| Not shown | HVF, SMP, performance, hardware, formal or verified-configuration assurance, reproducibility of the E1 image (one build), the system staying up after `TEST_PASS`, and anything about the broader hypothesis. The kernel warning `Could not infer GIC interrupt target ID, assuming 0.` appeared in all three boots and is not a failure under the specification |
+| New spike code | [D17](../../spikes/sel4-feasibility/results/deviations.md) (`build-e1.sh`) and D18 (the verifier's E1 checks and `--self-test`), neither individually approved. Nothing else changed: no kernel, loader or root-task source, no tool, no dependency [Measured: `git status`, pinned checkouts clean, `Cargo.lock` hash unchanged] |
+| Next | Independent review of E1. **No further experiment is started.** A2a, A4, A5, the comparator and Class 3 kernel modifications stay blocked. Does E1's Pass change ADR 0002 or ADR 0004? That is the owner's decision, and neither status changes here |
+
+### 2026-11-08: Owner decisions on E1, D17, D18, the E1 pull request and PR 9
+
+Source: the owner's message of 2026-11-08 in the working session. **No criterion is changed, no earlier outcome is relabelled and no ADR is
+accepted.**
+
+| Item | Owner decision | Effect |
+|---|---|---|
+| E1 | **Conditionally accepted as Pass (label U)**, limited to functional execution under QEMU TCG, subject to a final independent review of the corrections. The missing trailing line terminator is acceptable as a read-boundary artifact if all required markers were captured and the reviewer confirms the evidence. **Do not claim byte-identical serial logs** | The record already says the logs are not byte-identical. The acceptance is final only if that review finds no material issue |
+| D17, D18 | **Approved for S1 only.** Preserve the verifier self-tests and document the 512 MiB usable-memory limitation | Recorded in `deviations.md`. The limitation is in [E1](../../spikes/sel4-feasibility/results/E1.md) and the handoff |
+| E1 pull request | Commit and push the E1 changes on `spike/e1-route-ii`. Run one focused independent review of the final corrections, resolve material findings, verify the final blobs, run the complete checks and open a PR. **Merge only after an explicit MERGE-READY verdict and all required CI checks pass.** After the merge, report the final commit and stop | Conditional merge authorization. If any condition fails, stop and report |
+| PR 9 | **Do not merge it and do not dismiss its alerts.** Preserve the existing dependency pin while a compatible remediation is evaluated. **No additional `protobuf` experiments are authorized** | No change to `requirements.txt` or to the alerts |
+| Next milestone | The owner's priority is two isolated Rust userspace tasks communicating through seL4 IPC, with a negative capability-isolation test. **Not to be implemented yet.** The agent is to identify the minimum existing S1 gates and propose the smallest executable scope, concisely, with no new documentation or approval cycle unless a real architectural or security boundary requires one | A proposal in the session only. Nothing is authorized to start |
+| Stop condition | A2a, A4, A5, the comparator and Class 3 kernel modifications stay blocked. No experiment other than E1 is authorized | In force |

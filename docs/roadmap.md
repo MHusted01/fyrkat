@@ -68,11 +68,12 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08.
   keeps seL4-first as a provisional **working hypothesis**. Neither ADR is Accepted.
 - **Blocked:** A5 and any Class 3 kernel change. A2a, A4 and the comparator are not authorized. The nightly
   toolchain is approved for S1 only.
-- **Next (owner, 2026-11-08):** one bounded experiment, **E1**, to run the Rust root task on a hypervisor-enabled seL4
-  17.0.0 with the pinned Rust loader under QEMU TCG (Route II). It is authorized to start **only after the documentation
-  pull request that records it is merged**, is functional validation only (label U), and is specified in the plan's
+- **E1 (owner-authorized, 2026-11-08; ran after that documentation was merged):** the Rust root task on a
+  hypervisor-enabled seL4 17.0.0 with the pinned Rust loader under QEMU TCG (Route II), specified in the plan's
   [Amendments entry of the E1 decision](research/sel4-spike-plan.md#2026-11-08-owner-decisions-on-the-documentation-pr-six-deviations-pr-9-and-e1-route-ii).
-  Nothing further is authorized after it.
+  **The agent's reading is Pass, label U, functional only: 3 of 3 boots reached `TEST_PASS`** ([E1](../spikes/sel4-feasibility/results/E1.md)).
+  An independent review found it acceptable with corrections (applied); the owner conditionally accepted it, subject to a final review of those corrections. It shows nothing about HVF, SMP, performance, hardware or assurance, and its kernel has half the RAM of A1's.
+- **Next:** the E1 pull request under the owner's conditions (reviewed corrections, MERGE-READY verdict, green CI). No further experiment is authorized.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 
