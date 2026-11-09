@@ -53,7 +53,7 @@ Exit criteria:
 
 ## S1: Kernel foundation spike
 
-**Status: in progress, stopped at the A3 gate, apart from the bounded experiment E1 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
+**Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1 and E2 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
 A3, A4 and the A2a interpretation conditionally on 2026-11-08.
 
@@ -73,7 +73,11 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08.
   [Amendments entry of the E1 decision](research/sel4-spike-plan.md#2026-11-08-owner-decisions-on-the-documentation-pr-six-deviations-pr-9-and-e1-route-ii).
   **The agent's reading is Pass, label U, functional only: 3 of 3 boots reached `TEST_PASS`** ([E1](../spikes/sel4-feasibility/results/E1.md)).
   An independent review found it acceptable with corrections (applied); the owner conditionally accepted it, subject to a final review of those corrections. It shows nothing about HVF, SMP, performance, hardware or assurance, and its kernel has half the RAM of A1's.
-- **Next:** the E1 pull request under the owner's conditions (reviewed corrections, MERGE-READY verdict, green CI). No further experiment is authorized.
+- **E2 (owner-authorized, 2026-11-09):** two isolated Rust tasks over seL4 IPC, with two invalid invocations and two refused attempts to exceed their authority (badge forgery, a read of the other task's memory), on the E1 kernel
+  configuration. **The agent's reading is Pass, label U, functional only: 3 of 3 boots** ([E2](../spikes/sel4-feasibility/results/E2.md)). It is a
+  precursor, not Stage B evidence (A2a has not run), and it does not test revocation, rights amplification, hardware or assurance. The owner provisionally
+  accepted it as Pass (U), subject to independent review, and approved D19 and D20 for E2's scope only.
+- **Next:** independent review of E2, then (on MERGE-READY) a PR. No further experiment is authorized.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 

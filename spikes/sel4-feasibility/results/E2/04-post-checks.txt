@@ -1,0 +1,26 @@
+# E2 post-run checks, 2026-11-09T10:37:18Z
+repo HEAD: c90f0e63232f81b010dda61c8d25af2210a79b43
+git status --short (repo):
+ M Cargo.lock
+ M Cargo.toml
+?? build-e2.sh
+?? crates/e2-root-task/
+?? crates/e2-task/
+tracked files changed vs HEAD: 2 (spikes/sel4-feasibility/Cargo.lock spikes/sel4-feasibility/Cargo.toml )
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+rust-sel4 HEAD: c819c27b076130cba9821c4555f23773e4b0bffd; dirty files: 0
+Cargo.lock sha256: 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925
+Cargo.lock diff vs HEAD: 29 0 (added, removed lines)
+crates/root-task tracked diff vs HEAD: 0 lines
+build-e2.sh sha256: 4c0ecb69dedb0fe4d6b7fde4b95c877e81dbd19b16dc1b760e990d73ea7b9906
+boot-image.py sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644
+image used for the boots: external/e2-build/image.elf b4aec7616c52fd978f9b419f9bbde1f271225d8afa8704c165a3ad0e4ae4544f
+e2 9b15a9d8698fa6d5a87c46d1026729452f5f4329098889128fcf91b7fcc92db5  kernel.elf
+e2 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159  sel4-kernel-loader.elf
+e2 a1193a41ad08024d2dbbcae292141f8f6f968217298116003c77aa37aef40872  e2-client.elf
+e2 6ca8553a74e9f91c067a432a867afb038d8e3a9164527e1446f117acbaecc055  e2-server.elf
+e2 de259ffde214bd14cc26908d2bc5b37e29d6d4bd6a2bf4fa0ba97a70b304ecb0  e2-root-task.elf
+e2 b4aec7616c52fd978f9b419f9bbde1f271225d8afa8704c165a3ad0e4ae4544f  image.elf
+E1 hashes for comparison (results/E1.md): kernel 1fee1dd675a578b04153e8290fb58021d911656967f0da27d35ca12c885ca9d0, loader 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159
+kernel.elf contains its own build directory name: e1 11 lines mention e1-build; e2 11 lines mention e2-build
+first (superseded) build in the same directory: kernel 9b15a9d8698fa6d5a87c46d1026729452f5f4329098889128fcf91b7fcc92db5 (same as now), client 'a1193a41...' (same as now); server and root task differed because the positive control was added

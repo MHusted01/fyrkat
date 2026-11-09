@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-check the A1, A3 and E1 conclusions against the sanitized public evidence in results/.
+"""Re-check the A1, A3, E1 and E2 conclusions against the sanitized public evidence in results/.
 
     verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
@@ -105,7 +105,111 @@ def through_marker(text: str) -> str:
     return clean[: clean.find("TEST_PASS") + len("TEST_PASS")] if "TEST_PASS" in clean else clean
 
 
-def verify_e1(res: Path, lock_path: Path, a1rerun: dict[str, str], check: Callable[[str, bool], None]) -> None:
+# E2 added exactly these three packages to Cargo.lock (the two new crates and the `object` crate, owner-approved
+# 2026-11-09). The A1, A1-rerun and E1 checks about the lock are made against the lock without them.
+E2_LOCK_ADDITIONS = {("e2-root-task", None), ("e2-task", None), ("object", "0.40.0")}
+E2_OBJECT_CHECKSUM = "dd229a0361b9d0d4396176e02d65897f487eebeab7caa6d443855ee152ca0b9c"
+
+
+def split_e2_lock(text: str) -> tuple[str, list[str]]:
+    """Return the lock text without the E2 additions, and the removed blocks (each a whole [[package]] block)."""
+    kept: list[str] = []
+    removed: list[str] = []
+    for block in re.split(r"(?m)^(?=\[\[package\]\]$)", text):
+        name = re.search(r'(?m)^name = "([^"]+)"$', block)
+        ver = re.search(r'(?m)^version = "([^"]+)"$', block)
+        key = (name.group(1), ver.group(1)) if name and ver and block.startswith("[[package]]") else None
+        if key is not None and ((key[0], None) in E2_LOCK_ADDITIONS or key in E2_LOCK_ADDITIONS):
+            removed.append(block)
+        else:
+            kept.append(block)
+    return "".join(kept), removed
+
+
+E2_ORDER = ("Bootstrapping kernel", "Booting all finished, dropped to user space", "E2_ROOT start",
+            "E2_SERVER secret mapped and readable", "E2_SERVER ready",
+            "E2_SERVER got request=41 badge=0xa11ce served=1",
+            "E2_CLIENT call ok reply=42 served=1 badge=0xa11ce", "E2_CLIENT empty-slot refused label=2",
+            "E2_CLIENT wrong-type refused label=3", "E2_CLIENT badge-forge refused",
+            "E2_SERVER got request=100 badge=0xa11ce served=2", "E2_CLIENT second call ok served=2",
+            "E2_CLIENT reading server memory", "E2_ROOT client vm fault at 0x50000000, badge 1", "E2_PASS")
+E2_FAILURE = re.compile(r"E2_FAIL|panic|halt|assert|abort|exception|!!!", re.IGNORECASE)
+
+
+def through_e2_marker(text: str) -> str:
+    """Boot output up to and including E2_PASS, CRs removed (same reason as `through_marker`)."""
+    clean = text.replace("\r", "")
+    return clean[: clean.find("E2_PASS") + len("E2_PASS")] if "E2_PASS" in clean else clean
+
+
+def verify_e2(res: Path, lock_text: str, e1_post: str, check: Callable[[str, bool], None], e1_present: bool) -> None:
+    """E2 checks. Reads only sanitized files in results/E2 (and E1's post-run record for comparison)."""
+    cfg = json.loads(read(res, "E2/02-kernel-gen_config.json"))
+    e1cfg = json.loads(read(res, "E1/02-kernel-gen_config.json")) if e1_present else None
+    diff = read(res, "E2/05-config-diff-vs-e1.txt")
+    check("E2 kernel config: byte-for-key identical to E1's (hypervisor support on, 156 keys, 0 differ)",
+          cfg == e1cfg and cfg.get("ARM_HYPERVISOR_SUPPORT") is True
+          and "156 keys in E1-H config, 156 in E2 config, 0 differ:" in diff)
+    build = read(res, "E2/01-build.txt")
+    post = read(res, "E2/04-post-checks.txt")
+    pre = read(res, "E2/00-preflight.txt")
+    check("E2 build: succeeded (exit 0) with no error line",
+          "BUILD_EXIT=0" in build and not re.search(r"(?m)^error", build))
+    base_text, added = split_e2_lock(lock_text)
+    additions = sorted(re.search(r'name = "([^"]+)"', b).group(1) for b in added if re.search(r'name = "', b))
+    check("E2 Cargo.lock: the repository lock is the E1-era lock plus exactly e2-root-task, e2-task and object 0.40.0 "
+          "(checksum as in rust-sel4's own lock), purely additive",
+          additions == ["e2-root-task", "e2-task", "object"]
+          and any(E2_OBJECT_CHECKSUM in b for b in added)
+          and "Cargo.lock diff vs HEAD: 29 0 (added, removed lines)" in post
+          and f"Cargo.lock sha256: {hashlib.sha256(lock_text.encode()).hexdigest()}" in post)
+    check("E2 inputs: seL4 and rust-sel4 at their pins and clean, crates/root-task unchanged, only Cargo.toml and "
+          "Cargo.lock changed among tracked files",
+          all(f"{n} HEAD: {sha}; dirty files: 0" in post for n, sha in E1_PINS.items())
+          and "crates/root-task tracked diff vs HEAD: 0 lines" in post
+          and "tracked files changed vs HEAD: 2 (spikes/sel4-feasibility/Cargo.lock spikes/sel4-feasibility/Cargo.toml )" in post)
+    check("E2 toolchain and host recorded (QEMU 11.1.3, GCC 16.2.0, CMake 4.4.5, nightly-2026-08-21 rustc, arm64 host)",
+          "QEMU emulator version 11.1.3" in pre and "aarch64-elf-gcc (GCC) 16.2.0" in pre
+          and "cmake version 4.4.5" in pre and "8925ea358 2026-08-20" in pre and "arm64" in pre)
+    built = sums(build)
+    names = {"kernel.elf", "sel4-kernel-loader.elf", "e2-client.elf", "e2-server.elf", "e2-root-task.elf", "image.elf"}
+    recorded = {m.group(2): m.group(1) for m in re.finditer(r"(?m)^e2 ([0-9a-f]{64})\s+(\S+)$", post)}
+    e1_recorded = {m.group(2): m.group(1) for m in re.finditer(r"(?m)^e1 ([0-9a-f]{64})\s+(\S+)$", e1_post)}
+    check("E2 hash table: the build log and the post-run record agree on the six outputs; the loader is E1's loader",
+          set(built) == names and built == recorded
+          and built["sel4-kernel-loader.elf"] == e1_recorded.get("sel4-kernel-loader.elf"))
+    check("E2 hashes: the kernel and the image differ from E1's (the kernel embeds its build directory, which differs)",
+          built["kernel.elf"] != e1_recorded.get("kernel.elf") and built["image.elf"] != e1_recorded.get("image.elf"))
+    image_line = re.search(r"image used for the boots: \S+ ([0-9a-f]{64})", post)
+    boots = [read(res, f"E2/10-boot-{n}.txt") for n in (1, 2, 3)]
+    check("E2 boots: all three used the recorded image.elf",
+          image_line is not None and image_line.group(1) == built["image.elf"])
+    check("E2 boots: each run's command line and footer record virt,secure=off,gic-version=2,virtualization=on "
+          "under TCG, Cortex-A57, 1 vCPU",
+          all("-machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1" in b
+              and "accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True" in b for b in boots))
+    guests = [guest_output(b) for b in boots]
+    check("E2 boots: in the guest output of all three, the whole E2 sequence appears in order, ending in an E2_PASS line",
+          all(in_order(g, E2_ORDER) and re.search(r"(?m)^E2_PASS$", g) is not None for g in guests))
+    check("E2 boots: in all three, the harness reports the marker SEEN",
+          all("marker 'E2_PASS' SEEN" in b for b in boots))
+    check("E2 boots: no E2_FAIL, panic, halt, assertion, abort, exception or '!!!' in the guest output of any of the three",
+          not any(E2_FAILURE.search(g) for g in guests))
+    check("E2 boots: the server served exactly two requests and the only line naming a fault is the root task's VM fault",
+          all(len(re.findall(r"(?m)^E2_SERVER got request=", g)) == 2
+              and [ln for ln in g.split("\n") if re.search("fault", ln, re.IGNORECASE)]
+              == ["E2_ROOT client vm fault at 0x50000000, badge 1"] for g in guests))
+    check("E2 boots: output through E2_PASS identical across the three (the line terminator after the marker "
+          "depends on read timing and is excluded)",
+          len({through_e2_marker(g) for g in guests}) == 1)
+    mut = read(res, "E2/06-mutation-checks.txt")
+    check("E2 mutation checks: both mutants were refused E2_PASS and each printed the E2_FAIL naming its check",
+          mut.count("marker 'E2_PASS' NOT seen") == 2 and "marker 'E2_PASS' SEEN" not in mut
+          and "E2_FAIL client: read of the server's secret did not fault" in mut
+          and "E2_FAIL client: empty slot was not refused with InvalidCapability" in mut)
+
+
+def verify_e1(res: Path, lock_hash: str, a1rerun: dict[str, str], check: Callable[[str, bool], None]) -> None:
     """E1 checks. `check` records (name, ok). Reads only sanitized files in results/E1."""
     cfg = json.loads(read(res, "E1/02-kernel-gen_config.json"))
     check("E1 kernel config: hypervisor support on, qemu-arm-virt, Cortex-A57, 1 node, non-MCS, not a verification build",
@@ -131,8 +235,8 @@ def verify_e1(res: Path, lock_path: Path, a1rerun: dict[str, str], check: Callab
           and "KernelPlatform:STRING=qemu-arm-virt" in cache and "KernelMaxNumNodes:STRING=1" in cache)
     post = read(res, "E1/04-post-checks.txt")
     pre = read(res, "E1/00-preflight.txt")
-    lock_hash = hashlib.sha256(lock_path.read_bytes()).hexdigest() if lock_path.is_file() else ""
-    check("E1 inputs: seL4 and rust-sel4 at their pins and clean, no tracked file changed, Cargo.lock unchanged",
+    check("E1 inputs: seL4 and rust-sel4 at their pins and clean, no tracked file changed, Cargo.lock unchanged "
+          "(compared without the three packages E2 added)",
           all(f"{n} HEAD: {sha}; dirty files: 0" in post for n, sha in E1_PINS.items())
           and "tracked files changed vs HEAD: 0" in post and "crates/root-task tracked diff vs HEAD: 0 lines" in post
           and f"Cargo.lock sha256: {lock_hash}" in post and f"Cargo.lock sha256: {lock_hash}" in pre)
@@ -246,15 +350,20 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
           all(all(w in lg for w in wanted) and not any(u in lg for u in unwanted) for lg in logs))
     corr = read(res, "A1-rerun/02-lock-correction.txt")
     m = re.search(r"original: (\w{64})\s+corrected: (\w{64})", corr)
-    actual = hashlib.sha256(lock_path.read_bytes()).hexdigest() if lock_path.is_file() else ""
-    check("A1 rerun: the lock file in the repository is the corrected one recorded in the evidence",
+    # bytes, not read_text(): universal newlines would make a CRLF or CR copy hash like the real file
+    lock_text = lock_path.read_bytes().decode("utf-8") if lock_path.is_file() else ""
+    base_lock, _added = split_e2_lock(lock_text)
+    actual = hashlib.sha256(base_lock.encode()).hexdigest() if lock_text else ""
+    check("A1 rerun: the lock file in the repository is the corrected one recorded in the evidence "
+          "(compared without the three packages E2 added)",
           m is not None and m.group(2) == actual and m.group(1) != actual and m.group(1).startswith("c92d1dca"))
     pkgs: dict[str, set[str]] = {}
-    if lock_path.is_file():
-        for pkg in tomllib.loads(lock_path.read_text(encoding="utf-8"))["package"]:
+    if lock_text:
+        for pkg in tomllib.loads(base_lock)["package"]:
             pkgs.setdefault(pkg["name"], set()).add(pkg["version"])
     approved = {"cc": {"1.10.0"}, "log": {"0.4.34"}, "psm": {"0.1.24"}, "pest_stack_guard": {"1.0.0"}}
-    check("A1 rerun: the lock file has the four approved versions and neither ar_archive_writer nor object",
+    check("A1 rerun: the lock file has the four approved versions and neither ar_archive_writer nor object "
+          "(without the three packages E2 added)",
           all(pkgs.get(k) == v for k, v in approved.items()) and "ar_archive_writer" not in pkgs and "object" not in pkgs)
     pre = read(res, "A1-rerun/01-preflight.txt")
     drift = read(res, "A1/04-brew-drift-summary.txt")
@@ -288,7 +397,14 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
     # ---- E1 (Route II): functional boot of a hypervisor-enabled kernel under TCG. Label U, functional only.
     check("E1 evidence directory is present", (res / "E1").is_dir())
     if (res / "E1").is_dir():
-        verify_e1(res, lock_path, r_sum2, check)
+        verify_e1(res, actual, r_sum2, check)
+
+    # ---- E2: two isolated tasks over seL4 IPC and four refused attempts to exceed their authority. Label U.
+    check("E2 evidence directory is present", (res / "E2").is_dir())
+    if (res / "E2").is_dir():
+        e1_post = read(res, "E1/04-post-checks.txt") if (res / "E1/04-post-checks.txt").is_file() else ""
+        e1cfg_ok = (res / "E1/02-kernel-gen_config.json").is_file()
+        verify_e2(res, lock_text, e1_post, check, e1cfg_ok)
 
     # ---- integrity and privacy
     listed: set[str] = set()
@@ -301,9 +417,9 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2") for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/ and E1/ (one README note aside)",
+    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/ and E2/ (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -350,8 +466,8 @@ def self_test(res: Path, lock_path: Path) -> int:
             f.write_text(fn(f.read_text(encoding="utf-8")), encoding="utf-8")
         return apply
 
-    def every_boot(fn: Callable[[str], str]) -> Callable[[Path], None]:
-        steps = [edit(f"E1/10-boot-{n}.txt", fn) for n in (1, 2, 3)]
+    def every_boot(fn: Callable[[str], str], sub: str = "E1") -> Callable[[Path], None]:
+        steps = [edit(f"{sub}/10-boot-{n}.txt", fn) for n in (1, 2, 3)]
 
         def apply(root: Path) -> None:
             for step in steps:
@@ -371,6 +487,16 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_e1(root: Path) -> None:
         shutil.rmtree(root / "E1")
 
+    def remove_e2(root: Path) -> None:
+        shutil.rmtree(root / "E2")
+
+    def drop_line(prefix: str) -> Callable[[str], str]:
+        return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
+
+    def stray_request(text: str) -> str:
+        return text.replace("E2_CLIENT empty-slot refused",
+                            "E2_SERVER got request=7 badge=0x0 served=2\nE2_CLIENT empty-slot refused", 1)
+
     cases: list[tuple[str, Callable[[Path], None], str]] = [
         ("the guest never prints TEST_PASS (the footer still names it)", every_boot(drop_guest_marker),
          "a TEST_PASS line appear in that order"),
@@ -387,6 +513,19 @@ def self_test(res: Path, lock_path: Path) -> int:
             "image used for the boots: external/e1-build/image.elf 4487", "image used for the boots: external/e1-build/image.elf 0000", 1)),
          "all three used the recorded image.elf"),
         ("the E1 evidence is removed", remove_e1, "E1 evidence directory is present"),
+        ("the guest never prints E2_PASS (the footer still names it)",
+         every_boot(drop_line("E2_PASS"), "E2"), "whole E2 sequence appears in order"),
+        ("no VM fault line from the root task (the client's read of the server's memory is not shown to fault)",
+         every_boot(drop_line("E2_ROOT client vm fault"), "E2"), "whole E2 sequence appears in order"),
+        ("a stray request reaches the server during the refused attempts", every_boot(stray_request, "E2"),
+         "the server served exactly two requests"),
+        ("an E2_FAIL line in boot 2", edit("E2/10-boot-2.txt", lambda t: t.replace(
+            "E2_CLIENT call ok", "E2_FAIL client: x\nE2_CLIENT call ok", 1)), "no E2_FAIL, panic"),
+        ("hypervisor support off in the E2 config", edit("E2/02-kernel-gen_config.json", lambda t: t.replace(
+            '"ARM_HYPERVISOR_SUPPORT": true', '"ARM_HYPERVISOR_SUPPORT": false', 1)), "byte-for-key identical to E1"),
+        ("a mutant is recorded as having passed", edit("E2/06-mutation-checks.txt", lambda t: t.replace(
+            "marker 'E2_PASS' NOT seen", "marker 'E2_PASS' SEEN", 1)), "both mutants were refused"),
+        ("the E2 evidence is removed", remove_e2, "E2 evidence directory is present"),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -405,7 +544,37 @@ def self_test(res: Path, lock_path: Path) -> int:
             print(f"{'ok  ' if hit else 'MISS'}  {label}: failing checks = {len(failed)}")
             if not hit:
                 failures.append(label)
-    print(f"\nself-test: {len(cases) - len(failures)} of {len(cases)} corruptions were caught")
+        # Corruptions of the lock file itself (the evidence stays intact; a modified copy of the lock is passed in).
+        def crlf(t: str) -> str:
+            return t.replace("\n", "\r\n")
+
+        def other_checksum(t: str) -> str:
+            return t.replace(E2_OBJECT_CHECKSUM, "0" * 64, 1)
+
+        def extra_package(t: str) -> str:
+            return t + '\n[[package]]\nname = "extra"\nversion = "1.0.0"\n'
+
+        def e2_task_extra_dep(t: str) -> str:
+            head, sep, tail = t.partition('name = "e2-task"')
+            return head + sep + tail.replace('dependencies = [', 'dependencies = [\n "memchr",', 1)
+
+        lock_cases: list[tuple[str, Callable[[str], str], str]] = [
+            ("the lock has CRLF line endings", crlf, "the lock file in the repository is the corrected one"),
+            ("the lock has CRLF line endings (E2 lock check)", crlf, "E2 Cargo.lock"),
+            ("the lock has an extra package", extra_package, "the lock file in the repository is the corrected one"),
+            ("object's checksum in the lock is changed", other_checksum, "E2 Cargo.lock"),
+            ("e2-task gains a dependency in the lock", e2_task_extra_dep, "E2 Cargo.lock"),
+        ]
+        for label, mutate_lock, expect in lock_cases:
+            bad_lock = Path(tmp) / "Cargo.lock"
+            bad_lock.write_bytes(mutate_lock(lock_path.read_bytes().decode("utf-8")).encode("utf-8"))
+            failed = [n for n, ok in run_checks(res, bad_lock) if not ok]
+            hit = any(expect in n for n in failed)
+            print(f"{'ok  ' if hit else 'MISS'}  {label}: failing checks = {len(failed)}")
+            if not hit:
+                failures.append(label)
+    total = len(cases) + len(lock_cases)
+    print(f"\nself-test: {total - len(failures)} of {total} corruptions were caught")
     return 1 if failures else 0
 
 
@@ -414,7 +583,7 @@ def main() -> int:
     ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
     ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
     ap.add_argument("--self-test", action="store_true",
-                    help="corrupt a temporary copy of the evidence and require the E1 checks to fail")
+                    help="corrupt a temporary copy of the evidence and require the E1 and E2 checks to fail")
     ns = ap.parse_args()
     res, lock_path = Path(ns.results), Path(ns.lock)
     if ns.self_test:

@@ -3,4 +3,4 @@
 
 [workspace]
 resolver = "3"
-members = ["crates/root-task"]
+members = ["crates/root-task", "crates/e2-task", "crates/e2-root-task"]

@@ -1,0 +1,63 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel external/e2-build/image.elf
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602f8a70
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff8b000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd8b000,
+        v_entry: 0x23c10c,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff89000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff8b000 (filesz = 0x209e4, memsz = 0x209e4)
+seL4 kernel loader | DEBUG      0x7ffbb9e8 (filesz = 0x12078, memsz = 0x12078)
+seL4 kernel loader | DEBUG      0x7ffdda60 (filesz = 0x215e8, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff89000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff89000..807ff8afb3)
+  [807ff8b000..8080000000)
+Booting all finished, dropped to user space
+E2_ROOT start
+E2_SERVER secret mapped and readable
+E2_SERVER ready
+E2_SERVER got request=41 badge=0xa11ce served=1
+E2_CLIENT call ok reply=42 served=1 badge=0xa11ce
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeInvocation/643 T0x807007ec00 "child of: 'rootserver'" @212f8c]: Attempted to invoke a null cap #5.>>[0m
+E2_CLIENT empty-slot refused label=2
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/54 T0x807007ec00 "child of: 'rootserver'" @213020]: CNodeCap: Illegal Operation attempted.>>[0m
+E2_CLIENT wrong-type refused label=3
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/182 T0x807007ec00 "child of: 'rootserver'" @2143fc]: CNode Copy/Mint/Move/Mutate: Mutated cap would be invalid.>>[0m
+E2_CLIENT badge-forge refused
+E2_SERVER got request=100 badge=0xa11ce served=2
+E2_CLIENT second call ok served=2
+E2_CLIENT reading server memory
+E2_ROOT client vm fault at 0x50000000, badge 1
+E2_PASS
+[boot-image] marker 'E2_PASS' SEEN after 0.09s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=True)

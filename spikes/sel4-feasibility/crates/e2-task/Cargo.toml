@@ -1,0 +1,28 @@
+#
+# Copyright 2024, Colias Group, LLC (runtime.rs, adapted from seL4/rust-sel4 spawn-task, tag v6.0.0)
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# E2 spike: the two isolated tasks (client and server) and the constants they share with the root task.
+#
+
+[package]
+name = "e2-task"
+version = "0.1.0"
+edition = "2024"
+license = "BSD-2-Clause"
+publish = false
+
+[dependencies]
+sel4 = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }
+sel4-panicking = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0", features = ["personality", "panic-handler"] }
+sel4-panicking-env = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0" }
+sel4-runtime-common = { git = "https://github.com/seL4/rust-sel4", tag = "v6.0.0", features = ["sel4"] }
+
+[[bin]]
+name = "e2-client"
+path = "src/bin/client.rs"
+
+[[bin]]
+name = "e2-server"
+path = "src/bin/server.rs"
