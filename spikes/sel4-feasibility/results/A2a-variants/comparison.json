@@ -1,0 +1,1743 @@
+{
+ "config_diff_vs_reference": {
+  "E1H": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "COLOUR_PRINTING": [
+    false,
+    true
+   ],
+   "DEBUG_BUILD": [
+    false,
+    true
+   ],
+   "IRQ_REPORTING": [
+    false,
+    true
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "PRINTING": [
+    false,
+    true
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "USER_STACK_TRACE_LENGTH": [
+    "0",
+    "16"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  },
+  "E1HR": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  },
+  "K0Q": {
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ]
+  },
+  "K1": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_HYPERVISOR_SUPPORT": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "COLOUR_PRINTING": [
+    false,
+    true
+   ],
+   "DEBUG_BUILD": [
+    false,
+    true
+   ],
+   "IRQ_REPORTING": [
+    false,
+    true
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "PRINTING": [
+    false,
+    true
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "USER_STACK_TRACE_LENGTH": [
+    "0",
+    "16"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  },
+  "K1R": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_HYPERVISOR_SUPPORT": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  },
+  "K2": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_HYPERVISOR_SUPPORT": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "COLOUR_PRINTING": [
+    false,
+    true
+   ],
+   "DEBUG_BUILD": [
+    false,
+    true
+   ],
+   "ENABLE_SMP_SUPPORT": [
+    false,
+    true
+   ],
+   "IRQ_REPORTING": [
+    false,
+    true
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "MAX_NUM_NODES": [
+    "1",
+    "4"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "PRINTING": [
+    false,
+    true
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "USER_STACK_TRACE_LENGTH": [
+    "0",
+    "16"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  },
+  "K2R": {
+   "ALLOW_SMC_CALLS": [
+    true,
+    false
+   ],
+   "ARM_HYPERVISOR_SUPPORT": [
+    true,
+    false
+   ],
+   "ARM_MACH": [
+    "nvidia",
+    ""
+   ],
+   "ARM_PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "ENABLE_SMP_SUPPORT": [
+    false,
+    true
+   ],
+   "MACH": [
+    "nvidia",
+    null
+   ],
+   "MAX_NUM_BOOTINFO_UNTYPED_CAPS": [
+    "50",
+    "230"
+   ],
+   "MAX_NUM_NODES": [
+    "1",
+    "4"
+   ],
+   "NUM_DOMAINS": [
+    "16",
+    "1"
+   ],
+   "NUM_DOMAIN_SCHEDULES": [
+    "100",
+    "2"
+   ],
+   "PLAT": [
+    "tx2",
+    "qemu-arm-virt"
+   ],
+   "PLAT_QEMU_ARM_VIRT": [
+    false,
+    true
+   ],
+   "PLAT_TX2": [
+    true,
+    false
+   ],
+   "TIMER_FREQUENCY": [
+    "31250000",
+    "62500000"
+   ],
+   "VERIFICATION_BUILD": [
+    true,
+    false
+   ]
+  }
+ },
+ "config_keys": {
+  "E1H": 156,
+  "E1HR": 156,
+  "K0": 157,
+  "K0Q": 156,
+  "K1": 156,
+  "K1R": 156,
+  "K2": 156,
+  "K2R": 156
+ },
+ "configurations": [
+  "E1H",
+  "E1HR",
+  "K0",
+  "K0Q",
+  "K1",
+  "K1R",
+  "K2",
+  "K2R"
+ ],
+ "function_counts": {
+  "E1H": 960,
+  "E1HR": 876,
+  "K0": 883,
+  "K0Q": 883,
+  "K1": 822,
+  "K1R": 738,
+  "K2": 858,
+  "K2R": 773
+ },
+ "functions_between_others": {
+  "E1H vs E1HR": {
+   "differs": 311,
+   "identical": 565,
+   "in_reference": 960,
+   "only_other": 0,
+   "only_reference": 84
+  },
+  "E1H vs K0Q": {
+   "differs": 318,
+   "identical": 558,
+   "in_reference": 960,
+   "only_other": 7,
+   "only_reference": 84
+  },
+  "E1H vs K1": {
+   "differs": 213,
+   "identical": 605,
+   "in_reference": 960,
+   "only_other": 4,
+   "only_reference": 142
+  },
+  "E1H vs K1R": {
+   "differs": 335,
+   "identical": 399,
+   "in_reference": 960,
+   "only_other": 4,
+   "only_reference": 226
+  },
+  "E1H vs K2": {
+   "differs": 332,
+   "identical": 480,
+   "in_reference": 960,
+   "only_other": 46,
+   "only_reference": 148
+  },
+  "E1H vs K2R": {
+   "differs": 388,
+   "identical": 340,
+   "in_reference": 960,
+   "only_other": 45,
+   "only_reference": 232
+  },
+  "E1HR vs K0Q": {
+   "differs": 12,
+   "identical": 864,
+   "in_reference": 876,
+   "only_other": 7,
+   "only_reference": 0
+  },
+  "E1HR vs K1": {
+   "differs": 335,
+   "identical": 399,
+   "in_reference": 876,
+   "only_other": 88,
+   "only_reference": 142
+  },
+  "E1HR vs K1R": {
+   "differs": 100,
+   "identical": 634,
+   "in_reference": 876,
+   "only_other": 4,
+   "only_reference": 142
+  },
+  "E1HR vs K2": {
+   "differs": 388,
+   "identical": 340,
+   "in_reference": 876,
+   "only_other": 130,
+   "only_reference": 148
+  },
+  "E1HR vs K2R": {
+   "differs": 207,
+   "identical": 521,
+   "in_reference": 876,
+   "only_other": 45,
+   "only_reference": 148
+  },
+  "K0Q vs K1": {
+   "differs": 338,
+   "identical": 396,
+   "in_reference": 883,
+   "only_other": 88,
+   "only_reference": 149
+  },
+  "K0Q vs K1R": {
+   "differs": 105,
+   "identical": 629,
+   "in_reference": 883,
+   "only_other": 4,
+   "only_reference": 149
+  },
+  "K0Q vs K2": {
+   "differs": 389,
+   "identical": 339,
+   "in_reference": 883,
+   "only_other": 130,
+   "only_reference": 155
+  },
+  "K0Q vs K2R": {
+   "differs": 210,
+   "identical": 518,
+   "in_reference": 883,
+   "only_other": 45,
+   "only_reference": 155
+  },
+  "K1 vs K1R": {
+   "differs": 275,
+   "identical": 463,
+   "in_reference": 822,
+   "only_other": 0,
+   "only_reference": 84
+  },
+  "K1 vs K2": {
+   "differs": 262,
+   "identical": 554,
+   "in_reference": 822,
+   "only_other": 42,
+   "only_reference": 6
+  },
+  "K1 vs K2R": {
+   "differs": 346,
+   "identical": 386,
+   "in_reference": 822,
+   "only_other": 41,
+   "only_reference": 90
+  },
+  "K1R vs K2": {
+   "differs": 346,
+   "identical": 386,
+   "in_reference": 738,
+   "only_other": 126,
+   "only_reference": 6
+  },
+  "K1R vs K2R": {
+   "differs": 134,
+   "identical": 598,
+   "in_reference": 738,
+   "only_other": 41,
+   "only_reference": 6
+  },
+  "K2 vs K2R": {
+   "differs": 281,
+   "identical": 492,
+   "in_reference": 858,
+   "only_other": 0,
+   "only_reference": 85
+  }
+ },
+ "functions_by_property_vs_reference": {
+  "P1 address-space isolation": {
+   "E1H": {
+    "differs": 30,
+    "differs_names": [
+     "APFromVMRights",
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_getObjectSize",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "checkValidIPCBuffer",
+     "decodeARMFrameInvocation",
+     "decodeARMMMUInvocation",
+     "decodeARMVSpaceRootInvocation",
+     "decodeUntypedInvocation",
+     "deleteASIDPool",
+     "doFlush",
+     "getASIDMap",
+     "handleVMFault",
+     "invalidateASID",
+     "map_it_frame_cap",
+     "map_it_pd_cap",
+     "map_it_pt_cap",
+     "map_it_pud_cap",
+     "map_kernel_elf_image",
+     "map_kernel_frame",
+     "maskVMRights",
+     "performASIDControlInvocation",
+     "performPageInvocationMap",
+     "setASIDMap",
+     "storeHWASID",
+     "unmapPage",
+     "unmapPageTable"
+    ],
+    "identical": 45,
+    "in_reference": 75,
+    "only_other": 4,
+    "only_other_names": [
+     "Arch_userStackTrace",
+     "kernelDataAbort",
+     "kernelPrefetchAbort",
+     "readWordFromVSpace"
+    ],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "E1HR": {
+    "differs": 5,
+    "differs_names": [
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "map_kernel_elf_image"
+    ],
+    "identical": 70,
+    "in_reference": 75,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K0Q": {
+    "differs": 1,
+    "differs_names": [
+     "map_kernel_elf_image"
+    ],
+    "identical": 74,
+    "in_reference": 75,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1": {
+    "differs": 39,
+    "differs_names": [
+     "APFromVMRights",
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "activate_kernel_vspace",
+     "checkValidIPCBuffer",
+     "decodeARMFrameInvocation",
+     "decodeARMMMUInvocation",
+     "decodeARMPageTableInvocation",
+     "decodeARMVSpaceRootInvocation",
+     "decodeUntypedInvocation",
+     "deleteASID",
+     "deleteASIDPool",
+     "doFlush",
+     "handleVMFault",
+     "invalidateTLBByASID",
+     "invalidateTLBByASIDVA",
+     "makeUserPagePTE",
+     "map_it_frame_cap",
+     "map_it_pd_cap",
+     "map_it_pt_cap",
+     "map_it_pud_cap",
+     "map_kernel_elf_image",
+     "map_kernel_frame",
+     "map_kernel_physical_window",
+     "map_kernel_window",
+     "maskVMRights",
+     "performASIDControlInvocation",
+     "performPageFlush",
+     "performPageInvocationMap",
+     "performVSpaceFlush",
+     "unmapPage",
+     "unmapPageTable",
+     "write_it_asid_pool"
+    ],
+    "identical": 28,
+    "in_reference": 75,
+    "only_other": 6,
+    "only_other_names": [
+     "Arch_userStackTrace",
+     "kernelDataAbort",
+     "kernelPrefetchAbort",
+     "pte_get_AP",
+     "readWordFromVSpace",
+     "vmRightsFromPTE"
+    ],
+    "only_reference": 8,
+    "only_reference_names": [
+     "findFreeHWASID",
+     "getASIDMap",
+     "getHWASID",
+     "getPoolPtr",
+     "invalidateASID",
+     "invalidateASIDEntry",
+     "setASIDMap",
+     "storeHWASID"
+    ]
+   },
+   "K1R": {
+    "differs": 27,
+    "differs_names": [
+     "APFromVMRights",
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "activate_kernel_vspace",
+     "decodeARMFrameInvocation",
+     "decodeARMPageTableInvocation",
+     "decodeARMVSpaceRootInvocation",
+     "deleteASID",
+     "deleteASIDPool",
+     "handleVMFault",
+     "invalidateTLBByASID",
+     "invalidateTLBByASIDVA",
+     "makeUserPagePTE",
+     "map_it_frame_cap",
+     "map_kernel_elf_image",
+     "map_kernel_frame",
+     "map_kernel_physical_window",
+     "map_kernel_window",
+     "performPageFlush",
+     "performVSpaceFlush",
+     "write_it_asid_pool"
+    ],
+    "identical": 40,
+    "in_reference": 75,
+    "only_other": 2,
+    "only_other_names": [
+     "pte_get_AP",
+     "vmRightsFromPTE"
+    ],
+    "only_reference": 8,
+    "only_reference_names": [
+     "findFreeHWASID",
+     "getASIDMap",
+     "getHWASID",
+     "getPoolPtr",
+     "invalidateASID",
+     "invalidateASIDEntry",
+     "setASIDMap",
+     "storeHWASID"
+    ]
+   },
+   "K2": {
+    "differs": 42,
+    "differs_names": [
+     "APFromVMRights",
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "activate_kernel_vspace",
+     "checkValidIPCBuffer",
+     "decodeARMFrameInvocation",
+     "decodeARMMMUInvocation",
+     "decodeARMPageTableInvocation",
+     "decodeARMVSpaceRootInvocation",
+     "decodeUntypedInvocation",
+     "deleteASID",
+     "deleteASIDPool",
+     "doFlush",
+     "handleVMFault",
+     "invalidateTLBByASID",
+     "invalidateTLBByASIDVA",
+     "makeUserPagePTE",
+     "map_it_frame_cap",
+     "map_it_pd_cap",
+     "map_it_pt_cap",
+     "map_it_pud_cap",
+     "map_kernel_elf_image",
+     "map_kernel_frame",
+     "map_kernel_physical_window",
+     "map_kernel_window",
+     "maskVMRights",
+     "performASIDControlInvocation",
+     "performPageFlush",
+     "performPageGetAddress",
+     "performPageInvocationMap",
+     "performVSpaceFlush",
+     "setVMRootForFlush",
+     "unmapPage",
+     "unmapPageTable",
+     "write_it_asid_pool"
+    ],
+    "identical": 25,
+    "in_reference": 75,
+    "only_other": 6,
+    "only_other_names": [
+     "Arch_userStackTrace",
+     "kernelDataAbort",
+     "kernelPrefetchAbort",
+     "pte_get_AP",
+     "readWordFromVSpace",
+     "vmRightsFromPTE"
+    ],
+    "only_reference": 8,
+    "only_reference_names": [
+     "findFreeHWASID",
+     "getASIDMap",
+     "getHWASID",
+     "getPoolPtr",
+     "invalidateASID",
+     "invalidateASIDEntry",
+     "setASIDMap",
+     "storeHWASID"
+    ]
+   },
+   "K2R": {
+    "differs": 32,
+    "differs_names": [
+     "APFromVMRights",
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "activate_kernel_vspace",
+     "decodeARMFrameInvocation",
+     "decodeARMMMUInvocation",
+     "decodeARMPageTableInvocation",
+     "decodeARMVSpaceRootInvocation",
+     "decodeUntypedInvocation",
+     "deleteASID",
+     "deleteASIDPool",
+     "handleVMFault",
+     "invalidateTLBByASID",
+     "invalidateTLBByASIDVA",
+     "makeUserPagePTE",
+     "map_it_frame_cap",
+     "map_kernel_elf_image",
+     "map_kernel_frame",
+     "map_kernel_physical_window",
+     "map_kernel_window",
+     "performPageFlush",
+     "performPageGetAddress",
+     "performVSpaceFlush",
+     "setVMRootForFlush",
+     "write_it_asid_pool"
+    ],
+    "identical": 35,
+    "in_reference": 75,
+    "only_other": 2,
+    "only_other_names": [
+     "pte_get_AP",
+     "vmRightsFromPTE"
+    ],
+    "only_reference": 8,
+    "only_reference_names": [
+     "findFreeHWASID",
+     "getASIDMap",
+     "getHWASID",
+     "getPoolPtr",
+     "invalidateASID",
+     "invalidateASIDEntry",
+     "setASIDMap",
+     "storeHWASID"
+    ]
+   }
+  },
+  "P2 authority integrity": {
+   "E1H": {
+    "differs": 26,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_getObjectSize",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "cancelBadgedSends",
+     "cancelIPC",
+     "cancelSignal",
+     "capRemovable",
+     "completeSignal",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "receiveIPC",
+     "reduceZombie",
+     "resolveAddressBits",
+     "sendIPC",
+     "sendSignal"
+    ],
+    "identical": 59,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "E1HR": {
+    "differs": 4,
+    "differs_names": [
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 81,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K0Q": {
+    "differs": 0,
+    "differs_names": [],
+    "identical": 85,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1": {
+    "differs": 28,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "cancelBadgedSends",
+     "cancelIPC",
+     "cancelSignal",
+     "capRemovable",
+     "completeSignal",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "receiveIPC",
+     "reduceZombie",
+     "resolveAddressBits",
+     "sendIPC",
+     "sendSignal"
+    ],
+    "identical": 57,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1R": {
+    "differs": 8,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 77,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2": {
+    "differs": 33,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "cancelAllIPC",
+     "cancelAllSignals",
+     "cancelBadgedSends",
+     "cancelIPC",
+     "cancelSignal",
+     "capRemovable",
+     "completeSignal",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply",
+     "receiveIPC",
+     "reduceZombie",
+     "resolveAddressBits",
+     "sendIPC",
+     "sendSignal"
+    ],
+    "identical": 52,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2R": {
+    "differs": 19,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "cancelAllIPC",
+     "cancelAllSignals",
+     "cancelBadgedSends",
+     "createObject",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "finaliseCap",
+     "invokeCNodeSaveCaller",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply"
+    ],
+    "identical": 66,
+    "in_reference": 85,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   }
+  },
+  "P3 revocation and reclamation": {
+   "E1H": {
+    "differs": 20,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_getObjectSize",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 51,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "E1HR": {
+    "differs": 4,
+    "differs_names": [
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 67,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K0Q": {
+    "differs": 0,
+    "differs_names": [],
+    "identical": 71,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1": {
+    "differs": 22,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 49,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1R": {
+    "differs": 8,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 63,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2": {
+    "differs": 25,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 46,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2R": {
+    "differs": 17,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "createObject",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "invokeCNodeSaveCaller",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply"
+    ],
+    "identical": 54,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   }
+  },
+  "P4 kernel integrity": {
+   "E1H": {
+    "differs": 18,
+    "differs_names": [
+     "Arch_handleFaultReply",
+     "Arch_setMRs_fault",
+     "c_handle_fastpath_call",
+     "c_handle_fastpath_reply_recv",
+     "c_handle_interrupt",
+     "c_handle_syscall",
+     "c_handle_undefined_instruction",
+     "c_handle_vcpu_fault",
+     "c_handle_vm_fault",
+     "checkInterrupt",
+     "handleDoubleFault",
+     "handleInterruptEntry",
+     "handleInvocation",
+     "handleReply",
+     "handleSyscall",
+     "handleUnknownSyscall",
+     "setMRs_lookup_failure",
+     "slowpath"
+    ],
+    "identical": 15,
+    "in_reference": 33,
+    "only_other": 3,
+    "only_other_names": [
+     "c_handle_invalid_vector_entry",
+     "print_fault",
+     "vect_offset_to_name"
+    ],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "E1HR": {
+    "differs": 0,
+    "differs_names": [],
+    "identical": 33,
+    "in_reference": 33,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K0Q": {
+    "differs": 0,
+    "differs_names": [],
+    "identical": 33,
+    "in_reference": 33,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1": {
+    "differs": 20,
+    "differs_names": [
+     "Arch_handleFaultReply",
+     "Arch_setMRs_fault",
+     "c_handle_fastpath_call",
+     "c_handle_fastpath_reply_recv",
+     "c_handle_interrupt",
+     "c_handle_syscall",
+     "c_handle_undefined_instruction",
+     "c_handle_vm_fault",
+     "checkInterrupt",
+     "fastpath_call",
+     "fastpath_reply_recv",
+     "handleDoubleFault",
+     "handleInterruptEntry",
+     "handleInvocation",
+     "handleReply",
+     "handleSyscall",
+     "handleUnknownSyscall",
+     "restore_user_context",
+     "setMRs_lookup_failure",
+     "slowpath"
+    ],
+    "identical": 12,
+    "in_reference": 33,
+    "only_other": 3,
+    "only_other_names": [
+     "c_handle_invalid_vector_entry",
+     "print_fault",
+     "vect_offset_to_name"
+    ],
+    "only_reference": 1,
+    "only_reference_names": [
+     "c_handle_vcpu_fault"
+    ]
+   },
+   "K1R": {
+    "differs": 5,
+    "differs_names": [
+     "Arch_handleFaultReply",
+     "Arch_setMRs_fault",
+     "fastpath_call",
+     "fastpath_reply_recv",
+     "restore_user_context"
+    ],
+    "identical": 27,
+    "in_reference": 33,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 1,
+    "only_reference_names": [
+     "c_handle_vcpu_fault"
+    ]
+   },
+   "K2": {
+    "differs": 24,
+    "differs_names": [
+     "Arch_handleFaultReply",
+     "Arch_setMRs_fault",
+     "c_handle_fastpath_call",
+     "c_handle_fastpath_reply_recv",
+     "c_handle_interrupt",
+     "c_handle_syscall",
+     "c_handle_undefined_instruction",
+     "c_handle_vm_fault",
+     "checkInterrupt",
+     "fastpath_call",
+     "fastpath_reply_recv",
+     "handleDoubleFault",
+     "handleInterruptEntry",
+     "handleInvocation",
+     "handleRecv",
+     "handleReply",
+     "handleSyscall",
+     "handleUnknownSyscall",
+     "handleUserLevelFault",
+     "handleVMFaultEvent",
+     "handleYield",
+     "restore_user_context",
+     "setMRs_lookup_failure",
+     "slowpath"
+    ],
+    "identical": 8,
+    "in_reference": 33,
+    "only_other": 3,
+    "only_other_names": [
+     "c_handle_invalid_vector_entry",
+     "print_fault",
+     "vect_offset_to_name"
+    ],
+    "only_reference": 1,
+    "only_reference_names": [
+     "c_handle_vcpu_fault"
+    ]
+   },
+   "K2R": {
+    "differs": 19,
+    "differs_names": [
+     "Arch_handleFaultReply",
+     "Arch_setMRs_fault",
+     "c_handle_fastpath_call",
+     "c_handle_fastpath_reply_recv",
+     "c_handle_interrupt",
+     "c_handle_syscall",
+     "c_handle_undefined_instruction",
+     "c_handle_vm_fault",
+     "checkInterrupt",
+     "fastpath_call",
+     "fastpath_reply_recv",
+     "handleInvocation",
+     "handleRecv",
+     "handleReply",
+     "handleUnknownSyscall",
+     "handleUserLevelFault",
+     "handleVMFaultEvent",
+     "handleYield",
+     "restore_user_context"
+    ],
+    "identical": 13,
+    "in_reference": 33,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 1,
+    "only_reference_names": [
+     "c_handle_vcpu_fault"
+    ]
+   }
+  },
+  "P5 DMA confinement (kernel part)": {
+   "E1H": {
+    "differs": 20,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_getObjectSize",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 51,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "E1HR": {
+    "differs": 4,
+    "differs_names": [
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 67,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K0Q": {
+    "differs": 0,
+    "differs_names": [],
+    "identical": 71,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1": {
+    "differs": 22,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 49,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K1R": {
+    "differs": 8,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData"
+    ],
+    "identical": 63,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2": {
+    "differs": 25,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "capRemovable",
+     "createObject",
+     "cteDeleteOne",
+     "cteInsert",
+     "cteMove",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "getObjectSize",
+     "invokeCNodeSaveCaller",
+     "maskCapRights",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply",
+     "reduceZombie",
+     "resolveAddressBits"
+    ],
+    "identical": 46,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   },
+   "K2R": {
+    "differs": 17,
+    "differs_names": [
+     "Arch_createObject",
+     "Arch_decodeInvocation",
+     "Arch_deriveCap",
+     "Arch_finaliseCap",
+     "Arch_getObjectSize",
+     "Arch_prepareThreadDelete",
+     "Arch_sameObjectAs",
+     "Arch_sameRegionAs",
+     "Arch_updateCapData",
+     "createObject",
+     "decodeCNodeInvocation",
+     "decodeInvocation",
+     "decodeUntypedInvocation",
+     "finaliseCap",
+     "invokeCNodeSaveCaller",
+     "performInvocation_Endpoint",
+     "performInvocation_Reply"
+    ],
+    "identical": 54,
+    "in_reference": 71,
+    "only_other": 0,
+    "only_other_names": [],
+    "only_reference": 0,
+    "only_reference_names": []
+   }
+  }
+ },
+ "functions_vs_reference": {
+  "E1H": {
+   "differs": 322,
+   "identical": 554,
+   "in_reference": 883,
+   "only_other": 84,
+   "only_reference": 7
+  },
+  "E1HR": {
+   "differs": 17,
+   "identical": 859,
+   "in_reference": 883,
+   "only_other": 0,
+   "only_reference": 7
+  },
+  "K0Q": {
+   "differs": 6,
+   "identical": 877,
+   "in_reference": 883,
+   "only_other": 0,
+   "only_reference": 0
+  },
+  "K1": {
+   "differs": 338,
+   "identical": 396,
+   "in_reference": 883,
+   "only_other": 88,
+   "only_reference": 149
+  },
+  "K1R": {
+   "differs": 105,
+   "identical": 629,
+   "in_reference": 883,
+   "only_other": 4,
+   "only_reference": 149
+  },
+  "K2": {
+   "differs": 389,
+   "identical": 339,
+   "in_reference": 883,
+   "only_other": 130,
+   "only_reference": 155
+  },
+  "K2R": {
+   "differs": 210,
+   "identical": 518,
+   "in_reference": 883,
+   "only_other": 45,
+   "only_reference": 155
+  }
+ },
+ "property_files": {
+  "P1 address-space isolation": [
+   "src/arch/arm/64/kernel/vspace.c",
+   "src/arch/arm/64/object/objecttype.c",
+   "src/object/untyped.c"
+  ],
+  "P2 authority integrity": [
+   "src/object/cnode.c",
+   "src/kernel/cspace.c",
+   "src/object/objecttype.c",
+   "src/arch/arm/64/object/objecttype.c",
+   "src/object/endpoint.c",
+   "src/object/notification.c"
+  ],
+  "P3 revocation and reclamation": [
+   "src/object/cnode.c",
+   "src/object/objecttype.c",
+   "src/object/untyped.c",
+   "src/kernel/cspace.c",
+   "src/arch/arm/64/object/objecttype.c"
+  ],
+  "P4 kernel integrity": [
+   "src/api/syscall.c",
+   "src/api/faults.c",
+   "src/arch/arm/api/faults.c",
+   "src/kernel/faulthandler.c",
+   "src/arch/arm/64/c_traps.c",
+   "src/arch/arm/c_traps.c",
+   "src/fastpath/fastpath.c"
+  ],
+  "P5 DMA confinement (kernel part)": [
+   "src/arch/arm/object/smmu.c",
+   "src/arch/arm/object/iospace.c",
+   "src/drivers/smmu/smmuv2.c",
+   "src/object/cnode.c",
+   "src/object/objecttype.c",
+   "src/object/untyped.c",
+   "src/kernel/cspace.c",
+   "src/arch/arm/64/object/objecttype.c"
+  ]
+ },
+ "reference": "K0"
+}

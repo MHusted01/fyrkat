@@ -1,0 +1,22 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 4 -m size=1024M -nographic -monitor none -serial stdio -kernel <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2H/build/images/rust-root-task-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: ARM Ltd. Cortex-A57 r1p0
+  paddr=[402a1000..402fb0a7]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 402e2498.
+Loaded DTB from 402e2498.
+   paddr=[40246000..40248fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40245fff]
+  vaddr=[ffffffffc0000000..ffffffffc0245fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 40249000
+  paddr=[40249000..40280fff]
+  vaddr=[200000..237fff]
+  virt_entry=213678
+Boot cpu id = 0x0, index=0
+HVC is not supported for PSCI!
+Failed to boot cpu 0x1: 18446744073709551615
+abort() called.
+
+[boot-image] marker 'TEST_PASS' NOT seen after 20.14s (accel=tcg cpu=cortex-a57 smp=4 gic=2 virt=True)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Re-check the A1, A3, E1, E2, E3 and A2a conclusions against the sanitized public evidence in results/.
+"""Re-check the conclusions of A1, A3, E1, E2, E3, A2a and the Stage B preparation work (A2a variants, Route I,
+release-kernel execution) against the sanitized public evidence in results/.
 
     verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
@@ -233,6 +234,33 @@ def load_a2a() -> ModuleType:
     return module
 
 
+# Every directory of results/ whose files the manifest must list.
+EVIDENCE_DIRS = ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a", "A2a-variants", "RouteI", "ReleaseKernel")
+
+
+def load_sibling(stem: str) -> ModuleType:
+    """A checks module next to this file (verify_a2a_variants.py, verify_routei.py, ...), loaded by path like the others."""
+    path = Path(__file__).resolve().parent / f"{stem}.py"
+    spec = importlib.util.spec_from_file_location(stem, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_variants() -> ModuleType:
+    return load_sibling("verify_a2a_variants")
+
+
+def load_routei() -> ModuleType:
+    return load_sibling("verify_routei")
+
+
+def load_relk() -> ModuleType:
+    return load_sibling("verify_relk")
+
+
 def e3_helpers() -> SimpleNamespace:
     return SimpleNamespace(read=read, sums=sums, in_order=in_order, guest_output=guest_output, section=section,
                            E1_PINS=E1_PINS)
@@ -446,6 +474,21 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
     if (res / "A2a").is_dir():
         load_a2a().verify_a2a(res, check, e3_helpers())
 
+    # ---- A2a follow-up: release variants of K1, K2 and E1H, and the extra K0Q (no boot, no verification claim)
+    check("A2a variants evidence directory is present", (res / "A2a-variants").is_dir())
+    if (res / "A2a-variants").is_dir():
+        load_variants().verify_variants(res, check, e3_helpers())
+
+    # ---- Route I: K1 and K2 booted through seL4's elfloader with a Rust root task (functional execution under emulation only)
+    check("Route I evidence directory is present", (res / "RouteI").is_dir())
+    if (res / "RouteI").is_dir():
+        load_routei().verify_routei(res, check, e3_helpers())
+
+    # ---- Release-kernel execution: K1R and K2R run a root task that logs through its own UART driver (functional, emulation only)
+    check("Release-kernel evidence directory is present", (res / "ReleaseKernel").is_dir())
+    if (res / "ReleaseKernel").is_dir():
+        load_relk().verify_relk(res, check, e3_helpers())
+
     # ---- integrity and privacy
     listed: set[str] = set()
     bad = []
@@ -457,9 +500,9 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
         if hashlib.sha256((res / rel).read_bytes()).hexdigest() != clean:
             bad.append(rel)
     check("manifest: every sanitized file matches its recorded SHA-256", not bad)
-    evidence = {p.relative_to(res).as_posix() for sub in ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a") for p in (res / sub).rglob("*")
+    evidence = {p.relative_to(res).as_posix() for sub in EVIDENCE_DIRS for p in (res / sub).rglob("*")
                 if p.is_file() and p.as_posix() != (res / "A3/shim-era/README.md").as_posix()}
-    check("manifest: it lists exactly the evidence files under A1/, A1-rerun/, A3/, E1/, E2/, E3/ and A2a/ (one README note aside)",
+    check(f"manifest: it lists exactly the evidence files under {', '.join(d + '/' for d in EVIDENCE_DIRS)} (one README note aside)",
           listed == evidence)
     texts = {p: p.read_text(encoding="utf-8", errors="replace") for p in res.rglob("*") if p.is_file()}
     home, user, host = str(Path.home()), getpass.getuser(), socket.gethostname()
@@ -536,6 +579,15 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_a2a(root: Path) -> None:
         shutil.rmtree(root / "A2a")
 
+    def remove_variants(root: Path) -> None:
+        shutil.rmtree(root / "A2a-variants")
+
+    def remove_routei(root: Path) -> None:
+        shutil.rmtree(root / "RouteI")
+
+    def remove_relk(root: Path) -> None:
+        shutil.rmtree(root / "ReleaseKernel")
+
     def drop_line(prefix: str) -> Callable[[str], str]:
         return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
 
@@ -576,6 +628,12 @@ def self_test(res: Path, lock_path: Path) -> int:
         *load_e3().self_test_cases(edit, every_boot, drop_line),
         ("the A2a evidence is removed", remove_a2a, "A2a evidence directory is present"),
         *load_a2a().self_test_cases(edit),
+        ("the A2a variants evidence is removed", remove_variants, "A2a variants evidence directory is present"),
+        *load_variants().self_test_cases(edit),
+        ("the Route I evidence is removed", remove_routei, "Route I evidence directory is present"),
+        *load_routei().self_test_cases(edit),
+        ("the release-kernel evidence is removed", remove_relk, "Release-kernel evidence directory is present"),
+        *load_relk().self_test_cases(edit),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
@@ -635,7 +693,7 @@ def main() -> int:
     ap.add_argument("--results", default=str(Path(__file__).resolve().parent / "results"))
     ap.add_argument("--lock", default=str(Path(__file__).resolve().parent / "Cargo.lock"))
     ap.add_argument("--self-test", action="store_true",
-                    help="corrupt a temporary copy of the evidence and require the E1, E2, E3 and A2a checks to fail")
+                    help="corrupt a temporary copy of the evidence, one way at a time, and require the check each corruption targets to fail")
     ns = ap.parse_args()
     res, lock_path = Path(ns.results), Path(ns.lock)
     if ns.self_test:

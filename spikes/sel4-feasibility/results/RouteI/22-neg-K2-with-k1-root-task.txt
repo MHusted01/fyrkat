@@ -1,0 +1,60 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 4 -m size=1024M -nographic -monitor none -serial stdio -kernel <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build/images/rust-root-task-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: ARM Ltd. Cortex-A57 r1p0
+  paddr=[402a1000..402fb0a7]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 402e2498.
+Loaded DTB from 402e2498.
+   paddr=[40246000..40248fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40245fff]
+  vaddr=[ffffffffc0000000..ffffffffc0245fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 40249000
+  paddr=[40249000..40280fff]
+  vaddr=[200000..237fff]
+  virt_entry=213668
+Boot cpu id = 0x0, index=0
+Core 1 is up with logic id 1
+Core 2 is up with logic id 2
+Core 3 is up with logic id 3
+Enabling MMU and jumping to entry point...
+
+Bootstrapping kernel
+Available phys memory regions: 1
+  [40000000..80000000)
+Reserved virt address space regions: 3
+  [ffffff8040000000..ffffff8040246000)
+  [ffffff8040246000..ffffff8040248246)
+  [ffffff8040249000..ffffff8040281000)
+Booting all finished, dropped to user space
+Hello, World!
+badge = 0x1337
+panicked at crates/root-task/src/main.rs:62:5:
+assertion `left == right` failed
+  left: 0
+ right: 4919
+(aborted)
+Caught cap fault in send phase at address 0
+while trying to handle:
+user exception 0xf2000001 code 0
+in thread 0xffffff807ffeb400 "rootserver" at address 0x213a50
+With stack:
+0x2377b0: 0x214e94
+0x2377b8: 0x237828
+0x2377c0: 0x214dd8
+0x2377c8: 0x214e18
+0x2377d0: 0x214dac
+0x2377d8: 0x237828
+0x2377e0: 0x237828
+0x2377e8: 0x21541c
+0x2377f0: 0x0
+0x2377f8: 0x0
+0x237800: 0x2156f4
+0x237808: 0x0
+0x237810: 0x214098
+0x237818: 0x20030e
+0x237820: 0x237890
+0x237828: 0x237818
+
+[boot-image] marker 'TEST_PASS' NOT seen after 20.16s (accel=tcg cpu=cortex-a57 smp=4 gic=2 virt=True)

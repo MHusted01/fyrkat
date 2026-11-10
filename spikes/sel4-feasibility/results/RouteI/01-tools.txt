@@ -1,0 +1,5 @@
+compiler: aarch64-elf-gcc (GCC) 16.2.0
+cmake: cmake version 4.4.5
+ninja: 1.13.2
+cpio: cpio (GNU cpio) 2.15
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0

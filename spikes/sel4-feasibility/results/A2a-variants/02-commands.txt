@@ -1,0 +1,20 @@
+## K1R
+# K1R: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelArmHypervisorSupport=OFF -DKernelDebugBuild=OFF -DKernelPrinting=OFF -S <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/seL4 -B <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K1R/sel4
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K1R/sel4 kernel.elf
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K1R/sel4 kernel_all_pp_wrapper
+## K2R
+# K2R: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelArmHypervisorSupport=OFF -DKernelMaxNumNodes=4 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -S <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/seL4 -B <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K2R/sel4
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K2R/sel4 kernel.elf
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K2R/sel4 kernel_all_pp_wrapper
+## E1HR
+# E1HR: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelArmHypervisorSupport=ON -DKernelDebugBuild=OFF -DKernelPrinting=OFF -S <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/seL4 -B <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4 kernel.elf
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4 kernel_all_pp_wrapper
+## K0Q
+# K0Q: run from <REPO>/spikes/sel4-feasibility
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -G Ninja -DKernelPlatform=qemu-arm-virt -DARM_CPU=cortex-a57 -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/seL4/configs/AARCH64_verified.cmake -S <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/seL4 -B <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K0Q/sel4
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K0Q/sel4 kernel.elf
+ninja -C <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/K0Q/sel4 kernel_all_pp_wrapper

@@ -1,0 +1,64 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on -accel tcg -cpu cortex-a57 -smp 4 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/relk-build/K2R/build/images/rust-root-task-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: ARM Ltd. Cortex-A57 r1p0
+  paddr=[4031d000..403730a7]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 4034a498.
+Loaded DTB from 4034a498.
+   paddr=[40231000..40233fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40230fff]
+  vaddr=[ffffffffc0000000..ffffffffc0230fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 40234000
+  paddr=[40234000..402fcfff]
+  vaddr=[200000..2c8fff]
+  virt_entry=21fd7c
+Boot cpu id = 0x0, index=0
+Core 1 is up with logic id 1
+Core 2 is up with logic id 2
+Core 3 is up with logic id 3
+Enabling MMU and jumping to entry point...
+
+RELK start: user-level PL011 console at 0x9000000, control register 0x101
+RELK built-for: PRINTING=false DEBUG_BUILD=false MAX_NUM_NODES=4 ARM_HYPERVISOR_SUPPORT=false KERNEL_MCS=false mutant=none
+RELK kernel-reports: nodes=4 node_id=0 untypeds=57 device=26 uart_device_untyped=Some((9000000, 1000000))
+RELK notification: signalled through badge 0x1337, wait returned badge 0x1337
+RELK test=notification-badge result=PASS
+RELK   got report badge=0x1 label=0x101 mr=[1111222233334444, f0ff0f055aaaa55, 0, 0]
+RELK   got report badge=0x1 label=0x105 mr=[1, a5a4cd33dc229b2a, 102, 0]
+RELK test=ipc-call-reply result=PASS
+RELK   got fault from worker 0x2: VmFault(VmFault(seL4_Fault_VMFault_Unpacked { IP: 218b08, Addr: 60000abc, PrefetchFault: 0, FSR: 92000006 }.pack()))
+RELK test=vm-fault-delivery result=PASS
+RELK debug-syscall: what the kernel prints for the probe byte is between the brackets: []
+RELK   got fault from worker 0x3: UnknownSyscall(UnknownSyscall(seL4_Fault_UnknownSyscall_Unpacked { X0: 23, X1: 23, X2: 0, X3: 0, X4: 0, X5: 0, X6: 0, X7: fffffffffffffff7, FaultIP: 218b90, SP: 244130, LR: 218b94, SPSR: 140, Syscall: fffffffffffffff7 }.pack()))
+RELK debug-syscall: kernel_accepts_debug_putchar=Some(false) expected_from_build_configuration=false
+RELK test=debug-syscall result=PASS
+RELK   got report badge=0x77 label=0x106 mr=[1, 0, 0, 0]
+RELK   got report badge=0x4 label=0x103 mr=[107, 0, 0, 0]
+RELK revoke: revoked the badged parent capability
+RELK   got report badge=0x4 label=0x105 mr=[107, 2, 0, 0]
+RELK revoke: second call reached the root task=false kernel answered InvalidCapability(2)=true parent still usable=true
+RELK test=revoke-badged-copy result=PASS
+RELK page-permission: frame at physical 0x60006000, read-write at 0x40001000, second view at 0x40002000
+RELK   got report badge=0x5 label=0x103 mr=[5a, 0, 0, 0]
+RELK   got fault from worker 0x5: VmFault(VmFault(seL4_Fault_VMFault_Unpacked { IP: 218b60, Addr: 40002000, PrefetchFault: 0, FSR: 9200004f }.pack()))
+RELK page-permission: write through the second view refused=true frame still holds the pattern=true
+RELK   got fault from worker 0x6: VmFault(VmFault(seL4_Fault_VMFault_Unpacked { IP: 218b08, Addr: 40002000, PrefetchFault: 0, FSR: 92000007 }.pack()))
+RELK page-permission: read after unmapping the second view faults=true
+RELK test=page-permission-and-unmap result=PASS
+RELK   got report badge=0x7 label=0x105 mr=[3e8, 1062de, 0, 0]
+RELK   got report badge=0x8 label=0x105 mr=[1062de, 3e8, 0, 0]
+RELK test=timer-preemption result=PASS
+RELK smp: core 1: worker progress seen after Some(16799) spins of the root task (None: never), final report received=true
+RELK   got report badge=0x9 label=0x105 mr=[86b, 0, 0, 0]
+RELK smp: core 2: worker progress seen after Some(9088) spins of the root task (None: never), final report received=true
+RELK   got report badge=0xa label=0x105 mr=[3ec, 0, 0, 0]
+RELK smp: core 3: worker progress seen after Some(10559) spins of the root task (None: never), final report received=true
+RELK   got report badge=0xb label=0x105 mr=[3f0, 0, 0, 0]
+RELK smp: control on core 0: progress seen=None (expected None), counter after suspending it=0
+RELK smp: placing a thread on core 4 (one past the last): Err(Sel4(IllegalOperation))
+RELK test=smp-other-cores result=PASS
+RELK summary passed=8 failed=0 console_bytes_dropped=0 mmio_range_errors=0
+RELK_PASS
+[boot-image] marker 'RELK_PASS' SEEN after 1.44s (accel=tcg cpu=cortex-a57 smp=4 gic=2 virt=True)
