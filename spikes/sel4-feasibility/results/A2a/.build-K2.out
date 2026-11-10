@@ -1,0 +1,5 @@
+K2: build exit 0
+4a19d7379c147596df8c3a8bc92801e17caf392eaa5155555992d60933fd0c76  gen_config.json
+68a30dabc28cc4d9680d52062db0e3301f7185e7f9e6677be58dccc1eea38f8e  kernel.elf
+f7cce1c8fc29f7fc7afd8a3c1e9f4e9591c2ef358b1cb2e9799ed7234b1892dc  kernel_all_pp.c
+f7cce1c8fc29f7fc7afd8a3c1e9f4e9591c2ef358b1cb2e9799ed7234b1892dc  kernel_all.i

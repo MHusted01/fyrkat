@@ -1,0 +1,14 @@
+# A2a post-run record, 2026-11-09T18:39:08Z
+repo HEAD: 44d1d70255aa016f5b0141bf838acaa33f5aff96
+git status --short (repo):
+  M results/E3.md
+  M results/deviations.md
+ ?? a2a-compare.py
+ ?? build-a2a.sh
+ ?? run-a2a-evidence.sh
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+Cargo.toml and Cargo.lock tracked diff vs HEAD: 0 lines
+seL4 source tracked diff: 0 lines
+src sha256: d99e9faaeedbee11361fd0e4be0df3af2d61693132ce04edfab7ce295295a7d1  build-a2a.sh
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py

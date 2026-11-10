@@ -1,0 +1,15 @@
+# A2a preflight record, 2026-11-09T18:38:36Z. Written before the builds.
+repo HEAD: 44d1d70255aa016f5b0141bf838acaa33f5aff96  (origin/main 44d1d70255aa016f5b0141bf838acaa33f5aff96)
+branch: spike/a2a-assurance
+git status --short:
+  M results/E3.md
+  M results/deviations.md
+ ?? a2a-compare.py
+ ?? build-a2a.sh
+ ?? run-a2a-evidence.sh
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+uname -m: arm64
+Cargo.toml and Cargo.lock sha256: 87808559f4776eae97a212b7c581f4332096e231a0e5ca23a874e517fe5d4892 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925 
+src sha256: d99e9faaeedbee11361fd0e4be0df3af2d61693132ce04edfab7ce295295a7d1  build-a2a.sh
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py

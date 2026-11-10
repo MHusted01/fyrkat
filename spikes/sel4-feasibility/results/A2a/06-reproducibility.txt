@@ -1,0 +1,6 @@
+# Reproducibility: the function table and the comparison from two clean builds of each configuration in different directories.
+K0: function tables identical (883 functions, sha256 0fbaaa459833e998bb3c98afc6e1517a5a5a5b43f3e06f1e80f7e4cc1632e015)
+K1: function tables identical (822 functions, sha256 c80681bc8c3be955c89d5b79d3125c798650827af15fb0ec50eb1c0d380d0f11)
+K2: function tables identical (858 functions, sha256 980476b79a891b0191053a6fcc56a17386aae6835fed5e356de700b86dcb810f)
+E1H: function tables identical (960 functions, sha256 c77b22d27cbcd6085cc4f76b7fc08d19e192be1a0f0b1f2a3a60c68c75515e67)
+comparison and matrix rerun on the same tables: identical
