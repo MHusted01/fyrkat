@@ -55,7 +55,7 @@ Exit criteria:
 
 **Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1, E2 and E3 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
-A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later stop that day held A2a and A4, and they have not been authorized since.
+A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later stop that day held A2a and A4; A2a was authorized on 2026-11-09 and A4 has not been authorized.
 
 - **A1** ran and passed (label U), and a rerun with the approved dependency lock also passed (label U). The owner
   accepted the rerun **limited to build reproducibility**. No runtime validation exists: the A1 image has never
@@ -66,7 +66,7 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later
 - **Direction (owner, 2026-11-08):** [ADR 0002](adr/0002-initial-cpu-architecture.md) keeps AArch64-first as a
   provisional direction, with QEMU TCG as the initial local backend. [ADR 0004](adr/0004-kernel-foundation.md)
   keeps seL4-first as a provisional **working hypothesis**. Neither ADR is Accepted.
-- **Blocked:** A5 and any Class 3 kernel change. A2a, A4 and the comparator are not authorized. The nightly
+- **Blocked:** A5 and any Class 3 kernel change. A4 and the comparator are not authorized (A2a ran on 2026-11-09, below). The nightly
   toolchain is approved for S1 only.
 - **E1 (owner-authorized, 2026-11-08; ran after that documentation was merged):** the Rust root task on a
   hypervisor-enabled seL4 17.0.0 with the pinned Rust loader under QEMU TCG (Route II), specified in the plan's
@@ -75,11 +75,12 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later
   An independent review found it acceptable with corrections (applied); the owner conditionally accepted it, subject to a final review of those corrections. It shows nothing about HVF, SMP, performance, hardware or assurance, and its kernel has half the RAM of A1's.
 - **E2 (owner-authorized, 2026-11-09):** two isolated Rust tasks over seL4 IPC, with two invalid invocations and two refused attempts to exceed their authority (badge forgery, a read of the other task's memory), on the E1 kernel
   configuration. **Pass, label U, functional only: 3 of 3 boots** ([E2](../spikes/sel4-feasibility/results/E2.md)), **finally accepted by the owner** (after an independent review) as limited to its demonstrated
-  functional and capability-isolation probes; it does not establish verified kernel-generated fault delivery. It is a precursor, not Stage B evidence (A2a has not run), and it does not test revocation, rights amplification, hardware or assurance.
+  functional and capability-isolation probes; it does not establish verified kernel-generated fault delivery. It is a precursor, not Stage B evidence (E1H is not a matrix row), and it does not test revocation, rights amplification, hardware or assurance.
 - **E3 (owner-authorized, 2026-11-09):** capability revocation on the same configuration: after `seL4_CNode_Revoke` on the root task's endpoint capability, the mints of it and their copies in two tasks' CNodes are gone, while the ancestor, an unrelated control and a new mint work.
   **The agent's reading is Pass, label U, functional only: 3 of 3 boots, six mutants fail as they should** ([E3](../spikes/sel4-feasibility/results/E3.md)). **Finally accepted by the owner** (2026-11-09), limited to the tested capability-revocation topology under single-vCPU QEMU TCG with the debug kernel, after two independent reviews (NOT MERGE-READY, then MERGE-READY on the evidence); the verifier changes made after the second review are not reviewed, and E3.md lists the forged-log gaps that remain. D21 to D23 approved.
   A call through a revoked slot returns the same error as one through a never-populated slot, so the error code is not evidence. It does not test revoking a badged child, an untyped, a deeper chain, or any other object type, and it is not Stage B evidence.
-- **A2a (owner-authorized, 2026-11-09):** ran, **outcome Investigate** by the plan's definition (the P5 cell of K3 cannot be classified yet and no required Stage B test has run); the K1 and K2 cells for P1 to P4 are class B as pre-registered ([A2a](../spikes/sel4-feasibility/results/A2a.md)). Build success, configuration similarity and formal-verification applicability are kept apart there. Findings: K0, the only verified AArch64 configuration, is hypervisor-mode, so the hypervisor-enabled kernel of E1 to E3 is nearer to it than K1 and K2 in that option; K1, K2 and the E1H kernel are debug builds against K0's release build; the public documentation names no version.
+- **A2a (owner-authorized, 2026-11-09):** ran, **outcome Investigate** by the plan's definition (the P5 cell of K3 cannot be classified yet and no required Stage B test has run); the owner accepted it as the recorded result subject to independent review. The K1 and K2 cells for P1 to P4 are **expected** class B but **not yet classified**: the dependency lists were not completed, which the plan asks A2a to do, and the trusted-component entry is open ([A2a](../spikes/sel4-feasibility/results/A2a.md)).
+  Build success, configuration similarity and formal-verification applicability are kept apart there. Findings: every AArch64 verified configuration, K0 included, is hypervisor-mode, so the hypervisor-enabled kernel of E1 to E3 shares that option with K0 and K1 and K2 do not; K1, K2 and the E1H kernel are debug builds against K0's release build; the documentation ties the pinned release to a proof revision through the 17.0.0 verification manifest, but which AArch64 proof sessions exist for it is not established; no loader is known to start the 4-node K2.
 - **Next:** the owner's decision on the configuration and loader question before Stage B, and on the [A5 design proposal](research/a5-design-proposal.md). **Stage B, A4, A5 and the comparator are not authorized**; A5 is held for a reviewed design and is the likeliest falsifier.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
