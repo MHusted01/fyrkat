@@ -53,7 +53,7 @@ Exit criteria:
 
 ## S1: Kernel foundation spike
 
-**Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1, E2 and E3 below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
+**Status: in progress, stopped at the A3 gate, apart from the bounded experiments E1, E2 and E3 and the no-boot A2a below.** It is defined by the [spike plan](research/sel4-spike-plan.md),
 with pre-registered pass and fail criteria. The owner approved the plan's text on 2026-11-07 and authorized A1,
 A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later stop that day held A2a and A4; A2a was authorized on 2026-11-09 and A4 has not been authorized.
 
@@ -81,7 +81,7 @@ A3, A4 and the A2a interpretation conditionally on 2026-11-08; the owner's later
   A call through a revoked slot returns the same error as one through a never-populated slot, so the error code is not evidence. It does not test revoking a badged child, an untyped, a deeper chain, or any other object type, and it is not Stage B evidence.
 - **A2a (owner-authorized, 2026-11-09):** ran, **outcome Investigate** by the plan's definition (the P5 cell of K3 cannot be classified yet and no required Stage B test has run); the owner accepted it as the recorded result subject to independent review. The K1 and K2 cells for P1 to P4 are **expected** class B but **not yet classified**: the dependency lists were not completed, which the plan asks A2a to do, and the trusted-component entry is open ([A2a](../spikes/sel4-feasibility/results/A2a.md)).
   Build success, configuration similarity and formal-verification applicability are kept apart there. Findings: every AArch64 verified configuration, K0 included, is hypervisor-mode, so the hypervisor-enabled kernel of E1 to E3 shares that option with K0 and K1 and K2 do not; K1, K2 and the E1H kernel are debug builds against K0's release build; the documentation ties the pinned release to a proof revision through the 17.0.0 verification manifest, but which AArch64 proof sessions exist for it is not established; no loader is known to start the 4-node K2.
-- **Next:** the owner's decision on the configuration and loader question before Stage B, and on the [A5 design proposal](research/a5-design-proposal.md). **Stage B, A4, A5 and the comparator are not authorized**; A5 is held for a reviewed design and is the likeliest falsifier.
+- **Next:** the owner's decision on the configuration and loader question before Stage B, and on the [A5 design proposal](research/a5-design-proposal.md). **Stage B, A4, the full A5 experiment and the comparator are not authorized.** The owner has authorized Stage B preparation (release variants, the Route I elfloader investigation, a matrix Amendment) and A5 step 0 (an environment and feasibility probe only); A5 is held for a reviewed design and is the likeliest falsifier.
 - **Depends on:** M0 tooling.
 - **Exit:** the owner decides ADR 0004. **M1 cannot be finalized before this.**
 
