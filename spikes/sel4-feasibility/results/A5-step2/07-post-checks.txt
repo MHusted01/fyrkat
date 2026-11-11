@@ -1,0 +1,18 @@
+# A5 step 2 post-run record, 2026-11-10T23:55:54Z
+repo HEAD: bbaf23c815ae76e26899952d7e4b732918c9adf7
+seL4 source tracked diff: 0 lines
+Cargo.toml and Cargo.lock tracked diff vs HEAD: 0 lines
+src sha256: b1839ac2b0f4fcac775ecfb5d9f28c90fc7c1abf9b4528ebcc1cf87b747187ce  build-a5-e1h.sh
+src sha256: 57138cdba84ce6b8f183302f5bc3f0577a240d2ea38676621976c286916de51e  build-relk.sh
+src sha256: 87c35142b24b0a4eecec325be14f3775ccc2d0e5f939cac9f14295f4a13d0062  run-a5-step2-evidence.sh
+src sha256: 67a0f8f17956b77267eaf1b4daabf884e28f58f6b7e874470ed63c316c092abd  verify_a5_step2.py
+src sha256: b0ea5f770c2421322d102ca08fd56f11cf2b5df76f5f1175ac461e05e07e448b  boot-a5.py
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: e8af45ac836ee049ea1db7ea4d74150fa373f109364e80465fe7f961447ed273  crates/e2-root-task/src/bin/a5_step2_root_task.rs
+src sha256: 23db93089ad9804b87ff8f89c5011864faf9a1005749d2b0cde7f4f2ef3edbb9  crates/e2-root-task/src/a5_step2_tests.rs
+src sha256: d9aeabbe698ec6a6e7d8d404ef3be033eed94df9f1337b0288bd4829f4a01821  crates/e2-root-task/src/smmuv3.rs
+src sha256: 3d4242064e64503ad7c86c1ea031bb0328fe31cca6aa913e5199a5462daf1f25  crates/e2-root-task/src/edu.rs
+src sha256: 6a8d9db08c1058f4a0dc6626ba7b0e1233d5f6b037d9f3155580e37019cd59c9  crates/e2-root-task/src/slots.rs
+src sha256: 6957f7ef493f5d132d14bfafa2a8a2d85066ae63fbb608045120141165ce104b  crates/e2-root-task/src/pl011.rs
+src sha256: 9c9432c271430df6bc3b11725a89a87e476cdcc73b42538e2aaf509065dc95bc  crates/e2-root-task/src/a5_mmio.rs
+src sha256: abc20df95b76e2818d1e307930bf03bdc66c4c214e2ac3ac1eed86dbfeba93d4  crates/e2-root-task/src/object_allocator.rs

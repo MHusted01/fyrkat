@@ -1,0 +1,116 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/a5-step2-build/teardown-without-invalidation/image.elf -device edu,dma_mask=0xffffffffff -device edu,dma_mask=0xffffffffff -trace smmuv3_translate_* -trace smmuv3_propagate_event -trace smmuv3_cmdq_cfgi_* -trace smmuv3_cmdq_tlbi_nsnh -trace smmuv3_range_inval
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602da7d0
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff7b000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd7b000,
+        v_entry: 0x21e21c,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff79000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff7b000 (filesz = 0x6840, memsz = 0x6840)
+seL4 kernel loader | DEBUG      0x7ff91840 (filesz = 0xdf78, memsz = 0xdf78)
+seL4 kernel loader | DEBUG      0x7ffaf7b8 (filesz = 0x50450, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff79000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff79000..807ff7afb3)
+  [807ff7b000..8080000000)
+Booting all finished, dropped to user space
+A5S2 start: built-for PRINTING=true MAX_NUM_NODES=1 ARM_HYPERVISOR_SUPPORT=true mutant=teardown-without-invalidation
+smmuv3_cmdq_cfgi_ste_range start=0x0 - end=0xffffffff
+smmuv3_cmdq_tlbi_nsnh 
+smmuv3_cmdq_cfgi_ste streamid= 0x10
+smmuv3_cmdq_cfgi_cd sid=0x10
+A5S2 configured: stream 0x10 stage 1, asid 7; the frame under test goes at 0x100000000; 0x100003000 -> the server's page O at physical 0x7000a000
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000b000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000b000 perm=0x3 stage=1
+A5S2   events after scenario A's positive control: none
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff69400 "rootserver" @21eee4]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff69400 "rootserver" @21eee4]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+A5S2 A: positive control=16/16; after the donor's revoke: copying the frame capability: Err(FailedLookup); copying the server's copy of it: Err(FailedLookup); reused frame at physical 0x7000b000, the old frame was at 0x7000b000 (same=true); reused frame reads as zero=16/16
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000b000 perm=0x3 stage=1
+A5S2   events after the device's read of the mapping under test: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100003000 translated=0x7000a000 perm=0x3 stage=1
+A5S2   events after the device's write of its buffer to page O: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100003000 translated=0x7000a000 perm=0x3 stage=1
+A5S2   events after the device's read of the attack pattern from page O: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000b000 perm=0x3 stage=1
+A5S2   events after the device's write to the mapping under test: none
+A5S2 A: secret words the device read out=16/16; victim words the device overwrote=16/16 (victim still intact=0/16); transfers through the mapping left no event=true, only translation faults=false; transfers through page O left no event=true
+A5S2 finding=naive-frame-reuse observed=REACHED
+smmuv3_range_inval vmid=0 asid=7 addr=0x100000000 tg=0 num_pages=0x1 ttl=0 leaf=1 stage=1
+A5S2   teardown: table entry cleared, CMD_TLBI_NH_VA issued=true, CMD_SYNC complete
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000c000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000c000 perm=0x3 stage=1
+A5S2   events after scenario B's positive control: none
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeUntypedInvocation/204 T0x807ff69400 "rootserver" @21f5e0]: Untyped Retype: Insufficient memory (1 * 4096 bytes needed, 0 bytes available).>>[0m
+A5S2 B: a retype of the untyped while its frame capability exists: Err(NotEnoughMemory)
+A5S2 finding=retype-while-child-exists observed=REFUSED
+A5S2 B: MUTANT teardown-without-invalidation, CMD_TLBI_NH_VA is not issued
+A5S2   teardown: table entry cleared, CMD_TLBI_NH_VA issued=false, CMD_SYNC complete
+A5S2 B: positive control=16/16; mapping torn down, then revoked; reused frame at physical 0x7000c000 (same as the old=true)
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000c000 perm=0x3 stage=1
+A5S2   events after the device's read of the mapping under test: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100003000 translated=0x7000a000 perm=0x3 stage=1
+A5S2   events after the device's write of its buffer to page O: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100003000 translated=0x7000a000 perm=0x3 stage=1
+A5S2   events after the device's read of the attack pattern from page O: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000c000 perm=0x3 stage=1
+A5S2   events after the device's write to the mapping under test: none
+A5S2 B: secret words the device read out=16/16; victim words the device overwrote=16/16 (victim still intact=0/16); transfers through the mapping left no event=true, only translation faults=false; transfers through page O left no event=true
+A5S2 finding=teardown-then-reuse observed=REACHED
+smmuv3_range_inval vmid=0 asid=7 addr=0x100000000 tg=0 num_pages=0x1 ttl=0 leaf=1 stage=1
+A5S2   teardown: table entry cleared, CMD_TLBI_NH_VA issued=true, CMD_SYNC complete
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000d000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000d000 perm=0x3 stage=1
+A5S2   events after scenario C's positive control: none
+A5S2 C: positive control=16/16; revoked; the untyped is now a CNode of 128 slots with a notification capability (badge 0x5eedc0de) in slot 1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000d000 perm=0x3 stage=1
+A5S2   events after the device's read of the kernel object: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100003000 translated=0x7000a000 perm=0x3 stage=1
+A5S2   events after the device's write of its buffer to page O: none
+A5S2 C: bytes of the kernel object the device read out: slot 0 = [0, 0, 0, 0], slot 1 = [360000807000e000, 5eedc0de, 807ff41bc0, 807ff41ba3]
+A5S2 finding=kernel-object-disclosed read-left-no-event=true slot0-empty=true slot1-nonzero-words=4/4 badge-visible=true
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff69400 "rootserver" @21eee4]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000020 translated=0x7000d020 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000040 translated=0x7000d040 perm=0x3 stage=1
+A5S2   events after the device's copy of slot 1 onto slot 2: none
+A5S2 C: copying a capability out of slot 2 before the device wrote it: Err(FailedLookup); after: Ok(()); a signal through that copy arrived with badge 0x5eedc0de
+A5S2 finding=capability-duplicated-by-dma device-copy-left-no-event=true copy-out-refused-before=true copy-out-accepted-after=true signal-arrived-with-the-badge=true
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff69400 "rootserver" @21eee4]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+[0m[1m<<[0m[32mseL4(CPU 0)[0m[1m [decodeCNodeInvocation/107 T0x807ff69400 "rootserver" @21eee4]: CNode Copy/Mint/Move/Mutate: Source slot invalid or empty.>>[0m
+A5S2 C: a copy of slot 1 made by the kernel delivered a signal with badge 0x5eedc0de before the revoke; after revoking the notification's original capability: copying the minted capability in slot 1: Err(FailedLookup); copying the kernel-made copy: Err(FailedLookup); a signal through the device-made duplicate arrived with badge 0x5eedc0de
+A5S2 finding=dma-duplicate-survives-revocation kernel-made-copy-worked-before=true minted-capability-removed=true kernel-made-copy-removed=true dma-duplicate-still-works=true
+A5S2 smmu at the end [IDR0, IDR1, IDR5, CR0, CR0ACK, GBPA, GERROR^GERRORN] = [d44101b, 2730010, 74, d, d, 1000, 0]
+A5S2 at the end: device transfers not reported finished=0 console_bytes_dropped=0 mmio_range_errors=0
+A5S2_DONE
+
+[boot-a5] marker 'A5S2_DONE' SEEN after 2.22s (machine=virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off)

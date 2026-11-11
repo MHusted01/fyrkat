@@ -1,0 +1,10 @@
+# A5 step 0 post-run record, 2026-11-10T23:49:30Z
+repo HEAD: bbaf23c815ae76e26899952d7e4b732918c9adf7
+seL4 source tracked diff: 0 lines
+Cargo.toml and Cargo.lock tracked diff vs HEAD: 0 lines
+src sha256: 749e002ef4f10ebec3ea5df1f7f65aa494354b3d84122a19ea46d2f11c5aff52  build-a5-probe.sh
+src sha256: e134d4397af76c2b968b35d3af743ad68ef64ab02392b2d733bfe1d7b0d60a0a  run-a5-step0-evidence.sh
+src sha256: b0ea5f770c2421322d102ca08fd56f11cf2b5df76f5f1175ac461e05e07e448b  boot-a5.py
+src sha256: 67bfd518aeee083ae0aeb004068aa72afe0c83ffc324e8833155c1caaf740650  crates/e2-root-task/src/bin/a5_probe_root_task.rs
+src sha256: 9c9432c271430df6bc3b11725a89a87e476cdcc73b42538e2aaf509065dc95bc  crates/e2-root-task/src/a5_mmio.rs
+src sha256: abc20df95b76e2818d1e307930bf03bdc66c4c214e2ac3ac1eed86dbfeba93d4  crates/e2-root-task/src/object_allocator.rs

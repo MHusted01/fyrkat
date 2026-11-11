@@ -1,0 +1,401 @@
+## k2r-main: build exit 0
+# K2R (K2R-a5s1), root task: a5_step1_root_task, mutant: none, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install
+cargo build --locked --release -p e2-root-task --bin a5_step1_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1 -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<REPO>/spikes/sel4-feasibility/external/relk-build/k2-smc-a5s1.dtb
+ninja
+ninja kernel_all_pp_wrapper
+-- platform qemu-arm-virt supports multiple architectures, none was given
+--   defaulting to: aarch64
+-- Extracting device tree from QEMU
+-- The C compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- Configuring done (0.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4
+ninja: Entering directory `<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4'
+[1/45] Generate dummy headers for prune compilation
+[2/45] Creating C input file for preprocessor
+[3/45] Creating C input file for preprocessor
+[4/45] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[5/45] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[6/45] Generating include/sel4/shared_types.pbf
+[7/45] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[8/45] Generating generated/invocations_all.json
+[9/45] Generate invocation header gen_headers/api/invocation.h
+[10/45] Generate invocation header gen_headers/arch/api/invocation.h
+[11/45] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[12/45] Generating from <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4/libsel4/include/sel4/shared_types.pbf
+[13/45] Generating from <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/sel4/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[14/45] Generate syscall invocations
+[15/45] Creating C input file for preprocessor
+[16/45] Generate sel4_client.h
+[17/45] Generate invocation header include/sel4/invocation.h
+[18/45] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[19/45] Building C object CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[20/45] Generate syscall.h
+[21/45] Generating generated/arch/object/structures.bf.pbf
+[22/45] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[23/45] Concatenating C files
+[24/45] Creating C input file for preprocessor
+[25/45] Building C object CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[26/45] Generating kernel_all_pp_prune.c
+[27/45] Generating from generated/arch/object/structures.bf.pbf
+[28/45] Creating C input file for preprocessor
+[29/45] Building C object CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[30/45] Generating generated/sel4/shared_types.bf.pbf
+[31/45] Generating from generated/sel4/shared_types.bf.pbf
+[32/45] Creating C input file for preprocessor
+[33/45] Creating C input file for preprocessor
+[34/45] Building C object CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[35/45] Generating linker.lds_pp
+[36/45] Building C object CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[37/45] Generating kernel_all.i
+[38/45] Generating circular_includes_valid
+[39/45] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[40/45] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[41/45] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[42/45] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[43/45] Building C object CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[44/45] Linking C executable kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel.elf has a LOAD segment with RWX permissions
+[44/45] Install the project...
+-- Install configuration: "None"
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/bin/kernel.elf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/benchmark_utilisation_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/bootinfo_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/bootinfo.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/config.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/errors.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/benchmark_track_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/benchmark_tracepoints_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/syscalls_master.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/debug_assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/syscalls_mcs.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/macros.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/functions.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/assert.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/virtual_client.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/simple_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/api
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/api/syscall.xsd
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/api/syscall.xml
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces/object-api.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a53.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a76.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a8.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a72.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a57.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a35.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a15.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a55.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/shared_types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a7.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/constants_cortex_a9.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces/object-api-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/types.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/mapping.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/constants.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/objecttype.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/deprecated.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/faults.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/syscalls.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/simple_types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces/object-api-sel4-arch.xml
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/plat
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/plat/api
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/plat/api/constants.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/mode
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/mode/types.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/shared_types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/shared_types_gen.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/syscall.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/interfaces/sel4_client.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/arch/invocation.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/invocation.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/types.pbf
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/sel4_arch/types_gen.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/kernel
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/kernel/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/kernel/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/gen_config.json
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/sel4/gen_config.h
+-- Up-to-date: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/include/autoconf.h
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/src
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/libsel4/src/sel4_bootinfo.c
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/support/kernel.dtb
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/support/platform_gen.yaml
+-- Installing: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/prefix/install/support/platform_gen.json
+   Compiling compiler_builtins v0.1.160 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/compiler-builtins/compiler-builtins)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling core v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/core)
+   Compiling memchr v2.8.3
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling shlex v2.0.1
+   Compiling serde v1.0.229
+   Compiling find-msvc-tools v0.1.15
+   Compiling serde_json v1.0.154
+   Compiling cc v1.10.0
+   Compiling itoa v1.0.18
+   Compiling libc v0.2.191
+   Compiling sel4-build-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling cfg-if v1.0.5
+   Compiling prettyplease v0.3.0
+   Compiling pest_stack_guard v1.0.0
+   Compiling glob v0.3.4
+   Compiling prettyplease v0.2.37
+   Compiling ucd-trie v0.1.7
+   Compiling clang-sys v1.9.1
+   Compiling aho-corasick v1.1.5
+   Compiling regex-syntax v0.8.11
+   Compiling minimal-lexical v0.2.1
+   Compiling syn v3.0.9
+   Compiling rustversion v1.0.23
+   Compiling fallible-iterator v0.3.0
+   Compiling nom v7.1.3
+   Compiling syn v2.0.119
+   Compiling libloading v0.8.9
+   Compiling bindgen v0.72.1
+   Compiling psm v0.1.24
+   Compiling stacker v0.1.25
+   Compiling either v1.19.0
+   Compiling regex-automata v0.4.18
+   Compiling itertools v0.13.0
+   Compiling cexpr v0.6.0
+   Compiling rustc-hash v2.1.3
+   Compiling pest v2.9.5
+   Compiling log v0.4.34
+   Compiling shlex v1.3.0
+   Compiling bitflags v2.13.2
+   Compiling xml v1.4.0
+   Compiling sel4-bitfield-ops v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling serde_derive v1.0.229
+   Compiling sel4-root-task-macros v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling pest_meta v2.9.5
+   Compiling regex v1.13.1
+   Compiling xmltree v0.12.0
+   Compiling pest_generator v2.9.5
+   Compiling pest_derive v2.9.5
+   Compiling sel4-config-types v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-data v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-config-macros v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-sys v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling alloc v0.0.0 (<HOME>/.rustup/toolchains/nightly-2026-08-21-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc)
+   Compiling sel4-phdrs-constants v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-panicking-env v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling scopeguard v1.2.0
+   Compiling sel4-immediate-sync-once-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-ctors-dtors v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-alloca v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling lock_api v0.4.14
+   Compiling sel4-phdrs v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-immutable-cell v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-stack v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-panicking v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling dlmalloc v0.2.14
+   Compiling sel4-initialize-tls v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-dlmalloc v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4 v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling object v0.40.0
+   Compiling sel4-runtime-common v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling sel4-sync v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling e2-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-task)
+   Compiling sel4-root-task v0.1.0 (https://github.com/seL4/rust-sel4?tag=v6.0.0#c819c27b)
+   Compiling e2-root-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-root-task)
+    Finished `release` profile [optimized] target(s) in 14.40s
+loading initial cache file <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/projects/relk/settings.cmake
+-- Set platform details from PLATFORM=qemu-arm-virt
+--   KernelPlatform: qemu-arm-virt
+-- Setting from flags KernelSel4Arch: aarch64
+-- Found seL4: <REPO>/spikes/sel4-feasibility/external/seL4
+-- ARM_CPU not set, defaulting to cortex-a53
+-- The C compiler identification is GNU 16.2.0
+-- The CXX compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/homebrew/bin/aarch64-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found elfloader-tool: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/tools/seL4/elfloader-tool
+-- <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/build/kernel/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- CPIO test cpio_reproducible_flag PASSED
+-- Configuring done (0.9s)
+-- Generating done (0.0s)
+CMake Warning (unused-cli):
+  Manually-specified variables were not used by the project:
+
+    SEL4_CACHE_DIR
+
+
+-- Build files have been written to: <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/build
+[1/102] Generate dummy headers for prune compilation
+[2/102] Creating C input file for preprocessor
+[3/102] Creating C input file for preprocessor
+[4/102] Building C object CMakeFiles/rust-root-task.dir/dummy.c.obj
+[5/102] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[6/102] Building C object libcpio/CMakeFiles/cpio.dir/src/cpio.c.obj
+[7/102] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[8/102] Generating include/sel4/shared_types.pbf
+[9/102] Generating generated/invocations_all.json
+[10/102] Linking C executable rust-root-task
+[11/102] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[12/102] Linking C static library libcpio/libcpio.a
+[13/102] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[14/102] Generate invocation header gen_headers/api/invocation.h
+[15/102] Generate invocation header gen_headers/arch/api/invocation.h
+[16/102] Generate syscall invocations
+[17/102] Generating from <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/build/libsel4/include/sel4/shared_types.pbf
+[18/102] Generating from <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-a5s1/build/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[19/102] Creating C input file for preprocessor
+[20/102] Generate sel4_client.h
+[21/102] Building C object kernel/CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[22/102] Generate invocation header include/sel4/invocation.h
+[23/102] Generating generated/arch/object/structures.bf.pbf
+[24/102] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[25/102] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[26/102] Generate syscall.h
+[27/102] Concatenating C files
+[28/102] Creating C input file for preprocessor
+[29/102] Building C object libsel4/CMakeFiles/sel4.dir/src/sel4_bootinfo.c.obj
+[30/102] Linking C static library libsel4/libsel4.a
+[31/102] Building C object kernel/CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[32/102] Generating kernel_all_pp_prune.c
+[33/102] Generating from generated/arch/object/structures.bf.pbf
+[34/102] Creating C input file for preprocessor
+[35/102] Building C object kernel/CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[36/102] Generating generated/sel4/shared_types.bf.pbf
+[37/102] Generating from generated/sel4/shared_types.bf.pbf
+[38/102] Creating C input file for preprocessor
+[39/102] Creating C input file for preprocessor
+[40/102] Building C object kernel/CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[41/102] Generating linker.lds_pp
+[42/102] Building C object kernel/CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[43/102] Generating kernel_all.i
+[44/102] Generating circular_includes_valid
+[45/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[46/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[47/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[48/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[49/102] Building C object kernel/CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[50/102] Linking C executable kernel/kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel/kernel.elf has a LOAD segment with RWX permissions
+[51/102] Generating kernel.elf
+[52/102] Generating rootserver
+[53/102] Generate CPIO archive archive.o
+[54/102] Generating gen_headers/image_start_addr.h, gen_headers/platform_info.h
+[55/102] Generating linker.lds_pp
+[56/102] Generating gen_headers/devices_gen.h
+[57/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/structures.c.obj
+[58/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu.S.obj
+[59/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/crt0.S.obj
+[60/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu-hyp.S.obj
+[61/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/psci_asm.S.obj
+[62/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/traps.S.obj
+[63/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/debug.c.obj
+[64/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-imx6.c.obj
+[65/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/cpuid.c.obj
+[66/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/cpuid.c.obj
+[67/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/mmu.c.obj
+[68/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/smp.c.obj
+[69/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/psci.c.obj
+[70/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/sys_boot.c.obj
+[71/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-psci.c.obj
+[72/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/scu.c.obj
+[73/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/smp_boot.c.obj
+[74/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-zynq7000.c.obj
+[75/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-spin-table.c.obj
+[76/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/defaults.c.obj
+[77/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf32.c.obj
+[78/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf.c.obj
+[79/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf64.c.obj
+[80/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/common.c.obj
+[81/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/driver.c.obj
+[82/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/timer/arm_generic_timer.c.obj
+[83/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/smp/common.c.obj
+[84/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/exynos-uart.c.obj
+[85/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/8250-uart.c.obj
+[86/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/common.c.obj
+[87/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/bcm-uart.c.obj
+[88/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-lpuart.c.obj
+[89/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/pl011-uart.c.obj
+[90/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/msm-uart.c.obj
+[91/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-uart.c.obj
+[92/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/meson-uart.c.obj
+[93/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/xilinx-uart.c.obj
+[94/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/fdt.c.obj
+[95/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/stm32mp2-uart.c.obj
+[96/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_sha256.c.obj
+[97/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/string.c.obj
+[98/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_md5.c.obj
+[99/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/printf.c.obj
+[100/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/hash.c.obj
+[101/102] Linking C executable elfloader/elfloader
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: elfloader/elfloader has a LOAD segment with RWX permissions
+[102/102] Generating images/rust-root-task-image-arm-qemu-arm-virt
+[1/1] Generating kernel_all_pp.c

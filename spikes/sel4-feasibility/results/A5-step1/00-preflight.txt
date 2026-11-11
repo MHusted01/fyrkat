@@ -1,0 +1,22 @@
+# A5 step 1 preflight record, 2026-11-10T23:52:29Z. Written before the builds.
+repo HEAD: bbaf23c815ae76e26899952d7e4b732918c9adf7
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+qemu: QEMU emulator version 11.1.3
+tools/seL4 HEAD: 6493e0c6fab360eb81a8115a49c9ca7bc280c48a; dirty files: 0
+projects/util_libs HEAD: ef49a397b7044fc38b609a99a8c6265a97913b8e; dirty files: 0
+rust-sel4 HEAD: c819c27b076130cba9821c4555f23773e4b0bffd; dirty files: 0
+Cargo.toml and Cargo.lock sha256: 87808559f4776eae97a212b7c581f4332096e231a0e5ca23a874e517fe5d4892 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925 
+e3 kernel.elf sha256: b1b63218368002fc59e58f70aa7b5c81521a3689d2a6001480e0d1862707d7aa
+e3 sel4-kernel-loader.elf sha256: 8408ab23e7db94b549f49f609da260d26dbcab6d7e9d5a2f4d8acc12c9e88159
+src sha256: b1839ac2b0f4fcac775ecfb5d9f28c90fc7c1abf9b4528ebcc1cf87b747187ce  build-a5-e1h.sh
+src sha256: 57138cdba84ce6b8f183302f5bc3f0577a240d2ea38676621976c286916de51e  build-relk.sh
+src sha256: ce9991bbeac99aeb961009d55bd8cf715ce2f4c968741adc24197c1352e38569  run-a5-step1-evidence.sh
+src sha256: b0ea5f770c2421322d102ca08fd56f11cf2b5df76f5f1175ac461e05e07e448b  boot-a5.py
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: de609ee9b5c3ddb81ea1233e737c50ccb4317a24ce9fdba65c00a94c47ae0225  crates/e2-root-task/src/bin/a5_step1_root_task.rs
+src sha256: 92b6a18613e56eb26f3e500570528e2aa8e5c7c06e232daa5ea17b524e9662a3  crates/e2-root-task/src/a5_step1_tests.rs
+src sha256: d9aeabbe698ec6a6e7d8d404ef3be033eed94df9f1337b0288bd4829f4a01821  crates/e2-root-task/src/smmuv3.rs
+src sha256: 3d4242064e64503ad7c86c1ea031bb0328fe31cca6aa913e5199a5462daf1f25  crates/e2-root-task/src/edu.rs
+src sha256: 6957f7ef493f5d132d14bfafa2a8a2d85066ae63fbb608045120141165ce104b  crates/e2-root-task/src/pl011.rs
+src sha256: 9c9432c271430df6bc3b11725a89a87e476cdcc73b42538e2aaf509065dc95bc  crates/e2-root-task/src/a5_mmio.rs
+src sha256: abc20df95b76e2818d1e307930bf03bdc66c4c214e2ac3ac1eed86dbfeba93d4  crates/e2-root-task/src/object_allocator.rs

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Re-check the conclusions of A1, A3, E1, E2, E3, A2a and the Stage B preparation work (A2a variants, Route I,
-release-kernel execution) against the sanitized public evidence in results/.
+"""Re-check the conclusions of A1, A3, E1, E2, E3, A2a and the Stage B preparation work (A2a variants, Route I, A5 step 0,
+release-kernel execution, A5 steps 1 and 2) against the sanitized public evidence in results/.
 
     verify-evidence.py [--results DIR] [--lock FILE] [--self-test]
 
@@ -235,7 +235,7 @@ def load_a2a() -> ModuleType:
 
 
 # Every directory of results/ whose files the manifest must list.
-EVIDENCE_DIRS = ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a", "A2a-variants", "RouteI", "ReleaseKernel")
+EVIDENCE_DIRS = ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a", "A2a-variants", "RouteI", "A5-step0", "ReleaseKernel", "A5-step1", "A5-step2")
 
 
 def load_sibling(stem: str) -> ModuleType:
@@ -257,8 +257,20 @@ def load_routei() -> ModuleType:
     return load_sibling("verify_routei")
 
 
+def load_a5() -> ModuleType:
+    return load_sibling("verify_a5_step0")
+
+
 def load_relk() -> ModuleType:
     return load_sibling("verify_relk")
+
+
+def load_a5_step1() -> ModuleType:
+    return load_sibling("verify_a5_step1")
+
+
+def load_a5_step2() -> ModuleType:
+    return load_sibling("verify_a5_step2")
 
 
 def e3_helpers() -> SimpleNamespace:
@@ -484,10 +496,25 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
     if (res / "RouteI").is_dir():
         load_routei().verify_routei(res, check, e3_helpers())
 
+    # ---- A5 step 0: an environment and feasibility probe of QEMU's SMMUv3 and edu (no DMA-confinement claim)
+    check("A5 step 0 evidence directory is present", (res / "A5-step0").is_dir())
+    if (res / "A5-step0").is_dir():
+        load_a5().verify_a5(res, check, e3_helpers())
+
     # ---- Release-kernel execution: K1R and K2R run a root task that logs through its own UART driver (functional, emulation only)
     check("Release-kernel evidence directory is present", (res / "ReleaseKernel").is_dir())
     if (res / "ReleaseKernel").is_dir():
         load_relk().verify_relk(res, check, e3_helpers())
+
+    # ---- A5 step 1: SMMUv3 stage-1 translation and denial for one device stream (one emulated model; not an A5 outcome)
+    check("A5 step 1 evidence directory is present", (res / "A5-step1").is_dir())
+    if (res / "A5-step1").is_dir():
+        load_a5_step1().verify_a5_step1(res, check, e3_helpers())
+
+    # ---- A5 step 2: revoke while mapped (exploratory; the checks require validity and consistency, not an outcome)
+    check("A5 step 2 evidence directory is present", (res / "A5-step2").is_dir())
+    if (res / "A5-step2").is_dir():
+        load_a5_step2().verify_a5_step2(res, check, e3_helpers())
 
     # ---- integrity and privacy
     listed: set[str] = set()
@@ -585,8 +612,17 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_routei(root: Path) -> None:
         shutil.rmtree(root / "RouteI")
 
+    def remove_a5(root: Path) -> None:
+        shutil.rmtree(root / "A5-step0")
+
     def remove_relk(root: Path) -> None:
         shutil.rmtree(root / "ReleaseKernel")
+
+    def remove_a5_step1(root: Path) -> None:
+        shutil.rmtree(root / "A5-step1")
+
+    def remove_a5_step2(root: Path) -> None:
+        shutil.rmtree(root / "A5-step2")
 
     def drop_line(prefix: str) -> Callable[[str], str]:
         return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
@@ -632,8 +668,14 @@ def self_test(res: Path, lock_path: Path) -> int:
         *load_variants().self_test_cases(edit),
         ("the Route I evidence is removed", remove_routei, "Route I evidence directory is present"),
         *load_routei().self_test_cases(edit),
+        ("the A5 step 0 evidence is removed", remove_a5, "A5 step 0 evidence directory is present"),
+        *load_a5().self_test_cases(edit),
         ("the release-kernel evidence is removed", remove_relk, "Release-kernel evidence directory is present"),
         *load_relk().self_test_cases(edit),
+        ("the A5 step 1 evidence is removed", remove_a5_step1, "A5 step 1 evidence directory is present"),
+        *load_a5_step1().self_test_cases(edit),
+        ("the A5 step 2 evidence is removed", remove_a5_step2, "A5 step 2 evidence directory is present"),
+        *load_a5_step2().self_test_cases(edit),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
