@@ -1,0 +1,125 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/a5-step0-build-low/image.elf -device edu,dma_mask=0xffffffffff -trace smmuv3_translate_*
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602d57f8
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ffb0000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fdb0000,
+        v_entry: 0x219b54,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ffae000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ffb0000 (filesz = 0x53e8, memsz = 0x53e8)
+seL4 kernel loader | DEBUG      0x7ffc53e8 (filesz = 0xa3fc, memsz = 0xa3fc)
+seL4 kernel loader | DEBUG      0x7ffdf7e8 (filesz = 0x20440, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ffae000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ffae000..807ffaffb3)
+  [807ffb0000..8080000000)
+Booting all finished, dropped to user space
+A5P start
+A5P untypeds total=52 device=27 ram=25
+A5P probe built for ECAM 0x3f000000
+A5P cover smmu 0x9050000: device untyped 0x9000000 + 0x1000000
+A5P cover ecam 0x3f000000: device untyped 0x20000000 + 0x20000000
+A5P cover ecam-other-layout 0x4010000000: device untyped 0x4000000000 + 0x4000000000
+A5P cover pci-mmio-window 0x10000000: device untyped 0x10000000 + 0x10000000
+A5P smmu IDR0 = 0x0d44101b
+A5P smmu IDR1 = 0x02730010
+A5P smmu IDR2 = 0x00000000
+A5P smmu IDR3 = 0x00001414
+A5P smmu IDR4 = 0x00000000
+A5P smmu IDR5 = 0x00000074
+A5P smmu IIDR = 0x00000000
+A5P smmu AIDR = 0x00000001
+A5P smmu CR0 = 0x00000000
+A5P smmu CR0ACK = 0x00000000
+A5P smmu CR1 = 0x00000000
+A5P smmu CR2 = 0x00000000
+A5P smmu STATUSR = 0x00000000
+A5P smmu GBPA = 0x00001000
+A5P smmu IRQ_CTRL = 0x00000000
+A5P smmu GERROR = 0x00000000
+A5P smmu STRTAB_BASE_CFG = 0x00000000
+A5P smmu CMDQ_PROD = 0x00000000
+A5P smmu CMDQ_CONS = 0x00000000
+A5P smmu decoded: S1P=1 S2P=1 TTF=0b10 COHACC=1 ASID16=1 MSI=0 ST_LEVEL=0b1 SIDSIZE=16 OAS=0b100 GRAN4K=1 AIDR major.minor=0.1 (0.1 is SMMUv3.1)
+A5P ecam 0x3f000000 00:00.0 vendor:device = 0x1b36:0x0008
+A5P ecam 0x3f000000 00:01.0 vendor:device = 0x1af4:0x1000
+A5P ecam 0x3f000000 00:02.0 vendor:device = 0x1234:0x11e8
+A5P ecam 0x3f000000 00:03.0 vendor:device = 0xffff:0xffff
+A5P edu bar0 before=0x0 sizing_mask=0xfff00000 (size 0x100000) set=0x10000000 readback=0x10000000 command 0x0 -> 0x6
+A5P edu id=0x10000ed liveness 0xedcba987 (expect the complement of 0x12345678: 0xedcba987)
+A5P ram pages pa_a=0x70003000 pa_b=0x70004000; above edu's default 28-bit DMA mask: true
+smmuv3_translate_disable smmuv3-iommu-memory-region-16-2 sid=0x10 bypass (smmu disabled) iova:0x70003000 is_write=1
+smmuv3_translate_disable smmuv3-iommu-memory-region-16-2 sid=0x10 bypass (smmu disabled) iova:0x70004000 is_write=1
+A5P roundtrip state=reset-default dma1_done=true dma2_done=true words_copied=16/16 words_untouched=0/16 -> DATA MOVED
+A5P smmu GBPA 0x1000 -> 0x101000 (abort true)
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003000 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003004 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003008 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000300c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003010 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003014 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003018 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000301c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003020 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003024 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003028 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000302c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003030 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003034 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70003038 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000303c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004000 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004004 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004008 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000400c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004010 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004014 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004018 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000401c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004020 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004024 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004028 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000402c is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004030 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004034 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x70004038 is_write=0
+smmuv3_translate_abort smmuv3-iommu-memory-region-16-2 sid=0x10 abort on iova:0x7000403c is_write=0
+A5P roundtrip state=gbpa-abort dma1_done=true dma2_done=true words_copied=0/16 words_untouched=16/16 -> NOTHING MOVED
+A5P smmu GBPA 0x101000 -> 0x1000 (abort false)
+smmuv3_translate_disable smmuv3-iommu-memory-region-16-2 sid=0x10 bypass (smmu disabled) iova:0x70003000 is_write=1
+smmuv3_translate_disable smmuv3-iommu-memory-region-16-2 sid=0x10 bypass (smmu disabled) iova:0x70004000 is_write=1
+A5P roundtrip state=gbpa-abort-cleared dma1_done=true dma2_done=true words_copied=16/16 words_untouched=0/16 -> DATA MOVED
+A5P mmio range errors: 0
+A5P_DONE
+
+[boot-a5] marker 'A5P_DONE' SEEN after 1.21s (machine=virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off)

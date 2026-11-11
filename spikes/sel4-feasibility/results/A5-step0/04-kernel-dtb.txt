@@ -1,0 +1,7 @@
+# The device tree that seL4 builds in and the Rust loader passes to the root task (external/e3-build/sel4/kernel.dtb): counts of lines naming
+smmu: 0
+iommu: 0
+pcie@: 1
+msi: 2
+psci: 3
+pcie node reg: reg = <0x40 0x10000000 0x00 0x10000000>;

@@ -1,0 +1,241 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/a5-step1-build/rw-readonly/image.elf -device edu,dma_mask=0xffffffffff -device edu,dma_mask=0xffffffffff -trace smmuv3_translate_* -trace smmuv3_propagate_event -trace smmuv3_cmdq_cfgi_* -trace smmuv3_cmdq_tlbi_nsnh -trace smmuv3_range_inval
+seL4 kernel loader | INFO   Starting loader
+seL4 kernel loader | DEBUG  Platform info: PlatformInfo {
+    memory: [
+        0x60000000..0x80000000,
+    ],
+    devices: [
+        0x0..0x8000000,
+        0x8020000..0x8030000,
+        0x8040000..0x60000000,
+        0x80000000..0x100000000000,
+    ],
+}
+seL4 kernel loader | DEBUG  Loader footprint: 0x6027b000..0x602d9bd0
+seL4 kernel loader | DEBUG  Payload info: ArchivedPayloadInfo {
+    kernel_entry: 0xffc0000000,
+    user_image: ArchivedUserImageInfo {
+        ui_p_reg_start: 0x7ff7b000,
+        ui_p_reg_end: 0x80000000,
+        pv_offset: 0x7fd7b000,
+        v_entry: 0x21dde4,
+    },
+    dtb: Some(
+        ArchivedDtbInfo {
+            addr_p: 0x7ff79000,
+            size: 0x1fb3,
+        },
+    ),
+}
+seL4 kernel loader | DEBUG  Payload regions:
+seL4 kernel loader | DEBUG      0x60000000 (filesz = 0x23b000, memsz = 0x2e990)
+seL4 kernel loader | DEBUG      0x7ff7b000 (filesz = 0x5f0c, memsz = 0x5f0c)
+seL4 kernel loader | DEBUG      0x7ff90f10 (filesz = 0xdcb0, memsz = 0xdcb0)
+seL4 kernel loader | DEBUG      0x7ffaebc0 (filesz = 0x50448, memsz = 0x3e0)
+seL4 kernel loader | DEBUG      0x7ff79000 (filesz = 0x1fb3, memsz = 0x1fb3)
+seL4 kernel loader | DEBUG  Copying payload data
+seL4 kernel loader | INFO   Entering kernel
+Bootstrapping kernel
+Warning: Could not infer GIC interrupt target ID, assuming 0.
+Available phys memory regions: 1
+  [60000000..80000000)
+Reserved virt address space regions: 3
+  [8060000000..806023b000)
+  [807ff79000..807ff7afb3)
+  [807ff7b000..8080000000)
+Booting all finished, dropped to user space
+A5S1 start: built-for PRINTING=true MAX_NUM_NODES=1 ARM_HYPERVISOR_SUPPORT=true mutant=rw-readonly
+A5S1 devices: configured stream sid=0x10, unconfigured stream sid=0x18
+A5S1 smmu before enabling [IDR0, IDR1, IDR5, CR0, CR0ACK, GBPA, GERROR^GERRORN] = [d44101b, 2730010, 74, 0, 0, 1000, 0]
+smmuv3_cmdq_cfgi_ste_range start=0x0 - end=0xffffffff
+smmuv3_cmdq_tlbi_nsnh 
+A5S1 smmu after enabling  [IDR0, IDR1, IDR5, CR0, CR0ACK, GBPA, GERROR^GERRORN] = [d44101b, 2730010, 74, d, d, 1000, 0]
+A5S1 test=smmu-enabled result=PASS
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+A5S1   events after a write to the future read-write address: n=16 type=0x04 sid=0x10 write=true page=0x0
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+A5S1   events after a write to page P's physical address: n=16 type=0x04 sid=0x10 write=true page=0x0
+A5S1 unconfigured: transfers finished=true page P intact=16/16
+A5S1 test=unconfigured-stream-denied result=PASS
+smmuv3_cmdq_cfgi_ste streamid= 0x10
+smmuv3_cmdq_cfgi_cd sid=0x10
+A5S1 configured: stream 0x10 stage 1, asid 7; 0x100000000 -> P at physical 0x7000a000 read-write; 0x100001000 -> R at physical 0x7000c000 read-only; 0x100002000 unmapped; guard Q at physical 0x7000b000
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after the round trip through the read-write mapping: none
+A5S1 mapped: 16/16 words made the round trip; the address used (0x100000000) differs from P's physical address (0x7000a000)=true
+A5S1 test=mapped-iova-translated result=PASS
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+A5S1   events after a write to the unmapped address: n=16 type=0x10 sid=0x10 write=true page=0x100002000
+A5S1 unmapped: transfer finished=true guard page Q intact=16/16 page P still zero=16/16
+A5S1 test=unmapped-iova-denied result=PASS
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+A5S1   events after a write to guard page Q's physical address: n=16 type=0x10 sid=0x10 write=true page=0x7000b000
+A5S1 physical: transfer finished=true guard page Q intact=16/16
+A5S1 test=physical-address-denied result=PASS
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+A5S1   events after a read of guard page Q's physical address: n=16 type=0x10 sid=0x10 write=false page=0x7000b000
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after writing the device's buffer back to P: none
+A5S1 no-read: transfer finished=true words of Q's content that reached P=0/16 (the buffer held: earlier pattern 0/16, zero 16/16)
+A5S1 test=unmapped-memory-not-readable result=PASS
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100001000 translated=0x7000c000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after a read through the read-only mapping: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100001000 translated=0x7000c000 perm=0x3 stage=1
+A5S1   events after a write through the read-only mapping: none
+A5S1 read-only: read through it delivered=16/16 write finished=true page R unchanged=0/16
+A5S1 test=read-only-mapping-enforced result=FAIL
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x18
+A5S1   events after the unconfigured device's write to the read-write address: n=16 type=0x04 sid=0x18 write=true page=0x0
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after the configured device's round trip straight after: none
+A5S1 other-stream: transfer finished=true page P intact=16/16; the configured device's round trip=16/16
+A5S1 test=other-stream-denied result=PASS
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after a write after the entry was cleared, before any invalidation: none
+A5S1 unmap: entry cleared, no invalidation yet: the write still landed=16/16 words
+smmuv3_range_inval vmid=0 asid=7 addr=0x100000000 tg=0 num_pages=0x1 ttl=0 leaf=1 stage=1
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+A5S1   events after a write after the invalidation and its sync: n=16 type=0x10 sid=0x10 write=true page=0x100000000
+A5S1 unmap: after the invalidation: transfer finished=true words landed=0/16 page P still zero=16/16
+A5S1 test=unmap-effective-after-invalidation result=PASS
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after the round trip through the restored mapping: none
+smmuv3_translate_success smmuv3-iommu-memory-region-16-2 sid=0x10 iova=0x100000000 translated=0x7000a000 perm=0x3 stage=1
+A5S1   events after a write after the stream entry was cleared, before any invalidation: none
+A5S1 stream-removal: restored mapping round trip=16/16; entry cleared, no invalidation yet: the write still landed=16/16 words
+smmuv3_cmdq_cfgi_ste streamid= 0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+smmuv3_propagate_event SMMU_EVT_C_BAD_STE sid=0x10
+A5S1   events after a write after the stream invalidation and its sync: n=16 type=0x04 sid=0x10 write=true page=0x0
+A5S1 stream-removal: after the invalidation: transfer finished=true words landed=0/16 page P still zero=16/16
+A5S1 test=stream-removal-effective-after-invalidation result=PASS
+A5S1 global: CR0=0xd CR0ACK=0xd GBPA=0x1000 (abort bit set=false) GERROR^GERRORN=0x0
+A5S1 test=global-state-unchanged result=PASS
+A5S1 summary passed=10 failed=1 console_bytes_dropped=0 mmio_range_errors=0
+A5S1_FAIL
+
+[boot-a5] marker 'A5S1_FAIL' SEEN after 2.71s (machine=virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off)
