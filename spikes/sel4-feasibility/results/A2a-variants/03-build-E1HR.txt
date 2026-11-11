@@ -1,0 +1,51 @@
+## E1HR: build exit 0
+-- platform qemu-arm-virt supports multiple architectures, none was given
+--   defaulting to: aarch64
+-- Extracting device tree from QEMU
+-- The C compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- Configuring done (0.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4
+ninja: Entering directory `<HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4'
+[1/31] Generate dummy headers for prune compilation
+[2/31] Generating generated/invocations_all.json
+[3/31] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[4/31] Generate invocation header gen_headers/arch/api/invocation.h
+[5/31] Generate invocation header gen_headers/api/invocation.h
+[6/31] Generate syscall invocations
+[7/31] Creating C input file for preprocessor
+[8/31] Building C object CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[9/31] Generating generated/arch/object/structures.bf.pbf
+[10/31] Concatenating C files
+[11/31] Creating C input file for preprocessor
+[12/31] Building C object CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[13/31] Generating kernel_all_pp_prune.c
+[14/31] Generating from generated/arch/object/structures.bf.pbf
+[15/31] Creating C input file for preprocessor
+[16/31] Building C object CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[17/31] Generating generated/sel4/shared_types.bf.pbf
+[18/31] Generating from generated/sel4/shared_types.bf.pbf
+[19/31] Creating C input file for preprocessor
+[20/31] Creating C input file for preprocessor
+[21/31] Building C object CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[22/31] Generating linker.lds_pp
+[23/31] Building C object CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[24/31] Generating kernel_all.i
+[25/31] Generating circular_includes_valid
+[26/31] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[27/31] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[28/31] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[29/31] Building ASM object CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[30/31] Building C object CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[31/31] Linking C executable kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel.elf has a LOAD segment with RWX permissions
+ninja: Entering directory `<HOME>/dev/fyrkat/spikes/sel4-feasibility/external/a2a-variants-build/E1HR/sel4'
+[1/1] Generating kernel_all_pp.c

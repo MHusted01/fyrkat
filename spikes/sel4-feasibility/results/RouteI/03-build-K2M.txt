@@ -1,0 +1,137 @@
+## K2M: build exit 0
+loading initial cache file <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/projects/routei/settings.cmake
+-- Set platform details from PLATFORM=qemu-arm-virt
+--   KernelPlatform: qemu-arm-virt
+-- Setting from flags KernelSel4Arch: aarch64
+-- Found seL4: <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/kernel
+-- ARM_CPU not set, defaulting to cortex-a53
+-- The C compiler identification is GNU 16.2.0
+-- The CXX compiler identification is GNU 16.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: /opt/homebrew/bin/aarch64-elf-gcc
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /opt/homebrew/bin/aarch64-elf-gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /opt/homebrew/bin/aarch64-elf-g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found elfloader-tool: <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/tools/seL4/elfloader-tool
+-- <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build/kernel/gen_headers/plat/machine/devices_gen.h is out of date. Regenerating from DTB...
+-- CPIO test cpio_reproducible_flag PASSED
+-- Configuring done (0.8s)
+-- Generating done (0.0s)
+CMake Warning (unused-cli):
+  Manually-specified variables were not used by the project:
+
+    SEL4_CACHE_DIR
+
+
+-- Build files have been written to: <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build
+[1/102] Generate dummy headers for prune compilation
+[2/102] Creating C input file for preprocessor
+[3/102] Creating C input file for preprocessor
+[4/102] Building C object CMakeFiles/rust-root-task.dir/dummy.c.obj
+[5/102] Building C object libcpio/CMakeFiles/cpio.dir/src/cpio.c.obj
+[6/102] Building C object libsel4/CMakeFiles/libsel4_shared_types_gen_pbf_temp_lib.dir/libsel4_shared_types_gen_pbf_temp.c.obj
+[7/102] Building C object libsel4/CMakeFiles/libsel4_sel4_arch_types_gen_pbf_temp_lib.dir/libsel4_sel4_arch_types_gen_pbf_temp.c.obj
+[8/102] Generating include/sel4/shared_types.pbf
+[9/102] Generating sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[10/102] Linking C executable rust-root-task
+[11/102] Linking C static library libcpio/libcpio.a
+[12/102] Generating generated/invocations_all.json
+[13/102] Generate invocation header gen_headers/arch/api/sel4_invocation.h
+[14/102] Generate invocation header gen_headers/arch/api/invocation.h
+[15/102] Generate syscall invocations
+[16/102] Generate invocation header gen_headers/api/invocation.h
+[17/102] Generating from <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build/libsel4/include/sel4/shared_types.pbf
+[18/102] Creating C input file for preprocessor
+[19/102] Generating from <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build/libsel4/sel4_arch_include/aarch64/sel4/sel4_arch/types.pbf
+[20/102] Building C object kernel/CMakeFiles/kernel_bf_gen_target_1_pbf_temp_lib.dir/kernel_bf_gen_target_1_pbf_temp.c.obj
+[21/102] Generate sel4_client.h
+[22/102] Generate invocation header arch_include/arm/sel4/arch/invocation.h
+[23/102] Generating generated/arch/object/structures.bf.pbf
+[24/102] Generate invocation header include/sel4/invocation.h
+[25/102] Generate invocation header sel4_arch_include/aarch64/sel4/sel4_arch/invocation.h
+[26/102] Generate syscall.h
+[27/102] Building C object libsel4/CMakeFiles/sel4.dir/src/sel4_bootinfo.c.obj
+[28/102] Concatenating C files
+[29/102] Creating C input file for preprocessor
+[30/102] Linking C static library libsel4/libsel4.a
+[31/102] Building C object kernel/CMakeFiles/kernel_all_pp_prune_wrapper_temp_lib.dir/kernel_all_pp_prune_wrapper_temp.c.obj
+[32/102] Generating kernel_all_pp_prune.c
+[33/102] Generating from generated/arch/object/structures.bf.pbf
+[34/102] Creating C input file for preprocessor
+[35/102] Building C object kernel/CMakeFiles/kernel_bf_gen_target_11_pbf_temp_lib.dir/kernel_bf_gen_target_11_pbf_temp.c.obj
+[36/102] Generating generated/sel4/shared_types.bf.pbf
+[37/102] Generating from generated/sel4/shared_types.bf.pbf
+[38/102] Creating C input file for preprocessor
+[39/102] Creating C input file for preprocessor
+[40/102] Building C object kernel/CMakeFiles/linker_ld_wrapper_temp_lib.dir/linker_ld_wrapper_temp.c.obj
+[41/102] Generating linker.lds_pp
+[42/102] Building C object kernel/CMakeFiles/kernel_i_wrapper_temp_lib.dir/kernel_all_copy.c.obj
+[43/102] Generating kernel_all.i
+[44/102] Generating circular_includes_valid
+[45/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/idle.S.obj
+[46/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/armv/armv8-a/64/machine_asm.S.obj
+[47/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/head.S.obj
+[48/102] Building ASM object kernel/CMakeFiles/kernel.elf.dir/src/arch/arm/64/traps.S.obj
+[49/102] Building C object kernel/CMakeFiles/kernel.elf.dir/kernel_all.c.obj
+[50/102] Linking C executable kernel/kernel.elf
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: kernel/kernel.elf has a LOAD segment with RWX permissions
+[51/102] Generating kernel.elf
+[52/102] Generating rootserver
+[53/102] Generate CPIO archive archive.o
+[54/102] Generating gen_headers/image_start_addr.h, gen_headers/platform_info.h
+[55/102] Generating linker.lds_pp
+[56/102] Generating gen_headers/devices_gen.h
+[57/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/crt0.S.obj
+[58/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu-hyp.S.obj
+[59/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/traps.S.obj
+[60/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/mmu.S.obj
+[61/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/debug.c.obj
+[62/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/mmu.c.obj
+[63/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/structures.c.obj
+[64/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/64/cpuid.c.obj
+[65/102] Building ASM object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/psci_asm.S.obj
+[66/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/armv/armv8-a/64/smp.c.obj
+[67/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-imx6.c.obj
+[68/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/cpuid.c.obj
+[69/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-psci.c.obj
+[70/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-zynq7000.c.obj
+[71/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/drivers/smp-spin-table.c.obj
+[72/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/psci.c.obj
+[73/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf32.c.obj
+[74/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf64.c.obj
+[75/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/sys_boot.c.obj
+[76/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/defaults.c.obj
+[77/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/scu.c.obj
+[78/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/common.c.obj
+[79/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/arch-arm/smp_boot.c.obj
+[80/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/binaries/elf/elf.c.obj
+[81/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/driver.c.obj
+[82/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/8250-uart.c.obj
+[83/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/bcm-uart.c.obj
+[84/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/smp/common.c.obj
+[85/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/timer/arm_generic_timer.c.obj
+[86/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/common.c.obj
+[87/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/exynos-uart.c.obj
+[88/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-uart.c.obj
+[89/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/meson-uart.c.obj
+[90/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/pl011-uart.c.obj
+[91/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/imx-lpuart.c.obj
+[92/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/msm-uart.c.obj
+[93/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/stm32mp2-uart.c.obj
+[94/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/drivers/uart/xilinx-uart.c.obj
+[95/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/fdt.c.obj
+[96/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/string.c.obj
+[97/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/printf.c.obj
+[98/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_md5.c.obj
+[99/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/crypt_sha256.c.obj
+[100/102] Building C object elfloader/CMakeFiles/elfloader.dir/src/utils/hash.c.obj
+[101/102] Linking C executable elfloader/elfloader
+/opt/homebrew/opt/aarch64-elf-binutils/bin/aarch64-elf-ld: warning: elfloader/elfloader has a LOAD segment with RWX permissions
+[102/102] Generating images/rust-root-task-image-arm-qemu-arm-virt

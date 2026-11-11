@@ -1,0 +1,15 @@
+# A2a variants preflight record, 2026-11-09T19:22:45Z. Written before the builds.
+repo HEAD: 004bf9edc00c9a35301c2ae5e0438eb962b1012c
+branch: spike/s1-config-prep
+git status --short:
+ ?? build-a2a-variants.sh
+ ?? run-a2a-variants-evidence.sh
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+Cargo.toml and Cargo.lock sha256: 87808559f4776eae97a212b7c581f4332096e231a0e5ca23a874e517fe5d4892 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925 
+src sha256: edb6c15051d217af66bed472d0019aa54eecd14e97593789e38e532ecb38219f  build-a2a-variants.sh
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py
+a2a table sha256: 0fbaaa459833e998bb3c98afc6e1517a5a5a5b43f3e06f1e80f7e4cc1632e015  K0
+a2a table sha256: c80681bc8c3be955c89d5b79d3125c798650827af15fb0ec50eb1c0d380d0f11  K1
+a2a table sha256: 980476b79a891b0191053a6fcc56a17386aae6835fed5e356de700b86dcb810f  K2
+a2a table sha256: c77b22d27cbcd6085cc4f76b7fc08d19e192be1a0f0b1f2a3a60c68c75515e67  E1H

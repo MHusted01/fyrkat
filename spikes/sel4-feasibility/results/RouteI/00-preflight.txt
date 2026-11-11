@@ -1,0 +1,10 @@
+# Route I preflight record, 2026-11-10T12:32:27Z. Written before the builds.
+repo HEAD: 004bf9edc00c9a35301c2ae5e0438eb962b1012c
+branch: spike/s1-config-prep
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+qemu: QEMU emulator version 11.1.3
+Cargo.toml and Cargo.lock sha256: 87808559f4776eae97a212b7c581f4332096e231a0e5ca23a874e517fe5d4892 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925 
+K1 root task sha256: 64fcc25c933418d0ea94c832e9166fe983e281eb58be1d79a21440b5d8698314
+src sha256: b8e560eb2c6697687ad96770b4721df0146404373754d14b7adead7907a840f0  build-routei.sh
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py

@@ -1,0 +1,20 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2 -accel tcg -cpu cortex-a57 -smp 1 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/build/images/rust-root-task-image-arm-qemu-arm-virt
+
+ELF-loader started on CPU: ARM Ltd. Cortex-A57 r1p0
+  paddr=[40282000..402bd08f]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 402ab3a0.
+Loaded DTB from 402ab3a0.
+   paddr=[40228000..40229fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40227fff]
+  vaddr=[ffffffffc0000000..ffffffffc0227fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 4022a000
+  paddr=[4022a000..40261fff]
+  vaddr=[200000..237fff]
+  virt_entry=213668
+Enabling MMU and jumping to entry point...
+
+
+[boot-image] marker 'TEST_PASS' NOT seen after 20.00s (accel=tcg cpu=cortex-a57 smp=1 gic=2 virt=False)

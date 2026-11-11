@@ -1,0 +1,22 @@
+# Release-kernel execution preflight record, 2026-11-10T23:49:32Z. Written before the builds.
+repo HEAD: bbaf23c815ae76e26899952d7e4b732918c9adf7
+seL4 HEAD: 62e345c240a15671484530b4e6e069ce266c28d7; dirty files: 0
+qemu: QEMU emulator version 11.1.3
+tools/seL4 HEAD: 6493e0c6fab360eb81a8115a49c9ca7bc280c48a; dirty files: 0
+projects/util_libs HEAD: ef49a397b7044fc38b609a99a8c6265a97913b8e; dirty files: 0
+rust-sel4 HEAD: c819c27b076130cba9821c4555f23773e4b0bffd; dirty files: 0
+Cargo.toml and Cargo.lock sha256: 87808559f4776eae97a212b7c581f4332096e231a0e5ca23a874e517fe5d4892 442bf67d2c36b3593d52aebbdbf68cf71f64702bdf1ff1583fa60ebf99cad925 
+demo root task sha256: 64fcc25c933418d0ea94c832e9166fe983e281eb58be1d79a21440b5d8698314
+src sha256: 57138cdba84ce6b8f183302f5bc3f0577a240d2ea38676621976c286916de51e  build-relk.sh
+src sha256: 8b908ea80689c24d78c69f312ee16b1062620314a1bf13477c5ca3b0ae7c04a7  run-relk-evidence.sh
+src sha256: dc4dafe2537bef9cda48c2f3b550c8d7ee6def75bb5381d6bec44f5e45644644  boot-image.py
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: cdc4455eb347deee49f8b96c999cd36ac756862b704562a9c4c91a57fb32b748  crates/e2-root-task/src/bin/relk_root_task.rs
+src sha256: 67b65f35fa658bed4e2dc24375a5388a0ca50e7ed03c55547d2e04655f2b7b73  crates/e2-root-task/src/relk_tests.rs
+src sha256: 873b416cacbd2263852be4faf679680095364482bdb44093b2677d960b175947  crates/e2-root-task/src/relk_workers.rs
+src sha256: e42673367acfc6e2c06ff955525a82f94e6e27536373531d645379f3860a39e3  crates/e2-root-task/src/relk_spawn.rs
+src sha256: 6a8d9db08c1058f4a0dc6626ba7b0e1233d5f6b037d9f3155580e37019cd59c9  crates/e2-root-task/src/slots.rs
+src sha256: 02545b7efe6aeb3fbd7e657f9a1aed6fba4684618574725b856537cb29db200c  crates/e2-root-task/src/rawsys.rs
+src sha256: 6957f7ef493f5d132d14bfafa2a8a2d85066ae63fbb608045120141165ce104b  crates/e2-root-task/src/pl011.rs
+src sha256: 9c9432c271430df6bc3b11725a89a87e476cdcc73b42538e2aaf509065dc95bc  crates/e2-root-task/src/a5_mmio.rs
+src sha256: abc20df95b76e2818d1e307930bf03bdc66c4c214e2ac3ac1eed86dbfeba93d4  crates/e2-root-task/src/object_allocator.rs

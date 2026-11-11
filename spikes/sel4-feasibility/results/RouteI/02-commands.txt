@@ -1,0 +1,16 @@
+## K1
+# K1: run in <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K1/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf-
+ninja
+## K2
+# K2: run in <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-k2-prefix/k2-smc.dtb
+ninja
+## K2H
+# K2H: run in <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2H/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DSMP=TRUE -DNUM_NODES=4
+ninja
+## K2M
+# K2: run in <HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-build/K2M/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<HOME>/dev/fyrkat/spikes/sel4-feasibility/external/routei-k2-prefix/k2-smc.dtb
+ninja

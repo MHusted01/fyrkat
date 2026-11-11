@@ -1,0 +1,88 @@
+## K1
+# K1 (K1), root task: relk_root_task, mutant: none, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K1/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K1/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K1/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K1/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=0
+ninja
+ninja kernel_all_pp_wrapper
+## K1R
+# K1R (K1R), root task: relk_root_task, mutant: none, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K1R/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K1R/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1
+ninja
+ninja kernel_all_pp_wrapper
+## K2
+# K2 (K2), root task: relk_root_task, mutant: none, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K2/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K2/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K2/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K2/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=0 -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<REPO>/spikes/sel4-feasibility/external/relk-build/k2-smc.dtb
+ninja
+ninja kernel_all_pp_wrapper
+## K2R
+# K2R (K2R), root task: relk_root_task, mutant: none, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K2R/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K2R/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1 -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<REPO>/spikes/sel4-feasibility/external/relk-build/k2-smc.dtb
+ninja
+ninja kernel_all_pp_wrapper
+## K1R-skip-revoke
+# K1R (K1R-skip-revoke), root task: relk_root_task, mutant: skip-revoke, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-skip-revoke/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1
+ninja
+ninja kernel_all_pp_wrapper
+## K2R-rw-alias
+# K2R (K2R-rw-alias), root task: relk_root_task, mutant: rw-alias, prebuilt root task: none
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-rw-alias/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1 -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<REPO>/spikes/sel4-feasibility/external/relk-build/k2-smc.dtb
+ninja
+ninja kernel_all_pp_wrapper
+## K1R-debug-root
+# K1R (K1R-debug-root), root task: relk_root_task, mutant: none, prebuilt root task: <REPO>/spikes/sel4-feasibility/external/relk-build/K1/relk_root_task.elf
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-debug-root/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1
+ninja
+ninja kernel_all_pp_wrapper
+## K1R-putchar-demo
+# K1R (K1R-putchar-demo), root task: relk_root_task, mutant: none, prebuilt root task: <REPO>/spikes/sel4-feasibility/external/a1-rerun-build1/s1-root-task.elf
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K1R-putchar-demo/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1
+ninja
+ninja kernel_all_pp_wrapper
