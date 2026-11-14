@@ -35,7 +35,7 @@ and each changes only when its test in the
 - The advisor is a second opinion during work. It never counts as review.
 - One agent at a time unless parallel work is justified in writing. Stop at the end of each
   stage and report.
-- One task per session. See [the workflow](docs/development/workflow.md#4-sessions).
+- One task per session. See [the workflow](docs/development/workflow.md#5-sessions).
 
 ## Compact instructions
 

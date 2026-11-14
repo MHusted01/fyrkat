@@ -1,12 +1,14 @@
 name: macOS development host
 
-# The primary development machine is a Mac. This weekly run confirms that the documented
-# workflow (docs/development.md) still works there, and records whether HVF is available
-# on a hosted runner.
+# The primary development machine is a Mac. This run confirms that the documented workflow
+# (docs/development.md) still works there, and records whether HVF is available on a hosted
+# runner.
+#
+# It is started by hand. It used to run weekly as well. Both recorded runs failed before any
+# job started, so the schedule only produced failure notices. Restore the schedule when a run
+# has completed.
 
 on:
-  schedule:
-    - cron: "17 5 * * 1"
   workflow_dispatch:
 
 permissions:
