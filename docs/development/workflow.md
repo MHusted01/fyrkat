@@ -1,0 +1,102 @@
+# Engineering workflow
+
+How a change is reviewed, how a review ends, and how sessions are run. [AGENTS.md](../../AGENTS.md)
+holds the rules and the approval gates and wins over this file. The measurements behind these
+rules, and the hypotheses still being tested, are in the
+[workflow baseline](../research/workflow-baseline-2026-11.md).
+
+This file is security-sensitive: it decides how deeply a change is reviewed. Changing it needs
+owner approval.
+
+## 1. Review depth
+
+Depth is set by three questions about each unit of a change. A unit is a group of files together
+with the claims they support.
+
+**Exploratory status never lowers depth.** It only reduces how much is written about the result.
+
+| Axis | 0 | 1 | 2 | 3 |
+|---|---|---|---|---|
+| **Impact** | Records, formatting | Tooling, tests or documents that support but do not enforce anything | Implements or checks a security property: an isolation mechanism (capability or address space, IOMMU or SMMU, IPC authority), `unsafe` code, MMIO or device access, an evidence verifier or sanitizer, CI, hooks, security-sensitive paths, dependencies, the toolchain | Kernel or ABI, accepted criteria, production trusted code |
+| **Uncertainty** | A check that was shown to fail when the code is wrong covers the change | Partly covered | No oracle, a new mechanism, reliance on emulator or undocumented behaviour, or a result that surprised the author | |
+| **Claim** | No new claim | Labelled [Inferred] or [Speculative], or measured with nothing relying on it | A [Measured] claim others will build on, or any absence claim (refused, no fault, no leak) that depends on a detector | Feeds a gate outcome, an ADR, or a stated security property |
+
+- **None:** Impact 0 and Claim 0. `cargo xtask check` only.
+- **Deep:** Impact 2 or 3, or Claim 3, or Claim 2 with Uncertainty 2.
+- **Standard:** everything else.
+
+A fix has the depth of the unit it touches. One pull request may hold units of different depth,
+and each is reviewed at its own depth.
+
+`.github/scripts/review-packet.sh` computes a floor for the depth from paths: a
+security-sensitive path, compiled source, evidence tooling or the spike plan makes a change deep.
+It cannot see uncertainty or how a claim will be used. The author raises the depth with `--deep`
+when those call for it. Nothing lowers a depth the script sets.
+
+## 2. Review procedure
+
+1. **Commit first.** A review is evidence about one commit. The tree under review does not change
+   while the review runs.
+2. **Make the packet:** `bash .github/scripts/review-packet.sh <base> <head>`. It is built from
+   Git objects, with no text from the author. It gives the scope, the depth and its reasons, the
+   sensitive paths, the labelled claims the change adds, the plan sections it cites, the evidence
+   drivers and verifiers that name a changed file, and the checks to run. The reviewer starts
+   from the packet and may read anything else.
+3. **Review** with the `reviewer` agent in a fresh context that did not write or plan the change.
+   An agent never reviews its own work.
+4. **Findings** carry an ID, a severity and an evidence label.
+   - **Blocker:** a result or a security property is wrong.
+   - **Major:** a claim, a check or a test does not hold as written.
+   - **Minor** and **Nit:** everything else, one line each.
+5. **Fixes.** A Blocker or Major fix that changes code, a verifier or evidence gets a follow-up
+   review by the `reviewer-delta` agent, limited to `git diff <reviewed>..<new>` and the list of
+   findings. A text-only fix, or a fix to a Minor or Nit, is checked by the author and
+   `cargo xtask check`.
+6. **Validity.** An earlier review still covers a file whose content is unchanged since the
+   reviewed commit. It no longer covers a changed file, an evidence set whose pinned sources
+   changed, or a result whose criteria or verifier changed.
+7. **Complete** when no Blocker or Major is open and every such fix passed its follow-up or a
+   deterministic check. Open Minors are listed in the pull request.
+
+A reviewer's report is evidence to check, not a verdict to forward.
+
+## 3. When review does not converge
+
+Each follow-up round must leave fewer open Blocker and Major findings than the one before. If a
+round does not, stop reviewing and find out why. There is no fixed number of rounds.
+
+| Cause | Sign | Action |
+|---|---|---|
+| Fixes create defects | New findings in the lines a fix changed | Split the change. Merge the units that passed. Redo the failing unit smaller. |
+| Disagreement on a fact | The same finding returns | Adjudicate, as below. |
+| Ambiguous criterion | The finding and the reply read the same text differently | Fix the text first, then check the work against it. |
+| Late discovery | A real Blocker or Major in unchanged material that was already reviewed | Accept it, record it as a review miss, fix it. |
+| Moving target | The tree changed during the review | Review again at a fixed commit. |
+
+**Adjudication.** Take these in order and stop at the first that settles the question.
+
+1. Each side writes its claim and its evidence, with labels.
+2. Run an experiment that separates the two claims: a test, a mutant, a forged input. A result
+   beats an argument.
+3. Ask the `researcher` one primary-source question.
+4. Give both positions to the `adjudicator` agent in a fresh context, without saying which is the
+   author's.
+5. If the question is still open, take the conservative form: narrow the claim, lower its label,
+   add the check, or remove the code. None of these needs the owner.
+
+The outcome is recorded with the finding in the pull request.
+
+**The owner is asked only for** a decision that is the owner's under the
+[approval gates](../../AGENTS.md#approval-gates), or a material risk to a security property that
+is still open after step 5.
+
+## 4. Sessions
+
+- One task per session. When a task's pull request merges, run `/handoff`, start a fresh session,
+  and run `/fyrkat-resume`.
+- Model, effort and compaction settings are hypotheses under test. Their current values are in
+  [CLAUDE.md](../../CLAUDE.md) and the agent files, and the tests are in the
+  [baseline note](../research/workflow-baseline-2026-11.md#5-hypotheses). A value changes when
+  its test has a result, and the result is recorded there.
+- `scripts/workflow-metrics` measures a session's usage. See its
+  [README](../../scripts/workflow-metrics/README.md).

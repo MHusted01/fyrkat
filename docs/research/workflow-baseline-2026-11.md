@@ -132,7 +132,7 @@ Consequences [Inferred]:
 7. **Settings are hypotheses** (section 5). Today's values stay until measured.
 8. **A separate agent identity and rulesets** before any delegated merge.
 
-The rules themselves are written in `docs/development/workflow.md` when they come into force.
+The rules in force are in [docs/development/workflow.md](../development/workflow.md).
 
 ## 5. Hypotheses
 

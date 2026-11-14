@@ -59,6 +59,10 @@ echo x >deny.toml
 echo x >src/other.rs
 echo x >xtask-notes.md
 echo x >docs/cargo.toml.md
+mkdir -p docs/development sub/docs/development
+echo x >docs/development/workflow.md
+echo x >docs/development/workflow-notes.md
+echo x >sub/docs/development/workflow.md
 printf 'x' >".github/tick\`name.md"
 git mv docs/adr/0001-moved-out.md docs/notes/0001-moved-out.md
 echo changed >docs/notes.md
@@ -122,6 +126,12 @@ lacks 'docs/cargo.toml.md'
 check "docs/cargo.toml.md is not mistaken for Cargo.toml" $?
 lacks 'docs/notes.md'
 check "ordinary docs are not listed" $?
+has_path 'docs/development/workflow.md'
+check "the workflow document is listed" $?
+lacks 'docs/development/workflow-notes.md'
+check "workflow-notes.md is not mistaken for workflow.md" $?
+lacks 'sub/docs/development/workflow.md'
+check "only the root workflow document is listed" $?
 has_path '.github/tick?name.md'
 check "a backtick in a name cannot break the code span" $?
 

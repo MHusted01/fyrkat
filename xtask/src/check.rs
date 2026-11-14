@@ -9,9 +9,11 @@ use std::path::PathBuf;
 
 const UEFI_TARGETS: [&str; 2] = ["aarch64-unknown-uefi", "x86_64-unknown-uefi"];
 /// Shell test suites for the hooks and the CI helper scripts.
-const SCRIPT_TESTS: [&str; 2] = [
+const SCRIPT_TESTS: [&str; 4] = [
     ".claude/hooks/test-hooks.sh",
     ".github/scripts/test-sensitive-paths.sh",
+    ".github/scripts/test-review-packet.sh",
+    "scripts/workflow-metrics/test.sh",
 ];
 
 /// Shared inputs for every step.

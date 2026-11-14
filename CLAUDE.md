@@ -11,24 +11,41 @@ particular, for this repository:
   see [docs/standards/testing.md](docs/standards/testing.md).
 - **Mandatory TDD agent use does not apply.** Write tests first where that helps, but do not
   launch a `tdd-guide` agent by default.
-- **Proactive multi-agent use does not apply.** Do not spawn agents on your own initiative.
+- **Proactive multi-agent use does not apply.** Do not spawn agents on your own initiative. The one
+  exception is the review agents that [docs/development/workflow.md](docs/development/workflow.md)
+  calls for, which AGENTS.md lets an agent start without asking.
 
 The `ecc@ecc` plugin is disabled for this project in `.claude/settings.json`. If its agents
 or commands still appear, ignore them and tell the owner.
 
 ## Model policy
 
+These values are in force. Each is a hypothesis under test, and changes only when its test in
+the [workflow baseline](docs/research/workflow-baseline-2026-11.md#5-hypotheses) has a result.
+
 - **Sonnet** (the project default): implementation and deterministic testing.
-- **Opus**: architecture, security-critical review, and difficult debugging. The `reviewer`
-  agent uses it.
-- One agent at a time unless parallel work is justified in writing. Stop at the end of each
-  stage and report.
+- **Opus**: architecture, security-critical review, and difficult debugging. The review agents
+  use it at `xhigh` effort, set in their own files so that no user-level setting decides it.
+- **Fable**: only when the owner names it for a task.
+- The advisor is a second opinion during work. It never counts as review.
+- One agent at a time unless parallel work is justified in writing. Stop at an approval gate and
+  report. A stage that needs no approval does not need a stop.
+- One task per session. See [the workflow](docs/development/workflow.md#4-sessions).
+
+## Compact instructions
+
+When the conversation is compacted, keep: the authorizations in force and their source, the
+branch and the reviewed commits, open finding IDs, evidence sets whose pinned sources were
+edited, and commands that failed and why.
 
 ## Project setup
 
-- Agents: `researcher` (research) and `reviewer` (adversarial review) in `.claude/agents/`.
-  Both have Bash, which is not sandboxed. "Read-only" is a rule they are told to follow, not
+- Agents in `.claude/agents/`: `researcher` (research), `reviewer` (independent review),
+  `reviewer-delta` (follow-up review of fixes) and `adjudicator` (decides a disputed finding).
+  All have Bash, which is not sandboxed. "Read-only" is a rule they are told to follow, not
   something enforced, so check `git status` after they run.
+- Scripts: `.github/scripts/review-packet.sh` builds the brief a review starts from.
+  `scripts/workflow-metrics/` measures a session's usage.
 - Skills: `new-adr`, `unsafe-audit`, `pre-pr`, `handoff` and `fyrkat-resume` in
   `.claude/skills/`. `/fyrkat-resume` starts a session and `/handoff` ends one. See AGENTS.md.
 - Hooks in `.claude/hooks/` block pushes to main and edits to Accepted ADRs. They guard
