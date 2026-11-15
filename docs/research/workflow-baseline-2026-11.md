@@ -38,13 +38,15 @@ All rows are [Measured, local].
 - **A session starts at 52k to 58k tokens** before any work [Measured, local: transcript query].
   A fresh session then reads 0.6M to 1.8M tokens before it first changes a file other than the
   handoff. [Measured, local; the detection of changes made through the shell is a heuristic]
-- **Checks are not a bottleneck.** A CI run took about a minute in all but one of the runs
-  listed on 2026-11-15, and 17 minutes in that one [Measured: `gh run list`]. `cargo xtask check`
-  took a median of 10 seconds over 135 runs and `verify-evidence.py` 2 seconds over 138.
-  [Measured, local: transcript query]
+- **Checks are not a bottleneck.** The 47 successful runs of the CI workflow up to 2026-11-15
+  took a median of 53 seconds from creation to last update. Three took longer than 90 seconds,
+  the longest 17 minutes, and that one was on its third attempt.
+  [Measured: `gh run list --workflow CI --limit 100`] `cargo xtask check` took about 10 seconds
+  at the median over more than 130 runs, and `verify-evidence.py` a few seconds. [Measured,
+  local: transcript query; the run counts depend on how commands are matched]
 - **Pull requests.** Of 14 merged pull requests, 7 merged within three minutes of opening and 7
   took between 21 minutes and 17 hours. [Measured: `gh pr list`] PRs 6, 8 and 14 were reviewed
-  after they were pushed.
+  after they were pushed. [Inferred: the commits those reviews name are on GitHub unfixed]
 - **Review rounds:** PR 6 took five, PR 8 four, PRs 15 and 16 three between them, and E1, E2,
   E3 and A2a one each. [Inferred from the descriptions callers gave the 22 runs]
 - **Reviews find real defects.** At least 16 of the 22 reports carried a finding rated blocking
@@ -53,7 +55,8 @@ All rows are [Measured, local].
   headings, not from re-checking each finding. [Inferred]
 - **What reviewers read.** Of 6.6M characters of tool results, 34% was the spike plan and other
   records, 20% project source, and 5% diffs. The grouping reads paths and command text, so it is
-  approximate. 2% was an identical repeat of an earlier read. [Measured, local]
+  approximate. 2% was an identical repeat of an earlier read with the Read tool, which carries
+  39% of intake; reads through the shell are not tracked. [Measured, local]
 - **Records.** Three of the fifteen commits on `main` carried only records [Measured: `git log`].
   Reviewers repeatedly reported stale handoff lines and one claim restated differently in
   several files. [Inferred from report headings]
@@ -161,11 +164,15 @@ can reject a configuration. It cannot show one is safe for deep review.
 **Blinding.** The reviewer works in a scratch directory outside the repository that holds two
 commits made from `git archive` of the base and the head: no later history and no remote. It runs
 as a separate session started there, so it loads neither this project's memory nor its present
-instructions. Its brief is built mechanically. The earlier findings are written to a key file
-before any replay starts. GitHub, the network, the real repository and the transcripts are
-forbidden, and `audit.py` checks the run's tool calls afterwards; one forbidden access voids the
-run. The audit reads command text, so a clean audit is evidence of a blind run and not proof of
-one. Scoring happens after the report is returned, strict and lenient.
+instructions. Its brief is built mechanically. The earlier findings are saved as a key before
+any replay starts, in a directory that is not an ancestor or a sibling of the run's directory.
+GitHub, the network, the real repository and the transcripts are forbidden. `audit.py` reads
+the run's tool calls afterwards and flags any that may have reached outside the run. It prefers
+a false alarm to a miss, so each flagged call is read, and the run is void if one of them
+reached material outside it. The audit reads command text. It is a check on a reviewer that was
+told the rules, not a defence against one that tries to evade them, and a clean audit is
+evidence of a blind run and not proof of one. Scoring happens after the report is returned,
+strict and lenient.
 
 ## 6. Validation log
 

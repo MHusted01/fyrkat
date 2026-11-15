@@ -40,7 +40,8 @@ Each takes `--project-dir` to measure another checkout or a scratch directory, a
   requests are not in the transcripts.
 - Which files a shell command changed, and what a review read, are worked out from command text.
   Both are approximate.
-- `audit.py` reports what a run did, after the fact. It does not prevent anything, and a command
-  that builds a path or a URL at run time is not caught.
+- `audit.py` reports what a run did, after the fact. It does not prevent anything. It prefers a
+  false alarm to a miss, so its flags are for reading, not a verdict. A command that builds a
+  path or a program name at run time is not caught.
 - Output may include the description a caller gave a review. Check it for private details
   before pasting it into a public document.
