@@ -3,6 +3,9 @@
 
 "Intake" is the text tool results put into the reviewer's context, grouped by what was read.
 It shows how much of a review goes to the change and how much to the plan and the records.
+The grouping reads file paths and command text, so it is approximate. "Identical re-reads" are
+Read calls that repeat an earlier one exactly (same file, offset and limit); files read through
+the shell are not counted there.
 """
 
 from __future__ import annotations
@@ -24,8 +27,8 @@ CATEGORIES = (
     ("raw evidence", r"results/[A-Za-z0-9-]+/|results-raw|evidence-manifest"),
     ("diff", r"git (diff|show|log)"),
     ("upstream source", r"external/"),
+    ("build and run", r"cargo|ninja|cmake|qemu|build-|run-.*evidence|(^|[;&|]\s*)(python3?|bash|sh)\s+\S|(^|[;&|]\s*)\./"),
     ("project source", r"\.(rs|py|sh|toml|yml|yaml|c|h|cmake)\b"),
-    ("build and run", r"cargo|ninja|cmake|qemu|build-|run-.*evidence"),
 )
 OTHER = "other"
 
@@ -42,7 +45,7 @@ def summarize(path: Path) -> dict:
     calls = tr.api_calls(path)
     intake: collections.Counter = collections.Counter()
     pending: dict[str, tuple[str, bool]] = {}
-    seen_paths: set[str] = set()
+    seen_reads: set[tuple] = set()
     tools: collections.Counter = collections.Counter()
     repeat = 0
     for record in tr.records(path):
@@ -50,9 +53,9 @@ def summarize(path: Path) -> dict:
             name, arguments = block.get("name", ""), block.get("input") or {}
             tools[name] += 1
             if name == "Read":
-                target = arguments.get("file_path", "")
-                pending[block["id"]] = (category(target), target in seen_paths)
-                seen_paths.add(target)
+                key = tr.read_key(arguments)
+                pending[block["id"]] = (category(key[0]), key in seen_reads)
+                seen_reads.add(key)
             elif name == "Bash":
                 pending[block["id"]] = (category(arguments.get("command", "")), False)
         for block in tr.tool_results(record):
@@ -115,6 +118,7 @@ def main() -> None:
         return
 
     total: collections.Counter = collections.Counter()
+    repeated = 0
     for index, row in enumerate(rows, start=1):
         cost = "n/a" if row["estimate_usd"] is None else f"${row['estimate_usd']:.1f}"
         took = "n/a" if row["minutes"] is None else f"{row['minutes']:.0f} min"
@@ -125,11 +129,12 @@ def main() -> None:
             f"  est {cost:>6}  {took:>8}  {row['description']}"
         )
         total.update(row["intake_chars"])
-        total["(repeat reads)"] += row["repeat_read_chars"]
-    read = sum(v for k, v in total.items() if k != "(repeat reads)")
+        repeated += row["repeat_read_chars"]
+    read = sum(total.values())
     print(f"\nIntake over {len(rows)} run(s): {read / 1e6:.2f}M characters")
     for name, value in total.most_common():
         print(f"  {value / max(read, 1):6.1%}  {value / 1e3:8.0f}k  {name}")
+    print(f"Of that, identical re-reads with the Read tool: {repeated / max(read, 1):.1%} ({repeated / 1e3:.0f}k)")
 
 
 if __name__ == "__main__":

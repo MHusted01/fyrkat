@@ -3,9 +3,12 @@
 
 - Context per request, and how much of the input came from requests above a threshold.
 - Compactions, usage-limit stops, and waits for the owner longer than ten minutes.
-- Re-orientation: tokens read from the start of the session to the first edit of a file other
-  than the handoff. This is the price of starting a fresh session.
-- Repeats: files read more than once and commands run more than once.
+- Re-orientation: tokens read from the start of the session to its first change to a file other
+  than the handoff, whether made with an editing tool or by a shell command (a commit, an
+  in-place edit, output sent to a file). This is the price of starting a fresh session. The
+  shell part is a heuristic over the command text.
+- Repeats: identical Read calls (same file, offset and limit) and identical commands. Files read
+  through the shell are not counted.
 """
 
 from __future__ import annotations
@@ -48,7 +51,7 @@ def summarize(path: Path, threshold: int) -> dict:
             last_assistant = stamp or last_assistant
             if body.get("model") == tr.SYNTHETIC_MODEL:
                 text = " ".join(str(block.get("text", "")) for block in tr.content_blocks(record))
-                if "limit" in text.lower():
+                if tr.is_limit_stop(text):
                     limits.append(stamp)
             if not first_edit_seen and body.get("id") in calls and body["id"] not in counted:
                 counted.add(body["id"])
@@ -56,9 +59,11 @@ def summarize(path: Path, threshold: int) -> dict:
         for block in tr.tool_uses(record):
             name, arguments = block.get("name"), block.get("input") or {}
             if name == "Read":
-                reads[arguments.get("file_path", "")] += 1
+                reads[tr.read_key(arguments)] += 1
             elif name == "Bash":
                 commands[arguments.get("command", "")] += 1
+                if tr.bash_writes(arguments.get("command", "")):
+                    first_edit_seen = True
             elif name in EDITING_TOOLS and HANDOFF_NAME not in str(arguments.get("file_path", "")):
                 first_edit_seen = True
         if is_owner_turn(record) and last_assistant and stamp:
@@ -99,7 +104,7 @@ def main() -> None:
             f"  above {args.threshold // 1000}k: {row['share_above_threshold']:4.0%}"
             f"  compactions {row['compactions']}  limit stops {row['limit_stops']}"
             f"  re-orientation {start}"
-            f"  repeat reads {row['repeat_reads']}/{row['reads']}"
+            f"  identical re-reads {row['repeat_reads']}/{row['reads']}"
             f"  repeat commands {row['repeat_commands']}/{row['commands']}"
             f"  waits over 10 min: {row['long_waits_minutes']}"
         )

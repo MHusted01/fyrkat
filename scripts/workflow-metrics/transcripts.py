@@ -34,7 +34,7 @@ def transcript_dir(project_dir: str) -> Path:
 def add_location_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--project-dir",
-        default=os.getcwd(),
+        default=None,
         help="project whose transcripts are read (default: the current directory)",
     )
     parser.add_argument(
@@ -43,11 +43,17 @@ def add_location_arguments(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def redact(text: str) -> str:
+    """Remove the home directory, and the form of it inside transcript directory names, from text."""
+    home = str(Path.home())
+    return text.replace(home, "~").replace(re.sub(r"[^A-Za-z0-9]", "-", home), "-HOME")
+
+
 def resolve_dir(args: argparse.Namespace) -> Path:
     """Return the transcript directory named by the arguments, or exit with a clear message."""
-    directory = Path(args.transcripts) if args.transcripts else transcript_dir(args.project_dir)
+    directory = Path(args.transcripts) if args.transcripts else transcript_dir(args.project_dir or os.getcwd())
     if not directory.is_dir():
-        sys.exit(f"no transcript directory at {directory}")
+        sys.exit(f"no transcript directory at {redact(str(directory))}")
     return directory
 
 
@@ -64,12 +70,20 @@ def records(path: Path) -> Iterator[dict]:
             if isinstance(record, dict):
                 yield record
     if skipped:
-        print(f"note: skipped {skipped} unreadable line(s) in {path.name}", file=sys.stderr)
+        print(f"note: skipped {skipped} unreadable line(s) in one transcript", file=sys.stderr)
+
+
+def started(path: Path) -> str:
+    """Timestamp of the first dated record, so that order does not change when a session resumes."""
+    for record in records(path):
+        if record.get("timestamp"):
+            return record["timestamp"]
+    return ""
 
 
 def main_transcripts(directory: Path, include_small: bool = False) -> list[Path]:
-    """Return the main session transcripts, oldest first."""
-    paths = sorted(directory.glob("*.jsonl"), key=lambda p: p.stat().st_mtime)
+    """Return the main session transcripts, in the order the sessions started."""
+    paths = sorted(directory.glob("*.jsonl"), key=started)
     if include_small:
         return paths
     return [p for p in paths if p.stat().st_size >= MIN_SESSION_BYTES]
@@ -82,14 +96,14 @@ def subagent_transcripts(directory: Path, session: Path | None = None) -> list[t
     """
     pattern = f"{session.stem}/subagents/*.jsonl" if session else "*/subagents/*.jsonl"
     found = []
-    for path in sorted(directory.glob(pattern), key=lambda p: p.stat().st_mtime):
+    for path in sorted(directory.glob(pattern), key=started):
         meta_path = path.with_suffix(".meta.json")
         meta: dict = {}
         if meta_path.is_file():
             try:
                 meta = json.loads(meta_path.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError) as error:
-                print(f"note: unreadable metadata {meta_path.name}: {error}", file=sys.stderr)
+                print(f"note: unreadable metadata for one subagent run: {type(error).__name__}", file=sys.stderr)
         found.append((path, meta))
     return found
 
@@ -156,6 +170,29 @@ def context_tokens(usage: dict) -> int:
 
 def thinking_tokens(usage: dict) -> int:
     return (usage.get("output_tokens_details") or {}).get("thinking_tokens", 0)
+
+
+def read_key(arguments: dict) -> tuple:
+    """Identify one Read call. Reading the next part of a file is not a repeat of the first part."""
+    return (arguments.get("file_path", ""), arguments.get("offset"), arguments.get("limit"))
+
+
+# A Bash command that changes a file: a commit, an in-place edit, or output sent to a file that
+# is not a device or a temporary directory. A heuristic: it reads the command text only.
+_BASH_WRITE = re.compile(
+    r"\bgit\s+(commit|apply|mv|rm)\b|\bsed\s+-i|\bwrite_text\(|\btee\s+[^-|]"
+    r"|(?<![0-9&>])>>?\s*(?!/dev/|/tmp/|/private/tmp/|&)[\"']?[A-Za-z0-9_.$~/-]"
+)
+
+
+def bash_writes(command: str) -> bool:
+    return bool(_BASH_WRITE.search(command))
+
+
+def is_limit_stop(text: str) -> bool:
+    """True for Claude Code's usage-limit message, and not for other messages about limits."""
+    lowered = text.lower()
+    return "hit your" in lowered and "limit" in lowered
 
 
 def parse_time(stamp: str) -> datetime.datetime:

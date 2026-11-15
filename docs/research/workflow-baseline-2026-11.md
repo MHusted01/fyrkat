@@ -8,16 +8,20 @@
   the fifteen commits on `main` up to `460f385`.
 
 Labels follow [AGENTS.md](../../AGENTS.md#evidence-labels). **[Measured, local]** means measured
-with [scripts/workflow-metrics](../../scripts/workflow-metrics/README.md) from session
-transcripts that exist only on the owner's machine. Such a figure is reproducible there and
-nowhere else. Dollar figures are an estimator's output for comparing runs, not a bill.
+from session transcripts that exist only on the owner's machine, so the figure is reproducible
+there and nowhere else. Unless a source is named, such a figure is the output of
+[scripts/workflow-metrics](../../scripts/workflow-metrics/README.md). Where a source is named
+as "transcript query", the figure came from a one-off query of the same transcripts that is not
+in the repository. Dollar figures are an estimator's output for comparing runs, not a bill. The
+scripts' token totals are about 4% below Claude Code's own cost records, because background
+requests are not in the transcripts.
 
 ## 1. Baseline
 
 | Role | Requests | Output tokens | Thinking share of output | Context per request | Estimate |
 |---|---|---|---|---|---|
-| Main loop, Sonnet 5.5 | 1,434 | 2.40M | 41% | 329k | $101 |
-| Main loop, Fable 5.2 (one session) | 144 | 0.40M | 34% | 450k | $51 (Claude Code's own record) |
+| Main loop, Sonnet 5.5 | 1,434 | 2.40M | 41% | 330k | $100 |
+| Main loop, Fable 5.2 (one session) | 144 | 0.40M | 34% | 458k | $51 (Claude Code's own record) |
 | `reviewer`, Opus 5.5, 22 runs | 1,622 | 2.25M | 71% | 157k | $137 |
 | `researcher`, Sonnet 5.5, 1 run | 42 | 0.03M | 45% | 68k | $1 |
 
@@ -25,44 +29,66 @@ All rows are [Measured, local].
 
 - **Review is the largest consumer**, about 47% of the estimate. Every one of the 22 runs ran at
   `xhigh` effort. The agent file set no effort, so the level came from a user-level setting.
+  [Measured, local]
 - **The main loop pays mostly for context.** Cache reads and writes are 74% of its estimate. In
-  six of eight sessions, more than 80% of input tokens came from requests above 200k tokens of
-  context. The largest request read 963k. The sessions compacted four times in total.
-- **The 5-hour usage limit stopped work five times.**
-- **A session starts at 53k to 58k tokens** before any work. A fresh session then reads 0.8M to
-  3.0M tokens before its first edit.
-- **Checks are not a bottleneck.** CI finishes in 40 to 65 seconds. `cargo xtask check` takes
-  about 10 seconds and `verify-evidence.py` about 2. Most pull requests merged within two
-  minutes of opening, because review happens before the pull request.
+  five of eight sessions, more than 80% of input tokens came from requests above 200k tokens of
+  context, and in none less than 62%. The largest request read 963k. The sessions compacted
+  four times in total. [Measured, local]
+- **The 5-hour usage limit stopped work five times.** [Measured, local]
+- **A session starts at 52k to 58k tokens** before any work [Measured, local: transcript query].
+  A fresh session then reads 0.6M to 1.8M tokens before it first changes a file other than the
+  handoff. [Measured, local; the detection of changes made through the shell is a heuristic]
+- **Checks are not a bottleneck.** A CI run took about a minute in all but one of the runs
+  listed on 2026-11-15, and 17 minutes in that one [Measured: `gh run list`]. `cargo xtask check`
+  took a median of 10 seconds over 135 runs and `verify-evidence.py` 2 seconds over 138.
+  [Measured, local: transcript query]
+- **Pull requests.** Of 14 merged pull requests, 7 merged within three minutes of opening and 7
+  took between 21 minutes and 17 hours. [Measured: `gh pr list`] PRs 6, 8 and 14 were reviewed
+  after they were pushed.
 - **Review rounds:** PR 6 took five, PR 8 four, PRs 15 and 16 three between them, and E1, E2,
-  E3 and A2a one each.
+  E3 and A2a one each. [Inferred from the descriptions callers gave the 22 runs]
 - **Reviews find real defects.** At least 16 of the 22 reports carried a finding rated blocking
   or material: device registers mapped as cacheable memory, verifiers that accepted altered
   evidence, a change that broke an earlier experiment's build. This count is from report
   headings, not from re-checking each finding. [Inferred]
 - **What reviewers read.** Of 6.6M characters of tool results, 34% was the spike plan and other
-  records, 27% project source, and 5% diffs. 8% was a file the reviewer had already read.
-- **Records.** Three of the fifteen merges carried only records. Reviewers repeatedly reported
-  stale handoff lines and one claim restated differently in several files.
-- **The advisor** was configured for all 4,250 requests and never called.
+  records, 20% project source, and 5% diffs. The grouping reads paths and command text, so it is
+  approximate. 2% was an identical repeat of an earlier read. [Measured, local]
+- **Records.** Three of the fifteen commits on `main` carried only records [Measured: `git log`].
+  Reviewers repeatedly reported stale handoff lines and one claim restated differently in
+  several files. [Inferred from report headings]
+- **The advisor.** An advisor model is recorded on all 4,129 main-loop response records of S1
+  to S8 (1,578 requests), and no response contains an advisor call. [Measured, local:
+  transcript query] The first review of this note read the same transcripts as showing only
+  that the advisor beta was enabled. The count of the `advisorModel` field settled it.
 
 ## 2. GitHub: what is confirmed and what is inferred
 
 **Confirmed** [Measured: GitHub API, read-only, 2026-11-15, and the session transcripts]
 
-- The `gh` token agents use is the owner's OAuth token with the `repo` and `workflow` scopes.
-  Its permission on the repository is admin. The repository has one collaborator.
-- Agent sessions have written repository settings with it: seven branch-protection writes
+- The `gh` token agents use is the owner's OAuth token. Its scopes are `repo`, `workflow`,
+  `admin:ssh_signing_key`, `user`, `gist` and `read:org`. Its permission on the repository is
+  admin. The repository has one collaborator.
+- Agent sessions have written repository settings with it. Seven branch-protection writes
   succeeded, among them the first `PUT` on `main` and a create and delete on a throwaway branch.
+  The same session also wrote the Actions permissions, the default permission of the workflow
+  token and other repository settings, and deleted a ref.
 - No hook inspects `gh api`. The local control is an `ask` permission rule.
-- Rulesets work for this account on a public, user-owned repository: another such repository
-  has two active rulesets with empty bypass lists, and the API reports that its admin cannot
-  bypass them. Fyrkat's ruleset endpoints respond and list nothing.
+- Rulesets are available to this account on a public, user-owned repository: another such
+  repository has two active rulesets with empty bypass lists, and the API reports that its admin
+  cannot bypass them. No blocked push was observed. Fyrkat's ruleset endpoints respond and list
+  nothing.
 
-**Documented** by GitHub's REST reference: protecting a branch "requires admin or owner
-permissions"; branch-protection and ruleset writes fall under the "Administration" permission of
-a fine-grained token; rulesets accept a `creation` rule; a personal access token is "tied to the
-user who generated" it.
+**Documented** by GitHub (read on 2026-11-15):
+
+- Protecting a branch "requires admin or owner permissions to the repository".
+  (`docs.github.com/en/rest/branches/branch-protection`, "Update branch protection")
+- Branch-protection and ruleset writes are listed under the "Administration" repository
+  permission. (`docs.github.com/en/rest/authentication/permissions-required-for-fine-grained-personal-access-tokens`)
+- A ruleset accepts a rule of type `creation`. (`docs.github.com/en/rest/repos/rules`, "Create a
+  repository ruleset")
+- Personal access tokens are "tied to the user who generated them".
+  (`docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens`)
 
 **Inferred, not tested**
 
@@ -70,17 +96,23 @@ user who generated" it.
 - That the `ask` rule produced a prompt for those writes. The transcripts do not record prompts.
 - That a ruleset with a `creation` rule can be made on Fyrkat. Section 6 records the test.
 
-Two consequences. A fine-grained token of the owner's acts as the owner, so GitHub cannot tell
-agent from owner; a rule that needs the owner's review of an agent's work needs a separate
-account. And every server-side rule is a convention for as long as the agent holds an admin token.
+Consequences [Inferred]:
+
+- Every server-side rule is a convention for as long as the agent holds an admin token.
+- With the `admin:ssh_signing_key` scope an agent could add a signing key to the owner's
+  account, and its commits would then show as verified for the owner. With `gist` it has a way
+  to publish data.
+- Narrowing the token is not enough. Any token of the owner's, including a fine-grained one,
+  acts as the owner, so GitHub cannot tell agent from owner. A rule that needs the owner's
+  review of an agent's work needs a separate account for the agent.
 
 ## 3. Findings
 
 1. Cost follows context size and review effort, not checks or CI.
 2. Review is worth its cost and must stay deep where it guards a security property. Most spike
    work does. The saving therefore has to come from what a review reads, not from how hard it thinks.
-3. A third of review intake is the plan and records. The plan is 1,386 lines, and half of it is
-   the append-only Amendments.
+3. A third of review intake is the plan and records. The plan is 1,375 lines at `460f385`, and
+   half of it is the append-only Amendments.
 4. One fact kept in several files costs twice: once to write, once to review for agreement.
 5. Long sessions that span several tasks carry each task's context into the next.
 
@@ -104,7 +136,7 @@ The rules themselves are written in `docs/development/workflow.md` when they com
 | | Hypothesis | Measure | Adopt if |
 |---|---|---|---|
 | H1 | One task per session lowers usage per verified task | Tokens by role; re-orientation tokens | Lower total in matched tasks, no more rework |
-| H2 | A 200k compaction window lowers usage within a task | Tokens; files re-read and commands re-run after a compaction; active time | Lower total, no rise in repeats. Otherwise try 300k, then keep the default |
+| H2 | A 200k compaction window lowers usage within a task | Tokens; identical reads and commands repeated after a compaction; active time | Lower total, no rise in repeats. Otherwise try 300k, then keep the default |
 | H3 | A review packet and a split plan cut reviewer intake by a third | Intake characters by category | Intake falls and replay recall does not |
 | H4 | `high` effort matches `xhigh` for standard-depth review | Replay recall | No known blocking or high finding is missed |
 | H5 | `high` matches `xhigh` for deep review | Seeded defects in `unsafe`, MMIO and verifier code; paired reviews of deep changes | Every seeded defect is found by both. Replays cannot decide this |
@@ -131,8 +163,9 @@ commits made from `git archive` of the base and the head: no later history and n
 as a separate session started there, so it loads neither this project's memory nor its present
 instructions. Its brief is built mechanically. The earlier findings are written to a key file
 before any replay starts. GitHub, the network, the real repository and the transcripts are
-forbidden, and `audit.py` checks every command of the run afterwards; one forbidden access voids
-the run. Scoring happens after the report is returned, strict and lenient.
+forbidden, and `audit.py` checks the run's tool calls afterwards; one forbidden access voids the
+run. The audit reads command text, so a clean audit is evidence of a blind run and not proof of
+one. Scoring happens after the report is returned, strict and lenient.
 
 ## 6. Validation log
 

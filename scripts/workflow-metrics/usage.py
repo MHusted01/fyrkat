@@ -90,14 +90,18 @@ def main() -> None:
     directory, weights = tr.resolve_dir(args), load_weights()
 
     grand: dict[tuple[str, str], collections.Counter] = collections.defaultdict(collections.Counter)
+    run_totals: dict[str, float] = {}
     output = []
     for index, session in enumerate(tr.main_transcripts(directory, args.all), start=1):
         rows = session_rows(directory, session)
+        models_per_role = collections.Counter(row["role"] for row in rows)
         output.append({"session": f"S{index}", "rows": rows})
         if not args.json:
             print(f"\nS{index}")
         for row in rows:
-            grand[(row["role"], row["model"])].update({k: row.get(k, 0) for k in (*COMPONENTS, "runs")})
+            grand[(row["role"], row["model"])].update({k: row.get(k, 0) for k in COMPONENTS})
+            if row.get("runs"):
+                run_totals[row["role"]] = run_totals.get(row["role"], 0) + row["runs"] / models_per_role[row["role"]]
             if not args.json:
                 print("  " + describe(row, weights))
     if args.json:
@@ -106,6 +110,8 @@ def main() -> None:
     print("\nAll sessions")
     for (role, model), counts in sorted(grand.items()):
         print("  " + describe({"role": role, "model": model, **counts}, weights))
+    for role, runs in sorted(run_totals.items()):
+        print(f"  {role}: {runs:.0f} run(s)")
 
 
 if __name__ == "__main__":

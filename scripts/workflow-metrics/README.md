@@ -11,7 +11,8 @@ Run them from the repository root:
 python3 -B scripts/workflow-metrics/usage.py      # tokens and estimated cost by role and model
 python3 -B scripts/workflow-metrics/context.py    # context size, limit stops, repeated work
 python3 -B scripts/workflow-metrics/reviews.py    # one line per review run, and what reviewers read
-python3 -B scripts/workflow-metrics/audit.py      # forbidden accesses in a blind review run
+python3 -B scripts/workflow-metrics/audit.py --root DIR   # forbidden accesses in a blind review run
+python3 -B scripts/workflow-metrics/test_audit.py         # tests for the audit and the helpers
 ```
 
 Each takes `--project-dir` to measure another checkout or a scratch directory, and `--help`.
@@ -22,15 +23,24 @@ Each takes `--project-dir` to measure another checkout or a scratch directory, a
 - **Estimated cost** multiplies tokens by the rates in `weights.json`. Those rates were fitted
   to Claude Code's own cost records. Use the estimate to compare one run with another. It is
   not a bill, and it does not say how a subscription counts usage.
-- **Sessions and reviews** are printed as `S1`, `S2` and `R1`, `R2` in time order. Session
-  identifiers and paths are not printed.
+- **Sessions and reviews** are printed as `S1`, `S2` and `R1`, `R2` in the order they started.
+  The scripts do not print session identifiers, and they replace the home directory in anything
+  they quote. `audit.py` quotes the start of each command it flags, so read its output before
+  pasting it anywhere public.
+- **Repeats** are identical Read calls and identical commands. A file read through the shell is
+  not counted as a read, and most reviewer reading goes through the shell.
 
 ## Limits
 
 - The transcripts are local. A result from these scripts can be reproduced only on the machine
   that holds them, so a figure quoted from them in a document is labelled as local.
 - The transcript format belongs to Claude Code and can change between versions. The scripts were
-  written against version 2.1.325.
-- `audit.py` reports what a run did, after the fact. It does not prevent anything.
+  written with version 2.1.325 against transcripts from versions 2.1.319 to 2.1.325.
+- Token totals come out about 4% below Claude Code's own cost records, because background
+  requests are not in the transcripts.
+- Which files a shell command changed, and what a review read, are worked out from command text.
+  Both are approximate.
+- `audit.py` reports what a run did, after the fact. It does not prevent anything, and a command
+  that builds a path or a URL at run time is not caught.
 - Output may include the description a caller gave a review. Check it for private details
   before pasting it into a public document.
