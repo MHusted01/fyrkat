@@ -166,12 +166,13 @@ commits made from `git archive` of the base and the head: no later history and n
 as a separate session started there, so it loads neither this project's memory nor its present
 instructions. Its brief is built mechanically. The earlier findings are saved as a key before
 any replay starts, in a directory that is not an ancestor or a sibling of the run's directory.
-GitHub, the network, the real repository and the transcripts are forbidden. `audit.py` reads
-the run's tool calls afterwards and flags any that may have reached outside the run. It prefers
-a false alarm to a miss, so each flagged call is read, and the run is void if one of them
-reached material outside it. The audit reads command text. It is a check on a reviewer that was
-told the rules, not a defence against one that tries to evade them, and a clean audit is
-evidence of a blind run and not proof of one. Scoring happens after the report is returned,
+GitHub, the network, the real repository and the transcripts are forbidden. The run's tool calls
+are read afterwards from its transcript, and the run is void if one of them reached material
+outside it. That reading is a check on a reviewer that was told the rules, not a defence against
+one that tries to evade them: it is evidence of a blind run and not proof of one. A script that
+flags suspect calls for that reading was written with this note and is not part of it. Its review
+did not converge in two follow-up rounds, so it was split out to be redone as a smaller change
+of its own, as the approved procedure directs. Scoring happens after the report is returned,
 strict and lenient.
 
 ## 6. Validation log

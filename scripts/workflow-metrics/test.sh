@@ -3,4 +3,4 @@
 set -euo pipefail
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$here"
-python3 -B test_audit.py
+python3 -B test_transcripts.py
