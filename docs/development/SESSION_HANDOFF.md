@@ -12,12 +12,14 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
   adjudication agents the workflow calls for; settlement of routine technical disagreements by
   the workflow.
 - **Workflow implementation (owner, 2026-11-15)**, for implementing the approved engineering
-  workflow and completing its validation, and not for other work: edits to security-sensitive
-  paths; the replays, seeded-defect tests and paired reviews; merging the pull requests that
-  implement the workflow. Conditions: security requirements are preserved; no GitHub protection
-  is bypassed; a pull request is merged only after its required checks pass and its review is
-  complete at the reviewed head commit, with `--match-head-commit` and never with auto-merge.
-  Recorded in the
+  workflow and completing its validation: edits to security-sensitive paths; the replays,
+  seeded-defect tests and paired reviews; merging the pull requests that implement the workflow.
+  "And not for other work" is the agent's reading. Conditions: security requirements are
+  preserved; no GitHub protection is bypassed; a pull request is merged only after its required
+  checks pass and its review is complete at the reviewed head commit, with `--match-head-commit`
+  and never with auto-merge. The approved proposal also asks for a separate agent account and
+  rulesets "before any delegated merge": pull request 18 was merged on the owner's token on the
+  agent's reading that the explicit direction governs. See Waiting item 1. Recorded in the
   [Amendments, 2026-11-15](../research/sel4-spike-amendments.md#2026-11-15-the-owners-approval-of-the-engineering-workflow-and-its-standing-authorizations).
 - **K3 (owner, 2026-11-11).** The owner authorized K3 and left its design to the agent. That
   authorization is recorded only in an uncommitted Amendments entry in the main checkout. See
@@ -29,9 +31,13 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 ## Waiting for the owner
 
-1. **An identity for agents:** a separate GitHub account with write access, and the owner's token
-   out of the agent's environment. Agents use the owner's admin token today, so every server-side
-   rule is a convention. See the [baseline, section 2](../research/workflow-baseline-2026-11.md#2-github-what-is-confirmed-and-what-is-inferred).
+1. **An identity for agents, and one question.** A separate GitHub account with write access, and
+   the owner's token out of the agent's environment. Agents use the owner's admin token today, so
+   every server-side rule is a convention. See the
+   [baseline, section 2](../research/workflow-baseline-2026-11.md#2-github-what-is-confirmed-and-what-is-inferred).
+   The question: may the remaining workflow pull requests be merged on the owner's token, as
+   pull request 18 was, or should they wait for the separate account and the rulesets? Until
+   answered, the agent follows its reading in the Amendments entry and discloses each merge.
 2. **K3.** Accept or reject K3's interpretation of the plan's wording, and decide the A5-arm
    outcome. Whether K3 is committed, pushed and opened as a pull request.
 3. **The merge-delegation draft:** take, change or drop it. Its clause that a disputed finding is

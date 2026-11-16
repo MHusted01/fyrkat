@@ -700,7 +700,7 @@ reads it in two parts, and the owner may correct the reading. [Inferred]
 |---|---|
 | Standing authorization | "This is standing owner authorization to: Edit the gated paths and update the governing instructions accordingly. Spawn reviewer, delta-review and adjudication agents as needed. Create local commits on non-main branches. Amend the spike plan's workflow/model policy and split the Amendments. Run the proposed replays, seeded-defect tests and paired reviews. Replace owner arbitration of routine technical disagreements with the proposed autonomous resolution process." |
 | Condition | "Preserve security requirements and merge the stage PRs once their required checks and reviews pass, without bypassing GitHub protections." |
-| Merging | That sentence covers the pull requests that implement the workflow ("the stage PRs"), each only "once their required checks and reviews pass". The approved proposal adds "No auto-merge" and a merge tied to the reviewed commit. So a stage pull request is merged only after its required checks have passed and its review is complete at the head commit that was reviewed, with `gh pr merge --squash --match-head-commit <reviewed SHA>` and never with auto-merge. It is not a delegation of merge authority for other work: `AGENTS.md` still says agents never merge and the owner merges |
+| Merging | "merge the stage PRs once their required checks and reviews pass, without bypassing GitHub protections". The approved proposal adds, under GitHub: "No auto-merge. The draft requires `--match-head-commit <reviewed SHA>`." |
 | Order of work | "Move the proposal and measurement scripts into durable project files first. Proceed with independent stages while preparing any account or ruleset changes." |
 | What to bring to the owner | "Ask me only for account actions you cannot perform or genuinely consequential owner decisions, bundled into one concrete request." "Make routine implementation decisions independently." |
 | CI | The proposal the owner approved listed, under GitHub: a "CI job running `verify-evidence.py` and its `--self-test`, required once shown to pass on a clean checkout", and "Remove the weekly trigger from the macOS workflow until it runs" |
@@ -710,6 +710,13 @@ established and separately authorized". No defect in the macOS workflow is estab
 failed before any job started. The agent reads the owner's approval of a proposal that names the
 removal of the weekly trigger as the separate authorization for that one change. [Inferred] This
 entry records no other authority to change CI.
+
+**Merging, as the agent reads these texts.** [Inferred]
+
+- The owner's message covers the pull requests that implement the workflow ("the stage PRs") and no other work. It is not a delegation of merge authority in general: `AGENTS.md` still says agents never merge.
+- A stage pull request is merged only after its required checks have passed and its review is complete at the head commit that was reviewed, with `gh pr merge --squash --match-head-commit <reviewed SHA>` and never with auto-merge.
+- The proposal's own first item for GitHub is also in the approved text: "A separate account for agents with collaborator write access ... A fine-grained token of the owner would not do: it acts as the owner, so GitHub could not tell the two apart", and its summary item 8, "A separate agent identity and rulesets before any delegated merge". Those two texts and the owner's "merge the stage PRs" can be read as conflicting. The agent read the owner's explicit, later and narrower direction for these pull requests as governing, and read item 8 as governing any general delegation of merging. **That reading is the agent's.** Pull request 18 was merged on that reading, with the owner's own token, so GitHub's record of it does not show whether the owner or an agent merged it.
+- The question is in the owner's bundled request (the handoff, "Waiting for the owner", item 1): may the remaining stage pull requests be merged on the owner's token, or should they wait for a separate agent account and the rulesets?
 
 Changes this entry makes to the plan and its records:
 

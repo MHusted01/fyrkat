@@ -690,8 +690,8 @@ Amended on 2026-11-15; see the [Amendments](sel4-spike-amendments.md).
   security impact, uncertainty and the claims made, and is not lowered because an experiment is
   exploratory.
 - One agent at a time, with no parallel research agents. The exception is the agents the
-  workflow calls for: review, follow-up review and adjudication, and two reviews of one change
-  while a review configuration is being tested.
+  workflow calls for: review, follow-up review and adjudication, and, for the validation of the
+  workflow, two reviews of one change while a review configuration is being tested.
 - Work stops at the end of each stage, with a report on results and tokens used.
 
 ## Scope limits
