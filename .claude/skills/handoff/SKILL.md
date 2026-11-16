@@ -20,7 +20,9 @@ home and does not restate it.
   request, by whoever commits the task. It never gets a pull request of its own.
 - Never record an approval you cannot point to. An approval counts only if a repository document
   records it (the plan's Amendments, an ADR, the acceptance record) or the owner stated it in this
-  conversation. Name the source for each one.
+  conversation. Name the source for each one: a link to the entry, or "owner, in conversation"
+  with the date. Record the limits the owner set along with what was authorized.
+- Spike execution stays "not authorized" unless a document says otherwise.
 - No secrets and no personal email addresses. A public research-source URL is the only exception.
 
 ## What does not go in the handoff
@@ -36,7 +38,8 @@ or an Amendments entry already says.
    `git log --oneline -15` and `git diff --stat`. If `gh` works, run `gh pr view` and
    `gh pr checks` for the open PR. You need these to write accurate next actions. You do not copy
    them into the file.
-2. **Documents.** Read the current `SESSION_HANDOFF.md`, `docs/roadmap.md`, the Status line of every
+2. **Documents.** Read `AGENTS.md` if it is not already in your context. Read the current
+   `SESSION_HANDOFF.md`, `docs/roadmap.md`, the Status line of every
    ADR in `docs/adr/`, the Status line of `docs/research/sel4-spike-plan.md`, and the last entries
    of `docs/research/sel4-spike-amendments.md`.
 3. **Check the old handoff.** Compare each of its claims with steps 1 and 2. Drop what is stale or
@@ -44,8 +47,12 @@ or an Amendments entry already says.
    conflicts with an ADR or Git, the ADR or Git wins, and you list the conflict under Blockers.
 4. **Verify.** Run `cargo xtask check` and note the result, unless the argument is `--no-check` or a
    check already ran on this exact commit in this session.
-5. **Write the file**, replacing its content. Describe the state as it will be once the task's pull
-   request merges. Use these sections, in order, and keep the file under about 60 lines:
+5. **Write the file**, replacing its content. It travels in the task's pull request and is read
+   after that merges, so do not write what the merge makes false: say "this pull request adds the
+   check", not "the check is not on `main`". Everything else in it is what you verified. Check
+   other working trees and uncommitted files too (`git worktree list`, `git status` in each): work
+   that is not in Git is exactly what a handoff exists to record. Use these sections, in order,
+   and keep the file under about 100 lines:
    - **Authorizations in force:** one line each, with a link to the entry that records it and the
      date it ends if it has one. Then what is explicitly not authorized.
    - **Waiting for the owner:** decisions only the owner can make, each with a link to where the

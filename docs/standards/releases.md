@@ -17,7 +17,7 @@ first release follows it.
 
 1. The owner decides to release. Agents do not tag or publish.
 2. Confirm `main` is green: `cargo xtask check` and `cargo xtask boot` pass in CI, and a
-   run of the macOS workflow, started by hand for this release, completed.
+   run of the macOS workflow, started by hand for this release, passed.
 3. Update the changelog from merged PRs, grouped by Conventional Commit type, and list known
    issues and what was only tested under emulation.
 4. Bump versions in one commit: `chore: release vX.Y.Z`.

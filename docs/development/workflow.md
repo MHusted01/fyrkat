@@ -107,9 +107,10 @@ round does not, stop reviewing and find out why. There is no fixed number of rou
 
 The outcome is recorded with the finding in the pull request.
 
-**The owner is asked only for** a decision that is the owner's under the
-[approval gates](../../AGENTS.md#approval-gates), or a material risk to a security property that
-is still open after step 5.
+This procedure settles routine technical disagreements. **The owner is still asked for** a
+decision that is the owner's under the [approval gates](../../AGENTS.md#approval-gates), the
+acceptance of an outcome or a gate, the interpretation of a criterion of an approved plan, and
+a material risk to a security property that is still open after step 5.
 
 ## 4. Records
 
@@ -132,8 +133,9 @@ merges, and travels in that pull request. It never has a pull request of its own
 
 ## 5. Sessions
 
-- One task per session. When a task's pull request merges, run `/handoff`, start a fresh session,
-  and run `/fyrkat-resume`.
+- One task per session. Run `/handoff` before the task's last commit, so that the handoff
+  travels in the task's pull request. After that pull request merges, start a fresh session and
+  run `/fyrkat-resume`.
 - Model, effort and compaction settings are hypotheses under test. Their current values are in
   [CLAUDE.md](../../CLAUDE.md) and the agent files, and the tests are in the
   [baseline note](../research/workflow-baseline-2026-11.md#5-hypotheses). A value changes when

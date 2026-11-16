@@ -10,10 +10,9 @@
 
 No experiment starts until the owner separately authorizes execution, and approval of this
 plan is not that authorization. Every results file must cite the approved commit SHA
-`46a90fa`. The criteria are fixed. Later commits to this file may record approvals and
-other Amendments, but may not change a criterion. Loosening a criterion after seeing a
-result requires owner approval, and must be recorded under [Amendments](#amendments) with
-the reason.
+`46a90fa`. The criteria are fixed. Approvals and other Amendments are recorded in the
+[Amendments](sel4-spike-amendments.md), and may not change a criterion. Loosening a criterion
+after seeing a result requires owner approval, and must be recorded there with the reason.
 
 ## Hypothesis
 
@@ -690,8 +689,9 @@ Amended on 2026-11-15; see the [Amendments](sel4-spike-amendments.md).
 - Review follows [the engineering workflow](../development/workflow.md). Its depth is set by
   security impact, uncertainty and the claims made, and is not lowered because an experiment is
   exploratory.
-- One agent at a time, with no parallel research agents. The review agents of the workflow are
-  the exception.
+- One agent at a time, with no parallel research agents. The exception is the agents the
+  workflow calls for: review, follow-up review and adjudication, and two reviews of one change
+  while a review configuration is being tested.
 - Work stops at the end of each stage, with a report on results and tokens used.
 
 ## Scope limits

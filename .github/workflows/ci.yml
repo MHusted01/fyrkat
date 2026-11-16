@@ -96,7 +96,9 @@ jobs:
 
   # The recorded spike evidence still matches its manifest and its pinned sources, and the
   # verifier still catches every corruption in its self-test. Needs only Python: it reads the
-  # committed records and builds nothing.
+  # committed records and builds nothing. Two limits. The verifier's privacy check looks for the
+  # names of the machine it runs on, so here it cannot find the owner's; that check counts on the
+  # owner's machine. And a pull request runs its own copy of the verifier.
   evidence:
     name: spike evidence
     runs-on: ubuntu-24.04

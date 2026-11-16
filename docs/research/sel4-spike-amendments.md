@@ -4,9 +4,10 @@ The append-only record of changes to the [seL4 spike plan](sel4-spike-plan.md) a
 decisions and authorizations about it. Entries are added at the end and are not edited afterwards;
 a correction is a new entry.
 
-These entries were a section of the plan until 2026-11-15, and moved here unchanged so that the
-criteria can be read without the record. An entry's history before that date is in the plan's Git
-history.
+These entries were a section of the plan until 2026-11-15. They moved here so that the criteria
+can be read without the record, unchanged apart from two links back to plan sections. In an entry
+dated before 2026-11-15, "above" and "this file" mean the plan. An entry's history before that
+date is in the plan's Git history.
 
 ### 2026-11-07: Gate 2 revisions
 
@@ -675,27 +676,28 @@ Source: the agent, under the authorizations above. **Not experiment outcomes: no
 
 ### 2026-11-15: the owner's approval of the engineering workflow, and its standing authorizations
 
-The owner approved the engineering workflow proposal recorded in the
-[workflow baseline](workflow-baseline-2026-11.md) and, by message in the session of 2026-11-15,
-gave standing authorization to:
+Source: the owner's message of 2026-11-15 that approved the revised workflow proposal. The
+proposal is summarized in the [workflow baseline](workflow-baseline-2026-11.md#4-proposal-approved-2026-11-15).
+**No accepted criterion, outcome band, decision rule or scope limit of the plan is changed. No ADR
+status is changed. No verification claim is changed.** Accepting an outcome or a gate, and
+interpreting a criterion of the plan, stay with the owner.
 
-- edit the security-sensitive paths and update the governing instructions accordingly;
-- start review, follow-up review and adjudication agents as needed;
-- create local commits on branches other than `main`;
-- amend this plan's workflow and model policy and split the Amendments into their own file;
-- run the proposed replays, seeded-defect tests and paired reviews;
-- replace owner arbitration of routine technical disagreements with the procedure in
-  [the engineering workflow](../development/workflow.md#3-when-review-does-not-converge).
+Everything below is authorized for one purpose, in the owner's words: "Implement the revised
+proposal and complete its validation." It is not authority for other work.
 
-The owner also directed that the pull requests which implement the workflow be merged once their
-required checks and reviews pass, without bypassing a GitHub protection. That direction covers
-those pull requests. It is not a delegation of merge authority for other work: `AGENTS.md` still
-says the owner merges.
+| Item | Owner decision |
+|---|---|
+| Standing authorization | "This is standing owner authorization to: Edit the gated paths and update the governing instructions accordingly. Spawn reviewer, delta-review and adjudication agents as needed. Create local commits on non-main branches. Amend the spike plan's workflow/model policy and split the Amendments. Run the proposed replays, seeded-defect tests and paired reviews. Replace owner arbitration of routine technical disagreements with the proposed autonomous resolution process." |
+| Condition | "Preserve security requirements and merge the stage PRs once their required checks and reviews pass, without bypassing GitHub protections." |
+| Merging | That sentence covers the pull requests that implement the workflow ("the stage PRs"). It is not a delegation of merge authority for other work: `AGENTS.md` still says agents never merge and the owner merges |
+| Order of work | "Move the proposal and measurement scripts into durable project files first. Proceed with independent stages while preparing any account or ruleset changes." |
+| What to bring to the owner | "Ask me only for account actions you cannot perform or genuinely consequential owner decisions, bundled into one concrete request." "Make routine implementation decisions independently." |
+| CI | The proposal the owner approved listed, under GitHub: a "CI job running `verify-evidence.py` and its `--self-test`, required once shown to pass on a clean checkout", and "Remove the weekly trigger from the macOS workflow until it runs". The second replaces, for that one change, the direction of 2026-11-09 not to modify the macOS workflow without a separate authorization. No other change to CI is authorized by this entry |
+
+Changes this entry makes to the plan and its records:
 
 | Item | Before | After |
 |---|---|---|
-| Where the Amendments live | A section of `sel4-spike-plan.md`, lines 709 to 1375 at commit `460f385` | This file. The plan keeps an `Amendments` heading that points here. No entry was changed in the move: the two links from entries back to plan sections were given the plan's file name, and nothing else. The history of each entry before the move is in the plan's Git history |
-| Plan section "Model and budget policy" | Named the model for each experiment (Sonnet for A1, A3, A4, B1 to B4 and C1 to C3; Opus for A2 interpretation, A5 design, Class 2 review preparation, security review and Stage D), and said "One agent at a time, with no parallel research agents" | Model and effort are set by `CLAUDE.md`, and review by the engineering workflow. Review depth follows security impact, uncertainty and the claims made, and is not lowered because work is exploratory. The review agents of the workflow may run, including two reviews of one change when a review configuration is being tested. "No parallel research agents" and the report at the end of each stage are unchanged |
-| Disputed review findings | The owner settled them | The workflow's adjudication settles them. The owner is asked for an owner's decision under the approval gates, or for a material risk to a security property that remains open |
-
-No accepted criterion, outcome band, decision rule or scope limit of this plan was changed.
+| Where the Amendments live | A section of `sel4-spike-plan.md`, lines 709 to 1375 at commit `460f385` | This file. The plan keeps an `Amendments` heading that points here. No entry was changed in the move, apart from two links from entries back to plan sections, which were given the plan's file name. The history of each entry before the move is in the plan's Git history |
+| Plan section "Model and budget policy" | Named the model for each experiment (Sonnet for A1, A3, A4, B1 to B4 and C1 to C3; Opus for A2 interpretation, A5 design, Class 2 review preparation, security review and Stage D), and said "One agent at a time, with no parallel research agents" | Model and effort are set by `CLAUDE.md`, and review by the engineering workflow. Review depth follows security impact, uncertainty and the claims made, and is not lowered because work is exploratory. The agents the workflow calls for may run beside the author: review, follow-up review and adjudication, and two reviews of one change while a review configuration is being tested. "No parallel research agents" and the report at the end of each stage are unchanged |
+| Routine technical disagreements over review findings | The owner settled them | [The workflow's adjudication](../development/workflow.md#3-when-review-does-not-converge) settles them. The owner is still asked for a decision under the approval gates, for the acceptance of an outcome or a gate, for the interpretation of a criterion of this plan, and for a material risk to a security property that remains open |
