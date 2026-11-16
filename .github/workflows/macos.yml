@@ -6,7 +6,7 @@ name: macOS development host
 #
 # It is started by hand. It used to run weekly as well. Both recorded runs failed before any
 # job started, so the schedule only produced failure notices. Restore the schedule when a run
-# has completed.
+# has passed.
 
 on:
   workflow_dispatch:

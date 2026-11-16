@@ -7,13 +7,17 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 ## Authorizations in force
 
-- **Workflow implementation (owner, 2026-11-15).** For implementing the approved engineering
-  workflow and completing its validation, and for nothing else: edits to security-sensitive
-  paths; review, follow-up and adjudication agents; local commits on branches other than `main`;
-  the replays, seeded-defect tests and paired reviews; settlement of routine technical
-  disagreements by the workflow. Condition: security requirements are preserved and no GitHub
-  protection is bypassed. Merging is authorized for the pull requests that implement the workflow
-  and for nothing else. Recorded in the
+- **General rules since 2026-11-15** (in `AGENTS.md` and the [workflow](workflow.md), for all
+  work): local commits on branches other than `main`; the review, follow-up review and
+  adjudication agents the workflow calls for; settlement of routine technical disagreements by
+  the workflow.
+- **Workflow implementation (owner, 2026-11-15)**, for implementing the approved engineering
+  workflow and completing its validation, and not for other work: edits to security-sensitive
+  paths; the replays, seeded-defect tests and paired reviews; merging the pull requests that
+  implement the workflow. Conditions: security requirements are preserved; no GitHub protection
+  is bypassed; a pull request is merged only after its required checks pass and its review is
+  complete at the reviewed head commit, with `--match-head-commit` and never with auto-merge.
+  Recorded in the
   [Amendments, 2026-11-15](../research/sel4-spike-amendments.md#2026-11-15-the-owners-approval-of-the-engineering-workflow-and-its-standing-authorizations).
 - **K3 (owner, 2026-11-11).** The owner authorized K3 and left its design to the agent. That
   authorization is recorded only in an uncommitted Amendments entry in the main checkout. See
@@ -53,8 +57,13 @@ main checkout.
   See [EVIDENCE-PRIVACY](../../spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md).
 - The macOS workflow has never passed. It is started by hand only.
 - The `spike evidence` CI job blocks nothing until it is a required check.
-- The script that audits a blind replay is not in the repository: its review did not converge and
-  it was split out of pull request 18 to be redone on its own.
+- The script that audits a blind replay is not on `main`: its review did not converge and it was
+  split out of pull request 18 to be redone on its own. Earlier versions of it are in that pull
+  request's history.
+- **An identifier in pull request 18's history.** Commit `e163dff`, reachable through
+  `refs/pull/18/head`, holds a Claude Code session identifier that was used as test data. It is a
+  random ID, not a credential and not personal data, and it is not on `main`. Like the pull
+  request 7 ref, it cannot be removed from here.
 - Open: `RUSTSEC-2024-0449` (host-side); a base-controlled `pull_request_target` check; CI uses
   QEMU 8.2.2 against the spike's 11.1.3.
 
@@ -62,9 +71,13 @@ main checkout.
 
 - **Untracked, not the project's:** `.agents/` and `.codex/` (they include hooks and absolute home
   paths). Never stage them. Stage by name, never `git add -A`.
-- **Gitignored, local only, keep:** `spikes/sel4-feasibility/external/` (all builds) and
-  `results-raw/` (raw logs, including earlier runs kept on purpose). Do not `git clean`,
-  `checkout .`, `stash` or `reset` in the main checkout.
+- **Gitignored, local only, keep:** `spikes/sel4-feasibility/external/` and `results-raw/` (raw
+  logs, including earlier runs kept on purpose). Do not `git clean`, `checkout .`, `stash` or
+  `reset` in the main checkout.
+- **Most build output is gone.** On 2026-11-11 and 12, at the owner's request, `external/` was cut
+  from 11 GB to 328 MB: the builds of A1, A2a, E1 to E3 and A5 steps 0 to 2 were deleted. An
+  evidence driver for any of them needs a rebuild first. The record of what was deleted is in the
+  uncommitted handoff in the main checkout.
 - **Never push** `local-only/s1-workspace-unsanitized`. A local pre-push hook, set through
   `core.hooksPath`, refuses it by ancestry and by name. It is a guard on this machine only.
 
@@ -86,8 +99,17 @@ spike workspace.
 
 ## Context not recorded elsewhere
 
-- **Evidence pins.** Each evidence set records the SHA-256 of its inputs, and shared files (`a5_mmio.rs`, `pl011.rs`, `slots.rs`, `smmuv3.rs`, `edu.rs`, `boot-a5.py`, `build-relk.sh`, `build-a5-e1h.sh`, `object_allocator.rs`) are inputs of several sets. Editing one means re-running `run-a5-step0-evidence.sh`, `run-relk-evidence.sh`, `run-a5-step1-evidence.sh` and `run-a5-step2-evidence.sh` as applicable (under bash; about 12 minutes together), then `sanitize-run.py <A5-step0|ReleaseKernel|A5-step1|A5-step2>` and `verify-evidence.py`. Never edit a listed file while its driver runs or while a reviewer is reading the tree. `build-routei.sh`, `boot-image.py`, `a2a-compare.py` and `build-e2.sh` are pinned by merged evidence: do not change them.
-- **Running the experiments by hand.** Release kernels: `./build-relk.sh K1R` (or `K2R path/to/k2-smc.dtb`; `RELK_BIN=a5_step1_root_task` builds an A5 root task for a K row), boot with `boot-image.py --smp 1` (K1R) or `--smp 4 --virt` (K2R). A5 on E1-H: `./build-a5-e1h.sh step1|step2 [MUTANT]`, boot with `boot-a5.py --machine-extra iommu=smmuv3,highmem=off --device edu,dma_mask=0xffffffffff --device edu,dma_mask=0xffffffffff --trace "smmuv3_translate_*" --marker A5S1_PASS IMAGE` (`--smp 4` for a K2R image). `highmem=off` is required: the ECAM address and the I/O address window at 4 GiB assume it.
-- **QEMU's sources** for the SMMU and `edu` were read from the public repository at tag `v11.1.3` as documentation; nothing of them is in this repository.
+- **Evidence pins.** Each evidence set records the SHA-256 of its inputs, and shared files are
+  inputs of several sets. Editing one means re-running the drivers that list it, then
+  `sanitize-run.py` and `verify-evidence.py`. Never edit a listed file while its driver runs or
+  while a reviewer is reading the tree. Files pinned by merged evidence are not changed: write a
+  new script.
+- **Running the experiments by hand.** The commands for the release kernels and for A5 are in
+  this file's history at `460f385`. The images they name were deleted and must be rebuilt first.
+  The K3 commands are in the uncommitted handoff in the main checkout.
+- **QEMU's sources** for the SMMU and `edu` were read from the public repository at tag `v11.1.3`
+  as documentation. Nothing of them is in this repository.
 - `git log --show-signature` fails on this machine although the commits carry signatures and
   GitHub verifies them. Run the spike's drivers under bash: zsh does not split words.
+- `cargo xtask check` in a new worktree needs `.tools/` copied from the main checkout, and its own
+  `target/` directory.

@@ -6,8 +6,9 @@ a correction is a new entry.
 
 These entries were a section of the plan until 2026-11-15. They moved here so that the criteria
 can be read without the record, unchanged apart from two links back to plan sections. In an entry
-dated before 2026-11-15, "above" and "this file" mean the plan. An entry's history before that
-date is in the plan's Git history.
+dated before 2026-11-15, plan content said to be "above" is in the plan, and an entry said to be
+"above" is an earlier entry here. An entry's history before that date is in the plan's Git
+history.
 
 ### 2026-11-07: Gate 2 revisions
 
@@ -682,17 +683,33 @@ proposal is summarized in the [workflow baseline](workflow-baseline-2026-11.md#4
 status is changed. No verification claim is changed.** Accepting an outcome or a gate, and
 interpreting a criterion of the plan, stay with the owner.
 
-Everything below is authorized for one purpose, in the owner's words: "Implement the revised
-proposal and complete its validation." It is not authority for other work.
+The message opens: "Implement the revised proposal and complete its validation." It calls the
+authorization "standing" and says to "update the governing instructions accordingly". The agent
+reads it in two parts, and the owner may correct the reading. [Inferred]
+
+- **Now general rules**, written into `AGENTS.md` and the engineering workflow and in force for
+  all work: local commits on branches other than `main`; the review, follow-up review and
+  adjudication agents the workflow calls for; settlement of routine technical disagreements by
+  the workflow.
+- **For implementing the proposal and completing its validation, and not for other work:**
+  editing the security-sensitive paths and the governing instructions; amending the plan's
+  workflow and model policy and splitting the Amendments; the replays, seeded-defect tests and
+  paired reviews; merging the pull requests that implement the workflow.
 
 | Item | Owner decision |
 |---|---|
 | Standing authorization | "This is standing owner authorization to: Edit the gated paths and update the governing instructions accordingly. Spawn reviewer, delta-review and adjudication agents as needed. Create local commits on non-main branches. Amend the spike plan's workflow/model policy and split the Amendments. Run the proposed replays, seeded-defect tests and paired reviews. Replace owner arbitration of routine technical disagreements with the proposed autonomous resolution process." |
 | Condition | "Preserve security requirements and merge the stage PRs once their required checks and reviews pass, without bypassing GitHub protections." |
-| Merging | That sentence covers the pull requests that implement the workflow ("the stage PRs"). It is not a delegation of merge authority for other work: `AGENTS.md` still says agents never merge and the owner merges |
+| Merging | That sentence covers the pull requests that implement the workflow ("the stage PRs"), each only "once their required checks and reviews pass". The approved proposal adds "No auto-merge" and a merge tied to the reviewed commit. So a stage pull request is merged only after its required checks have passed and its review is complete at the head commit that was reviewed, with `gh pr merge --squash --match-head-commit <reviewed SHA>` and never with auto-merge. It is not a delegation of merge authority for other work: `AGENTS.md` still says agents never merge and the owner merges |
 | Order of work | "Move the proposal and measurement scripts into durable project files first. Proceed with independent stages while preparing any account or ruleset changes." |
 | What to bring to the owner | "Ask me only for account actions you cannot perform or genuinely consequential owner decisions, bundled into one concrete request." "Make routine implementation decisions independently." |
-| CI | The proposal the owner approved listed, under GitHub: a "CI job running `verify-evidence.py` and its `--self-test`, required once shown to pass on a clean checkout", and "Remove the weekly trigger from the macOS workflow until it runs". The second replaces, for that one change, the direction of 2026-11-09 not to modify the macOS workflow without a separate authorization. No other change to CI is authorized by this entry |
+| CI | The proposal the owner approved listed, under GitHub: a "CI job running `verify-evidence.py` and its `--self-test`, required once shown to pass on a clean checkout", and "Remove the weekly trigger from the macOS workflow until it runs" |
+
+The direction of 2026-11-09 was: "do not modify the workflow unless a concrete defect is
+established and separately authorized". No defect in the macOS workflow is established: its runs
+failed before any job started. The agent reads the owner's approval of a proposal that names the
+removal of the weekly trigger as the separate authorization for that one change. [Inferred] This
+entry records no other authority to change CI.
 
 Changes this entry makes to the plan and its records:
 
