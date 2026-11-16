@@ -13,7 +13,7 @@ truth: ADRs and Git are. Record only what you verified, and label the rest.
 
 - Edit `docs/development/SESSION_HANDOFF.md` and nothing else.
 - Never run `git add`, `commit`, `push`, `merge`, `checkout`, `switch`, `reset`, `stash` or `rebase`,
-  and never change a branch. The owner decides whether and when to commit the file.
+  and never change a branch. You do not commit the file. It is committed with the task it describes (AGENTS.md).
 - Never record an approval you cannot point to. An approval counts only if a repository document
   records it (the plan's Amendments, an ADR, the acceptance record) or the owner stated it in this
   conversation. Name the source for each one.

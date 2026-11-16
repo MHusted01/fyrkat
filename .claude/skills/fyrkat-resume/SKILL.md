@@ -10,7 +10,8 @@ Resume Fyrkat work. This skill only reads. It changes nothing until the verifica
 
 ## Steps
 
-1. **Load instructions.** Read `AGENTS.md` and `CLAUDE.md`, then `docs/development/SESSION_HANDOFF.md`.
+1. **Load the handoff.** Read `docs/development/SESSION_HANDOFF.md`. `AGENTS.md` and `CLAUDE.md` are
+   already loaded when a session starts: read them again only if they are not in your context.
    The handoff is a snapshot. It may be out of date.
 2. **Read Git.** Run `git status -sb`, `git branch --show-current`, `git rev-parse HEAD`,
    `git log --oneline -10`, and `git diff --stat`. If `gh` works, run `gh pr view` for the open PR and
