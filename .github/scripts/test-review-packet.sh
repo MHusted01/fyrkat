@@ -7,6 +7,10 @@ script=$here/review-packet.sh
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
+# The developer's own Git configuration must not change a result.
+export GIT_CONFIG_GLOBAL=/dev/null
+export GIT_CONFIG_SYSTEM=/dev/null
+
 passed=0
 failed=0
 
@@ -22,6 +26,8 @@ expect() { # expect <description> <command...>: the command must succeed
 }
 depth_is() { [[ $(grep -m1 -o 'Depth: [a-z]*' <<<"$2" || true) == "Depth: $1" ]]; }
 has() { grep -q -F -- "$1" <<<"$2"; }
+lacks() { ! grep -q -F -- "$1" <<<"$2"; }
+section() { awk -v title="## $1" '$0 == title { on = 1; next } /^## / { on = 0 } on' <<<"$2"; }
 exits() { # exits <status> <command...>
   local want=$1 status=0
   shift
@@ -36,84 +42,191 @@ git config user.name test
 git config user.email test@example.invalid
 git config commit.gpgsign false
 
-mkdir -p docs/development docs/research spikes/sel4-feasibility/crates/t/src
+mkdir -p .github/scripts docs/development docs/research docs/sub spikes/sel4-feasibility/crates/t/src spikes/sel4-feasibility/results/E9 tools
+# The base holds the review scripts under test, so the packet is "made by the base's copy".
+cp "$here/review-packet.sh" "$here/sensitive-paths.sh" .github/scripts/
 echo base >docs/development/SESSION_HANDOFF.md
-echo base >docs/notes.md
+printf 'intro\nOld claim. [Measured: log 1]\n' >docs/notes.md
+echo base >docs/sub/deep.md
 echo base >docs/research/sel4-spike-plan.md
+echo base >docs/research/sel4-spike-amendments.md
 echo "fn main() {}" >spikes/sel4-feasibility/crates/t/src/mmio.rs
+echo "fn main() {}" >spikes/sel4-feasibility/crates/t/src/moved.rs
 echo 'SOURCES = ["crates/t/src/mmio.rs"]' >spikes/sel4-feasibility/verify_t.py
+echo "pinned: helper.py" >spikes/sel4-feasibility/results/E9/00-preflight.txt
 echo base >spikes/sel4-feasibility/helper.py
+echo base >spikes/sel4-feasibility/results/E9.md
+echo base >tools/notes.py
 git add -A
 git commit -q -m base
 base=$(git rev-parse HEAD)
 
-# commit_on <branch> : commit the working tree on a fresh branch from base and print its SHA.
-commit_on() {
-  git checkout -q -b "$1" "$base"
-  shift
+n=0
+# change <command...>: run the command on a fresh branch from base, commit, and set $head.
+change() {
+  n=$((n + 1))
+  git checkout -q -b "case-$n" "$base"
   "$@"
   git add -A
-  git commit -q -m change
-  git rev-parse HEAD
+  git commit -q --allow-empty -m change
+  head=$(git rev-parse HEAD)
 }
+packet() { bash "$script" "$base" "$head" "$@"; }
+append() { echo "$2" >>"$1"; }
+create() { mkdir -p "$(dirname "$1")" && echo x >"$1"; }
 
-# 1. Handoff only: standard by default, none only when the author asserts records-only.
-edit_handoff() { echo "next: nothing" >>docs/development/SESSION_HANDOFF.md; }
-handoff=$(commit_on handoff edit_handoff)
-out=$(bash "$script" "$base" "$handoff")
-expect "a records change is standard by default" depth_is standard "$out"
-out=$(bash "$script" "$base" "$handoff" --records-only)
-expect "records-only is accepted for Markdown with no label" depth_is none "$out"
+# 1. Only the handoff is a record that needs no review. Nothing else is, and no flag lowers a depth.
+change append docs/development/SESSION_HANDOFF.md "next: nothing"
+expect "the handoff alone needs no review" depth_is none "$(packet)"
+handoff_and_notes() { append docs/development/SESSION_HANDOFF.md x; append docs/notes.md typo; }
+change handoff_and_notes
+expect "the handoff with another document is standard" depth_is standard "$(packet)"
+change append docs/notes.md "a typo fix"
+expect "a document change is standard" depth_is standard "$(packet)"
+expect "there is no flag that lowers the depth" exits 64 bash "$script" "$base" "$head" --records-only
+change true
+expect "an empty change is not waved through as a record" depth_is standard "$(packet)"
 
-# 2. A document that adds an evidence label: records-only is refused and the claim is listed.
-edit_claim() { echo "The device was refused. [Measured: log 3]" >>docs/notes.md; }
-claim=$(commit_on claim edit_claim)
-out=$(bash "$script" "$base" "$claim" --records-only)
-expect "records-only is refused when a label is added" depth_is standard "$out"
-expect "the refusal is stated" has 'records-only` was refused' "$out"
-expect "the added claim is listed with its line" has 'docs/notes.md:2: The device was refused' "$out"
+# 2. Labelled claims are listed however they are written and whatever Git is told to do.
+for label in Measured Documented Inferred Speculative; do
+  change append docs/notes.md "The device was refused. [$label: log 3]"
+  expect "an added [$label] claim is listed with its line" has "docs/notes.md:3: The device was refused. [$label" "$(packet)"
+done
+change append docs/notes.md "lower case [measured] label"
+expect "a label in lower case is listed" has "docs/notes.md:3: lower case [measured]" "$(packet)"
+change append docs/notes.md "++ hidden [Measured] behind plus signs"
+expect "a line that looks like a diff header is still listed" has "++ hidden [Measured]" "$(packet)"
+change append docs/sub/deep.md "nested [Inferred] claim"
+expect "a claim in a nested directory is listed" has "docs/sub/deep.md:2: nested [Inferred]" "$(packet)"
+change append docs/notes.md "claim under odd settings [Measured]"
+expect "forced colour does not hide a claim" has "claim under odd settings" "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=color.ui GIT_CONFIG_VALUE_0=always packet)"
+expect "an external diff program does not hide a claim" has "claim under odd settings" "$(GIT_EXTERNAL_DIFF=true packet)"
+expect "running from a subdirectory does not hide a claim" has "claim under odd settings" "$(cd spikes && bash "$script" "$base" "$head")"
+binary_attribute() { echo '*.md -diff' >.gitattributes; append docs/notes.md "claim in a file marked binary [Measured]"; }
+change binary_attribute
+expect "a no-diff attribute does not hide a claim" has "claim in a file marked binary" "$(packet)"
+remove_claim() { echo intro >docs/notes.md; }
+change remove_claim
+out=$(packet)
+expect "a removed claim is listed" has "docs/notes.md:2: Old claim. [Measured: log 1]" "$out"
+expect "a removed claim is not listed as added" has "None." "$(section "Labelled claims the change adds" "$out")"
 
-# 3. Compiled source is deep, and cannot be lowered.
-edit_rust() { echo "// change" >>spikes/sel4-feasibility/crates/t/src/mmio.rs; }
-rust=$(commit_on rust edit_rust)
-out=$(bash "$script" "$base" "$rust" --records-only)
-expect "compiled source is deep even with records-only" depth_is deep "$out"
-expect "the compiled file is named" has 'mmio.rs` (compiled source)' "$out"
-expect "a verifier that pins the file is named" has 'mmio.rs` is named by: spikes/sel4-feasibility/verify_t.py' "$out"
+# 3. Compiled and linked source is deep, by every extension, and a rename cannot hide it.
+for extension in rs c h S s asm ld lds x cmake; do
+  change create "boot/start.$extension"
+  expect "a .$extension file is deep" depth_is deep "$(packet)"
+done
+change git mv spikes/sel4-feasibility/crates/t/src/moved.rs docs/moved.md
+out=$(packet)
+expect "renaming source to Markdown is still deep" depth_is deep "$out"
+expect "the renamed source file is named" has 'moved.rs` (compiled or linked source)' "$out"
 
-# 4. A security-sensitive path is deep.
-edit_ci() { mkdir -p .github/workflows; echo x >.github/workflows/ci.yml; }
-ci=$(commit_on ci edit_ci)
-expect "a sensitive path is deep" depth_is deep "$(bash "$script" "$base" "$ci")"
+# 4. Spike material other than prose is deep. Spike prose is not, by path.
+for file in build-e9.sh boot-e9.py fetch-tree.sh requirements.txt link-virt.cfg results/E9/01-log.txt; do
+  change create "spikes/sel4-feasibility/$file"
+  expect "spike file $file is deep" depth_is deep "$(packet)"
+done
+change append spikes/sel4-feasibility/results/E9.md "prose"
+expect "spike prose is standard by path" depth_is standard "$(packet)"
 
-# 5. Evidence tooling is deep; other Python is not.
-edit_verifier() { echo "# change" >>spikes/sel4-feasibility/verify_t.py; }
-verifier=$(commit_on verifier edit_verifier)
-expect "a verifier is deep" depth_is deep "$(bash "$script" "$base" "$verifier")"
-edit_helper() { echo "# change" >>spikes/sel4-feasibility/helper.py; }
-helper=$(commit_on helper edit_helper)
-expect "other tooling is standard" depth_is standard "$(bash "$script" "$base" "$helper")"
+# 5. Evidence tooling and dependency lists are deep wherever they live. Other tooling is not.
+for file in verify_x.py verify-x.py sanitize-x.py sanitize_x.py run-x-evidence.sh compare-x.py x-compare.py; do
+  change create "tools/$file"
+  expect "evidence tool $file is deep" depth_is deep "$(packet)"
+done
+for file in requirements-build.txt poetry.lock .gitmodules; do
+  change create "tools/$file"
+  expect "dependency list $file is deep" depth_is deep "$(packet)"
+done
+change append tools/notes.py "# change"
+out=$(packet)
+expect "other tooling is standard" depth_is standard "$out"
+expect "--deep raises the depth" depth_is deep "$(packet --deep)"
+expect "a standard change names no depth-setting file" has "None by path." "$out"
 
-# 6. The plan's criteria are deep. The author can raise any change to deep.
-edit_plan() { echo "criterion" >>docs/research/sel4-spike-plan.md; }
-plan=$(commit_on plan edit_plan)
-expect "the spike plan is deep" depth_is deep "$(bash "$script" "$base" "$plan")"
-expect "--deep raises the depth" depth_is deep "$(bash "$script" "$base" "$helper" --deep)"
+# 6. Sensitive paths, the plan and its Amendments are deep.
+change create .github/workflows/ci.yml
+expect "a sensitive path is deep" depth_is deep "$(packet)"
+change append docs/research/sel4-spike-plan.md criterion
+expect "the spike plan is deep" depth_is deep "$(packet)"
+change append docs/research/sel4-spike-amendments.md "### entry"
+expect "the Amendments are deep" depth_is deep "$(packet)"
 
-# 7. A cited plan section is listed.
-edit_cite() { echo "See [x](research/sel4-spike-plan.md#decision-rules)." >>docs/notes.md; }
-cite=$(commit_on cite edit_cite)
-expect "a cited plan section is listed" has 'sel4-spike-plan.md#decision-rules' "$(bash "$script" "$base" "$cite")"
+# 7. A packet made by scripts that differ from the base's copies says so and is deep.
+change append tools/notes.py "# change"
+mkdir -p "$tmp/edited"
+cp "$here/review-packet.sh" "$here/sensitive-paths.sh" "$tmp/edited/"
+echo "# an edit" >>"$tmp/edited/review-packet.sh"
+out=$(bash "$tmp/edited/review-packet.sh" "$base" "$head")
+expect "an edited script cannot produce a standard packet" depth_is deep "$out"
+expect "the packet says its script differs from the base's" has "differs from the base commit's copy" "$out"
+expect "the unedited script is reported as the base's copy" has "the base commit's copy" "$(packet)"
 
-# 8. A hostile file name cannot break the Markdown.
-edit_hostile() { echo x >'spikes/a`b.rs'; }
-hostile=$(commit_on hostile edit_hostile)
-out=$(bash "$script" "$base" "$hostile")
-expect "a backtick in a file name is neutralized" has 'spikes/a?b.rs` (compiled source)' "$out"
+# 8. What the reviewer is pointed to.
+change append docs/notes.md "See [x](research/sel4-spike-plan.md#decision-rules)."
+expect "a cited plan section is listed" has 'sel4-spike-plan.md#decision-rules' "$(packet)"
+change append spikes/sel4-feasibility/crates/t/src/mmio.rs "// change"
+expect "a verifier that pins a changed file is named" has 'mmio.rs` is named by: spikes/sel4-feasibility/verify_t.py' "$(packet)"
+change append tools/notes.py "# change"
+expect "ordinary tooling names no evidence" has "None found." "$(packet)"
+pin_then_change() { echo "pinned: notes.py" >>spikes/sel4-feasibility/results/E9/00-preflight.txt; }
+git checkout -q main
+pin_then_change
+git add -A
+git commit -q -m "pin notes.py"
+pinned_base=$(git rev-parse HEAD)
+git checkout -q -b pinned-change "$pinned_base"
+echo "# change" >>tools/notes.py
+git add -A
+git commit -q -m change
+out=$(bash "$script" "$pinned_base" "$(git rev-parse HEAD)")
+expect "a change to a file that recorded evidence names is deep" depth_is deep "$out"
+expect "the pinning record is named" has 'notes.py` is named by: spikes/sel4-feasibility/results/E9/00-preflight.txt' "$out"
+git checkout -q main
+git reset -q --hard "$base"
+change append spikes/sel4-feasibility/helper.py "# change"
+expect "a preflight record that pins a changed file is named" has 'helper.py` is named by: spikes/sel4-feasibility/results/E9/00-preflight.txt' "$(packet)"
+hostile() { echo x >'spikes/a`b.rs'; }
+change hostile
+expect "a backtick in a file name is neutralized" has 'spikes/a?b.rs` (compiled or linked source)' "$(packet)"
 
-# 9. Bad arguments.
+# 9. A submodule is a dependency. Anchors are read from documents only.
+git checkout -q -b gitlink "$base"
+git update-index --add --cacheinfo 160000,1111111111111111111111111111111111111111,vendor/lib
+git commit -q -m "add a submodule"
+head=$(git rev-parse HEAD)
+expect "a submodule change is deep" depth_is deep "$(packet)"
+git reset -q --hard
+change append tools/notes.py "# see sel4-spike-plan.md#decision-rules"
+expect "an anchor in a script is not a cited plan section" has "None. Read the plan by section" "$(packet)"
+
+# 10. A failed Git step prints no depth.
+git checkout -q --orphan unrelated
+git rm -q -rf . >/dev/null
+echo x >AGENTS.md
+git add -A
+git commit -q -m unrelated
+unrelated=$(git rev-parse HEAD)
+git checkout -q main
+status=0
+out=$(bash "$script" "$base" "$unrelated" 2>/dev/null) || status=$?
+expect "commits with no shared history exit 65" test "$status" -eq 65
+expect "commits with no shared history print no depth" lacks "Depth:" "$out"
+
+# 11. The scope starts at the merge base when the base given is not an ancestor.
+change append docs/notes.md "on a branch"
+branch_head=$head
+git checkout -q main
+echo later >docs/later.md
+git add -A
+git commit -q -m later
+out=$(bash "$script" "$(git rev-parse HEAD)" "$branch_head")
+expect "a base that is not an ancestor is replaced by the merge base" has "The scope starts at their merge base" "$out"
+expect "files changed only on the base branch are not in scope" lacks "docs/later.md" "$out"
+
+# 12. Bad arguments.
 expect "a missing argument exits 64" exits 64 bash "$script" "$base"
-expect "an unknown flag exits 64" exits 64 bash "$script" "$base" "$helper" --lower
+expect "an unknown flag exits 64" exits 64 bash "$script" "$base" "$branch_head" --lower
 expect "an unknown commit exits 65" exits 65 bash "$script" "$base" 0000000000000000000000000000000000000000
 
 echo "review-packet tests: $passed passed, $failed failed"

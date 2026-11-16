@@ -12,24 +12,29 @@ particular, for this repository:
 - **Mandatory TDD agent use does not apply.** Write tests first where that helps, but do not
   launch a `tdd-guide` agent by default.
 - **Proactive multi-agent use does not apply.** Do not spawn agents on your own initiative. The one
-  exception is the review agents that [docs/development/workflow.md](docs/development/workflow.md)
-  calls for, which AGENTS.md lets an agent start without asking.
+  exception is the agents that [docs/development/workflow.md](docs/development/workflow.md)
+  calls for (review, follow-up review, adjudication, and one question to the `researcher` during
+  adjudication), which AGENTS.md lets an agent start without asking.
 
 The `ecc@ecc` plugin is disabled for this project in `.claude/settings.json`. If its agents
 or commands still appear, ignore them and tell the owner.
 
 ## Model policy
 
-These values are in force. Each is a hypothesis under test, and changes only when its test in
-the [workflow baseline](docs/research/workflow-baseline-2026-11.md#5-hypotheses) has a result.
+These values are in force. The model, effort and compaction values are hypotheses under test,
+and each changes only when its test in the
+[workflow baseline](docs/research/workflow-baseline-2026-11.md#5-hypotheses) has a result.
 
 - **Sonnet** (the project default): implementation and deterministic testing.
 - **Opus**: architecture, security-critical review, and difficult debugging. The review agents
-  use it at `xhigh` effort, set in their own files so that no user-level setting decides it.
+  use it at `xhigh` effort. The level is written in each agent's file, so it no longer comes
+  silently from a user-level setting. The `CLAUDE_CODE_EFFORT_LEVEL` environment variable and an
+  effort passed by the caller for one run still override the file. Do not pass a review agent a
+  lower model or effort than its file sets.
 - **Fable**: only when the owner names it for a task.
 - The advisor is a second opinion during work. It never counts as review.
-- One agent at a time unless parallel work is justified in writing. Stop at an approval gate and
-  report. A stage that needs no approval does not need a stop.
+- One agent at a time unless parallel work is justified in writing. Stop at the end of each
+  stage and report.
 - One task per session. See [the workflow](docs/development/workflow.md#4-sessions).
 
 ## Compact instructions

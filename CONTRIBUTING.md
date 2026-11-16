@@ -14,7 +14,7 @@ to people as well as AI agents. Setup is in [docs/development.md](docs/developme
    you ran and their real results. Say what you did not run.
 6. Address review. The owner merges; contributors do not merge their own PRs.
 
-Only the project owner accepts ADRs. Changes to `.github/`, `docs/adr/`, `xtask/`, `deny.toml`, and at any depth `.claude/`, `.cargo/`, `rust-toolchain.toml`, `rust-toolchain`, `.mcp.json`, `AGENTS.md`, `CLAUDE.md`, `build.rs`, `Cargo.toml` and `Cargo.lock`, and `docs/development/workflow.md` are security-sensitive and need owner approval.
+Only the project owner accepts ADRs. Changes to `.github/`, `docs/adr/`, `xtask/`, `deny.toml`, `docs/development/workflow.md`, and at any depth `.claude/`, `.codex/`, `.agents/`, `.cargo/`, `rust-toolchain.toml`, `rust-toolchain`, `.mcp.json`, `AGENTS.md`, `AGENTS.override.md`, `CLAUDE.md`, `build.rs`, `Cargo.toml` and `Cargo.lock` are security-sensitive and need owner approval.
 
 ## Commit messages
 

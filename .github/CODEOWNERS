@@ -8,6 +8,8 @@
 /.claude/              @MHusted01
 # Nested config that changes what runs or what agents do:
 **/.claude/            @MHusted01
+**/.codex/             @MHusted01
+**/.agents/            @MHusted01
 /docs/adr/             @MHusted01
 **/.cargo/             @MHusted01
 /xtask/                @MHusted01
@@ -19,5 +21,6 @@ build.rs               @MHusted01
 Cargo.toml             @MHusted01
 Cargo.lock             @MHusted01
 AGENTS.md              @MHusted01
+AGENTS.override.md     @MHusted01
 CLAUDE.md              @MHusted01
 /docs/development/workflow.md @MHusted01
