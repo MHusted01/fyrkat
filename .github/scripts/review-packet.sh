@@ -15,6 +15,9 @@
 # Run the copy of this script that the base commit holds when a change touches this script or
 # sensitive-paths.sh. The packet prints whether the copies in use match the base commit's.
 set -euo pipefail
+# Environment variables that change how Git reads a pathspec would hide claims and evidence
+# records from the searches below.
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 
 usage() {
   echo "usage: $0 <base-sha> <head-sha> [--deep]" >&2
@@ -64,7 +67,8 @@ dependencies='(^|/)(requirements[^/]*\.txt|[^/]*\.lock|\.gitmodules)$'
 criteria='^docs/research/sel4-spike-(plan|amendments)\.md$'
 
 # Keep a hostile file name from breaking a Markdown code span or a list.
-safe() { printf '%s' "${1//[$'\n\r`']/?}"; }
+# Written with tr so that it behaves the same in bash 3.2, which macOS ships.
+safe() { printf '%s' "$1" | tr '\n\r`' '???'; }
 
 # A failure in any Git step below stops the script before it prints a depth. The name list goes
 # through a file because a failure inside a process substitution would go unseen.
@@ -147,7 +151,7 @@ pinned_lines=()
 if [[ ${#files[@]} -gt 0 ]]; then
   for path in "${files[@]}"; do
     name=${path##*/}
-    users=$(git grep -l -F -- "$name" "$head_sha" -- \
+    users=$(git -c color.grep=never grep --no-color -l -F -- "$name" "$head_sha" -- \
       '*run-*-evidence.sh' '*verify*.py' '*preflight*.txt' '*evidence-manifest.txt' 2>/dev/null |
       sed "s/^$head_sha://" | grep -v -F -x -- "$path" | sort -u || true)
     if [[ -n "$users" ]]; then
@@ -198,7 +202,7 @@ labelled() { # labelled <sign>
 }
 claims_added=$(labelled "+")
 claims_removed=$(labelled "-")
-stat=$(plain_diff --stat=120 "$base_sha" "$head_sha")
+stat=$(plain_diff --stat=120,1000 "$base_sha" "$head_sha")
 anchors=$(plain_diff -U0 "$base_sha" "$head_sha" -- '*.md' |
   grep -E '^\+' | grep -oE 'sel4-spike-(plan|amendments)\.md#[A-Za-z0-9_-]+' | sort -u || true)
 

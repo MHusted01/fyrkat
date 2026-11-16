@@ -11,6 +11,9 @@
 # It fails closed: if either commit is unknown, or the two share no history, it prints nothing
 # and exits with an error, so that a mistyped name is never reported as "None."
 set -euo pipefail
+# Environment variables that change how Git reads a pathspec would hide claims and evidence
+# records from the searches below.
+unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
 
 if [[ $# -ne 2 ]]; then
   echo "usage: $0 <base-sha> <head-sha>" >&2
@@ -35,7 +38,8 @@ names=$(mktemp)
 trap 'rm -f "$names"' EXIT
 # --ignore-submodules=none: a submodule at a sensitive path is listed whatever the user's
 # settings or a .gitmodules file say.
-git -c core.quotePath=false diff --no-color --no-ext-diff --no-renames --ignore-submodules=none \
+# --no-relative: run from a subdirectory with diff.relative set, the list would miss the rest.
+git -c core.quotePath=false diff --no-color --no-ext-diff --no-renames --ignore-submodules=none --no-relative \
   --name-only -z "$start" "$head" >"$names"
 matches=()
 while IFS= read -r -d '' path; do
@@ -53,7 +57,7 @@ else
   echo
   for path in "${matches[@]}"; do
     # Keep a hostile file name from breaking the Markdown code span or the list.
-    safe=${path//[$'\n\r`']/?}
+    safe=$(printf '%s' "$path" | tr '\n\r`' '???')
     echo "- \`$safe\`"
   done
 fi

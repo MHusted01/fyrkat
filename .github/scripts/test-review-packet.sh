@@ -106,6 +106,9 @@ expect "forced colour does not hide a claim" has "claim under odd settings" "$(G
 expect "forced diff colour does not hide a claim" has "claim under odd settings" "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=color.diff GIT_CONFIG_VALUE_0=always packet)"
 expect "an external diff program does not hide a claim" has "claim under odd settings" "$(GIT_EXTERNAL_DIFF=true packet)"
 expect "running from a subdirectory does not hide a claim" has "claim under odd settings" "$(cd spikes && bash "$script" "$base" "$head")"
+for variable in GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS; do
+  expect "$variable does not hide a claim" has "claim under odd settings" "$(env "$variable=1" bash "$script" "$base" "$head")"
+done
 binary_attribute() { echo '*.md -diff' >.gitattributes; append docs/notes.md "claim in a file marked binary [Measured]"; }
 change binary_attribute
 expect "a no-diff attribute does not hide a claim" has "claim in a file marked binary" "$(packet)"
@@ -220,6 +223,9 @@ git add -A
 git commit -q -m change
 out=$(bash "$script" "$pinned_base" "$(git rev-parse HEAD)")
 expect "a change to a file that recorded evidence names is deep" depth_is deep "$out"
+for variable in GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS; do
+  expect "$variable does not hide an evidence record" depth_is deep "$(env "$variable=1" bash "$script" "$pinned_base" "$(git rev-parse HEAD)")"
+done
 expect "the pinning record is named" has 'notes.py` is named by: spikes/sel4-feasibility/results/E9/00-preflight.txt' "$out"
 git checkout -q main
 git reset -q --hard "$base"
@@ -233,6 +239,10 @@ expect "an evidence driver that names a changed file is named" has 'spikes/sel4-
 hostile() { echo x >'spikes/a`b.rs'; }
 change hostile
 expect "a backtick in a file name is neutralized" has 'spikes/a?b.rs` (compiled or linked source)' "$(packet)"
+if [[ -x /bin/bash ]]; then
+  expect "file names are printed under the system bash too" has 'spikes/a?b.rs` (compiled or linked source)' "$(/bin/bash "$script" "$base" "$head")"
+fi
+expect "a short name width does not cut file names" has "spikes/ab.rs" "$(section "Changed files" "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.statNameWidth GIT_CONFIG_VALUE_0=5 packet)")"
 
 # 9. A submodule is a dependency. Anchors are read from documents only.
 git checkout -q -b gitlink "$base"

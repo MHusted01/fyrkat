@@ -189,6 +189,14 @@ gitlink=$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.ignoreSubmodules GIT_CONFIG_V
 assert "a moved submodule at a sensitive path is listed despite diff.ignoreSubmodules" grep -qF 'xtask/vendor' <<<"$gitlink"
 git reset -q --hard
 
+# Run from a subdirectory with diff.relative set, the whole repository is still listed.
+relative=$(cd docs && GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.relative GIT_CONFIG_VALUE_0=true "$script" "$base" "$head")
+assert "diff.relative from a subdirectory does not hide AGENTS.md" grep -qxF -- "- \`AGENTS.md\`" <<<"$relative"
+if [[ -x /bin/bash ]]; then
+  system=$(/bin/bash "$script" "$base" "$head")
+  assert "a backtick in a name is neutralized under the system bash too" grep -qF '.github/tick?name.md' <<<"$system"
+fi
+
 git checkout -q --orphan unrelated
 git rm -q -rf . >/dev/null
 echo x >AGENTS.md
