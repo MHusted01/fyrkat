@@ -21,9 +21,11 @@ with the claims they support.
 | **Uncertainty** | A check that was shown to fail when the code is wrong covers the change | Partly covered | No oracle, a new mechanism, reliance on emulator or undocumented behaviour, or a result that surprised the author | |
 | **Claim** | No new claim | Labelled [Inferred] or [Speculative], or measured with nothing relying on it | A [Measured] claim others will build on, or any absence claim (refused, no fault, no leak) that depends on a detector | Feeds a gate outcome, an ADR, or a stated security property |
 
-- **None:** Impact 0 and Claim 0. `cargo xtask check` only.
 - **Deep:** Impact 2 or 3, or Claim 3, or Claim 2 with Uncertainty 2.
 - **Standard:** everything else.
+
+Every change is reviewed before it merges. There is no depth below standard: a change small
+enough to need little review is quick to review.
 
 A fix has the depth of the unit it touches. One pull request may hold units of different depth,
 and each is reviewed at its own depth.
@@ -33,8 +35,8 @@ when it touches a security-sensitive path, compiled or linked source, evidence t
 in a spike other than its prose, a dependency list or submodule, the spike plan, or a file that
 recorded evidence names. The script cannot see uncertainty or how a claim will be used. The
 author raises the depth with `--deep` when those call for it. Nothing lowers a depth the script
-sets: it has no flag for that, and it prints "none" only when the session handoff is the one
-file changed. Every other change, a corrected typo included, is at least standard.
+sets: it has no flag for that, and it prints standard or deep for every change, a corrected
+typo and the session handoff included.
 
 The path signals are a floor and not the whole of the Impact axis. A document that sets rules,
 such as a standard, is standard by path. Raise it when what it changes is a security rule.

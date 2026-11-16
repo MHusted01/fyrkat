@@ -178,6 +178,17 @@ code=0
 assert "an option in place of a commit exits 65" test "$code" -eq 65
 assert "an option in place of a commit is refused as a commit name" grep -q "unknown commit: --output" "$tmp/stderr"
 assert "an option in place of a commit writes no file" test -z "$(find "$tmp" -maxdepth 1 -name 'written*')"
+# A submodule at a sensitive path is listed even when the user tells Git to ignore submodules.
+git checkout -q -b gitlink "$head"
+git update-index --add --cacheinfo 160000,1111111111111111111111111111111111111111,xtask/vendor
+git commit -q -m "add a submodule"
+added=$(git rev-parse HEAD)
+git update-index --cacheinfo 160000,2222222222222222222222222222222222222222,xtask/vendor
+git commit -q -m "move the submodule to another commit"
+gitlink=$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.ignoreSubmodules GIT_CONFIG_VALUE_0=all "$script" "$added" "$(git rev-parse HEAD)")
+assert "a moved submodule at a sensitive path is listed despite diff.ignoreSubmodules" grep -qF 'xtask/vendor' <<<"$gitlink"
+git reset -q --hard
+
 git checkout -q --orphan unrelated
 git rm -q -rf . >/dev/null
 echo x >AGENTS.md

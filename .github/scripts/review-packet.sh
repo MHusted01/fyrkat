@@ -9,8 +9,8 @@
 #
 # The depth printed here is a floor. The script sees impact signals in paths. It cannot see
 # uncertainty or what a claim will be used for, so the author raises the depth with --deep
-# when those call for it. Nothing lowers the depth: there is no flag for that, and "none" is
-# printed only when the session handoff is the one file changed.
+# when those call for it. Nothing lowers the depth: there is no flag for that, and no change
+# is printed as needing no review.
 #
 # Run the copy of this script that the base commit holds when a change touches this script or
 # sensitive-paths.sh. The packet prints whether the copies in use match the base commit's.
@@ -42,9 +42,12 @@ given_base=$(git rev-parse "$base^{commit}")
 # ancestor of the head, its merge base with the head is.
 base_sha=$(git merge-base "$given_base" "$head_sha") || { echo "the commits share no history" >&2; exit 65; }
 
-# The same diff whatever the user's Git configuration or the repository's attributes say.
+# The same diff whatever the user's Git configuration, the repository's attributes or a
+# .gitmodules file say: no colour, no external or text-conversion program, binary files as
+# text, renames as a removal and an addition, and submodule changes always shown.
 plain_diff() {
-  git -c core.quotePath=false -c color.ui=never diff --no-ext-diff --no-textconv --text --no-renames "$@"
+  git -c core.quotePath=false -c color.ui=never -c color.diff=never \
+    diff --no-color --no-ext-diff --no-textconv --text --no-renames --ignore-submodules=none "$@"
 }
 
 # Extended regular expressions over repository-relative paths.
@@ -59,8 +62,6 @@ verifier='(^|/)(verify[-_][^/]*\.py|sanitize[-_][^/]*\.py|run-[^/]*-evidence\.sh
 dependencies='(^|/)(requirements[^/]*\.txt|[^/]*\.lock|\.gitmodules)$'
 # Text that fixes criteria in advance, and the record of what the owner authorized.
 criteria='^docs/research/sel4-spike-(plan|amendments)\.md$'
-# The one file that is a record and nothing else.
-handoff='docs/development/SESSION_HANDOFF.md'
 
 # Keep a hostile file name from breaking a Markdown code span or a list.
 safe() { printf '%s' "${1//[$'\n\r`']/?}"; }
@@ -75,7 +76,7 @@ while IFS= read -r -d '' path; do
   files+=("$path")
 done <"$work/names"
 # A submodule pins another repository at a commit: a dependency.
-gitlinks=$(git diff --raw --no-renames "$base_sha" "$head_sha" | awk '$1 == ":160000" || $2 == "160000"' | wc -l | tr -d ' ')
+gitlinks=$(plain_diff --raw "$base_sha" "$head_sha" | awk '$1 == ":160000" || $2 == "160000"' | wc -l | tr -d ' ')
 
 sensitive_report=$(bash "$here/sensitive-paths.sh" "$base_sha" "$head_sha")
 
@@ -109,10 +110,8 @@ spike_files=()
 verifier_files=()
 dependency_files=()
 criteria_changed=0
-only_handoff=1
 if [[ ${#files[@]} -gt 0 ]]; then
   for path in "${files[@]}"; do
-    [[ "$path" == "$handoff" ]] || only_handoff=0
     if [[ "$path" =~ $compiled ]]; then
       compiled_files+=("$path")
     elif [[ "$path" =~ $verifier ]]; then
@@ -163,10 +162,9 @@ if [[ "$flag" == --deep ]]; then
   deep_reasons+=("the author raised it: uncertainty or the use of a claim calls for it")
 fi
 
+# Every change is reviewed. The handoff too: it states what is authorized.
 if [[ ${#deep_reasons[@]} -gt 0 ]]; then
   depth=deep
-elif [[ ${#files[@]} -gt 0 && $only_handoff -eq 1 ]]; then
-  depth=none
 else
   depth=standard
 fi

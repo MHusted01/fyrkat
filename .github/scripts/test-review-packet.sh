@@ -75,17 +75,20 @@ packet() { bash "$script" "$base" "$head" "$@"; }
 append() { echo "$2" >>"$1"; }
 create() { mkdir -p "$(dirname "$1")" && echo x >"$1"; }
 
-# 1. Only the handoff is a record that needs no review. Nothing else is, and no flag lowers a depth.
+# 1. Every change is reviewed: no change and no flag gives a depth below standard.
 change append docs/development/SESSION_HANDOFF.md "next: nothing"
-expect "the handoff alone needs no review" depth_is none "$(packet)"
-handoff_and_notes() { append docs/development/SESSION_HANDOFF.md x; append docs/notes.md typo; }
-change handoff_and_notes
-expect "the handoff with another document is standard" depth_is standard "$(packet)"
+expect "the handoff alone is standard" depth_is standard "$(packet)"
+change append docs/development/SESSION_HANDOFF.md "The owner authorized merging. [Measured: owner message]"
+out=$(packet)
+expect "a handoff that adds a claim is standard" depth_is standard "$out"
+expect "a claim added to the handoff is listed" has "SESSION_HANDOFF.md:2: The owner authorized merging" "$out"
 change append docs/notes.md "a typo fix"
-expect "a document change is standard" depth_is standard "$(packet)"
+out=$(packet)
+expect "a document change is standard" depth_is standard "$out"
+expect "no depth below standard is ever printed" lacks "Depth: none" "$out"
 expect "there is no flag that lowers the depth" exits 64 bash "$script" "$base" "$head" --records-only
 change true
-expect "an empty change is not waved through as a record" depth_is standard "$(packet)"
+expect "an empty change is standard" depth_is standard "$(packet)"
 
 # 2. Labelled claims are listed however they are written and whatever Git is told to do.
 for label in Measured Documented Inferred Speculative; do
@@ -100,6 +103,7 @@ change append docs/sub/deep.md "nested [Inferred] claim"
 expect "a claim in a nested directory is listed" has "docs/sub/deep.md:2: nested [Inferred]" "$(packet)"
 change append docs/notes.md "claim under odd settings [Measured]"
 expect "forced colour does not hide a claim" has "claim under odd settings" "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=color.ui GIT_CONFIG_VALUE_0=always packet)"
+expect "forced diff colour does not hide a claim" has "claim under odd settings" "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=color.diff GIT_CONFIG_VALUE_0=always packet)"
 expect "an external diff program does not hide a claim" has "claim under odd settings" "$(GIT_EXTERNAL_DIFF=true packet)"
 expect "running from a subdirectory does not hide a claim" has "claim under odd settings" "$(cd spikes && bash "$script" "$base" "$head")"
 binary_attribute() { echo '*.md -diff' >.gitattributes; append docs/notes.md "claim in a file marked binary [Measured]"; }
@@ -110,6 +114,19 @@ change remove_claim
 out=$(packet)
 expect "a removed claim is listed" has "docs/notes.md:2: Old claim. [Measured: log 1]" "$out"
 expect "a removed claim is not listed as added" has "None." "$(section "Labelled claims the change adds" "$out")"
+git checkout -q main
+printf 'intro\n-- dashed [Inferred] claim\n' >docs/dashed.md
+git add -A
+git commit -q -m "a line that starts with dashes"
+dashed_base=$(git rev-parse HEAD)
+git checkout -q -b dashed "$dashed_base"
+echo intro >docs/dashed.md
+git add -A
+git commit -q -m change
+out=$(bash "$script" "$dashed_base" "$(git rev-parse HEAD)")
+expect "a removed line that looks like a diff header is still listed" has "docs/dashed.md:2: -- dashed [Inferred] claim" "$out"
+git checkout -q main
+git reset -q --hard "$base"
 
 # 3. Compiled and linked source is deep, by every extension, and a rename cannot hide it.
 for extension in rs c h S s asm ld lds x cmake; do
@@ -161,6 +178,28 @@ out=$(bash "$tmp/edited/review-packet.sh" "$base" "$head")
 expect "an edited script cannot produce a standard packet" depth_is deep "$out"
 expect "the packet says its script differs from the base's" has "differs from the base commit's copy" "$out"
 expect "the unedited script is reported as the base's copy" has "the base commit's copy" "$(packet)"
+expect "an unedited pair gives a standard packet for ordinary tooling" depth_is standard "$(packet)"
+mkdir -p "$tmp/edited-paths"
+cp "$here/review-packet.sh" "$here/sensitive-paths.sh" "$tmp/edited-paths/"
+echo "# an edit" >>"$tmp/edited-paths/sensitive-paths.sh"
+out=$(bash "$tmp/edited-paths/review-packet.sh" "$base" "$head")
+expect "an edited path list beside an unedited packet script is deep" depth_is deep "$out"
+expect "the packet names the path list as differing" has 'sensitive-paths.sh' "$(grep -F 'differs from the base' <<<"$out")"
+# A repository whose base commit holds no copy of the scripts: the change that introduces them.
+bare=$tmp/no-scripts
+git init -q -b main "$bare"
+git -C "$bare" config user.name test
+git -C "$bare" config user.email test@example.invalid
+git -C "$bare" config commit.gpgsign false
+echo base >"$bare/notes.txt"
+git -C "$bare" add -A
+git -C "$bare" commit -q -m base
+echo change >>"$bare/notes.txt"
+git -C "$bare" add -A
+git -C "$bare" commit -q -m change
+out=$(cd "$bare" && bash "$script" HEAD~1 HEAD)
+expect "a base with no copy of the scripts is deep" depth_is deep "$out"
+expect "the packet says the base has no copy" has "the base commit has no copy" "$out"
 
 # 8. What the reviewer is pointed to.
 change append docs/notes.md "See [x](research/sel4-spike-plan.md#decision-rules)."
@@ -186,6 +225,11 @@ git checkout -q main
 git reset -q --hard "$base"
 change append spikes/sel4-feasibility/helper.py "# change"
 expect "a preflight record that pins a changed file is named" has 'helper.py` is named by: spikes/sel4-feasibility/results/E9/00-preflight.txt' "$(packet)"
+pin_in_manifest() { echo "sha256 tools/notes.py" >spikes/sel4-feasibility/results/evidence-manifest.txt; echo "cp tools/notes.py out/" >spikes/sel4-feasibility/run-e9-evidence.sh; append tools/notes.py "# change"; }
+change pin_in_manifest
+out=$(packet)
+expect "a manifest that pins a changed file is named" has 'spikes/sel4-feasibility/results/evidence-manifest.txt' "$(grep -F 'notes.py` is named by' <<<"$out")"
+expect "an evidence driver that names a changed file is named" has 'spikes/sel4-feasibility/run-e9-evidence.sh' "$(grep -F 'notes.py` is named by' <<<"$out")"
 hostile() { echo x >'spikes/a`b.rs'; }
 change hostile
 expect "a backtick in a file name is neutralized" has 'spikes/a?b.rs` (compiled or linked source)' "$(packet)"
@@ -196,6 +240,22 @@ git update-index --add --cacheinfo 160000,11111111111111111111111111111111111111
 git commit -q -m "add a submodule"
 head=$(git rev-parse HEAD)
 expect "a submodule change is deep" depth_is deep "$(packet)"
+expect "a submodule change is deep despite diff.ignoreSubmodules" depth_is deep "$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=diff.ignoreSubmodules GIT_CONFIG_VALUE_0=all packet)"
+git reset -q --hard
+# A submodule that .gitmodules says to ignore, then moved to another commit, then removed.
+printf '[submodule "vendor/lib"]\n\tpath = vendor/lib\n\turl = ./lib\n\tignore = all\n' >.gitmodules
+git add .gitmodules
+git commit -q -m "ignore the submodule"
+ignored_base=$(git rev-parse HEAD)
+git update-index --cacheinfo 160000,2222222222222222222222222222222222222222,vendor/lib
+git commit -q -m "move the submodule"
+moved=$(git rev-parse HEAD)
+out=$(bash "$script" "$ignored_base" "$moved")
+expect "moving a submodule that .gitmodules ignores is deep" depth_is deep "$out"
+expect "the moved submodule is counted" has "a submodule changed (1)" "$out"
+git update-index --force-remove vendor/lib
+git commit -q -m "remove the submodule"
+expect "removing a submodule is deep" has "a submodule changed (1)" "$(bash "$script" "$moved" "$(git rev-parse HEAD)")"
 git reset -q --hard
 change append tools/notes.py "# see sel4-spike-plan.md#decision-rules"
 expect "an anchor in a script is not a cited plan section" has "None. Read the plan by section" "$(packet)"

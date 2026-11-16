@@ -33,7 +33,10 @@ shopt -s nocasematch
 # old and the new path, so moving a file out of a sensitive directory still shows up.
 names=$(mktemp)
 trap 'rm -f "$names"' EXIT
-git -c core.quotePath=false diff --no-renames --name-only -z "$start" "$head" >"$names"
+# --ignore-submodules=none: a submodule at a sensitive path is listed whatever the user's
+# settings or a .gitmodules file say.
+git -c core.quotePath=false diff --no-color --no-ext-diff --no-renames --ignore-submodules=none \
+  --name-only -z "$start" "$head" >"$names"
 matches=()
 while IFS= read -r -d '' path; do
   if [[ "$path" =~ $sensitive ]]; then

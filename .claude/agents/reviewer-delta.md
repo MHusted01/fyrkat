@@ -1,6 +1,6 @@
 ---
 name: reviewer-delta
-description: Follow-up review of fixes to earlier findings on a Fyrkat change. Use after a Blocker or Major fix that changed code, a verifier or evidence. Never reviews a fix it wrote, and never the review it follows.
+description: Follow-up review of fixes to earlier findings on a Fyrkat change. Use when docs/development/workflow.md section 2 step 5 calls for it, which is after any Blocker or Major fix and after any fix in a deep unit. Never reviews a fix it wrote, and never the review it follows.
 tools: Read, Grep, Glob, Bash
 model: opus
 effort: xhigh
@@ -12,7 +12,7 @@ The caller gives you the earlier findings by ID, the reviewed commit and the new
 
 ## What to do
 
-1. For each Blocker and Major finding: is it fixed? Answer yes or no, with the evidence. Check the fix against the finding, not against the author's description of the fix.
+1. For each finding the caller lists, whatever its severity: is it fixed? Answer yes or no, with the evidence. Check the fix against the finding, not against the author's description of the fix.
 2. Read `git diff <reviewed>..<new>` for regressions: a new defect in the lines a fix changed, a check that was weakened to pass, a claim that became stronger than its evidence.
 3. If an evidence set's pinned source changed, confirm the set was re-recorded and that `verify-evidence.py` and its `--self-test` pass at the new commit.
 
