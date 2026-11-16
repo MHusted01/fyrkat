@@ -35,9 +35,11 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
    the owner's token out of the agent's environment. Agents use the owner's admin token today, so
    every server-side rule is a convention. See the
    [baseline, section 2](../research/workflow-baseline-2026-11.md#2-github-what-is-confirmed-and-what-is-inferred).
-   The question: may the remaining workflow pull requests be merged on the owner's token, as
-   pull request 18 was, or should they wait for the separate account and the rulesets? Until
-   answered, the agent follows its reading in the Amendments entry and discloses each merge.
+   On 2026-11-16 the owner answered the question of merging the remaining workflow pull
+   requests on the owner's token with "whatever you deem correct and best". The agent decided
+   to merge them on that token, disclosed in each pull request, under the conditions in the
+   [Amendments, 2026-11-16](../research/sel4-spike-amendments.md#2026-11-16-the-owners-answer-on-merging-the-workflows-pull-requests).
+   The account and the rulesets are still the owner's to set up.
 2. **K3.** Accept or reject K3's interpretation of the plan's wording, and decide the A5-arm
    outcome. Whether K3 is committed, pushed and opened as a pull request.
 3. **The merge-delegation draft:** take, change or drop it. Its clause that a disputed finding is

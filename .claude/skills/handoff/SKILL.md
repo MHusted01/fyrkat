@@ -19,7 +19,7 @@ home and does not restate it.
   and never change a branch. The file is committed with the task it describes, in that task's pull
   request, by whoever commits the task. It never gets a pull request of its own.
 - Never record an approval you cannot point to. An approval counts only if a repository document
-  records it (the plan's Amendments, an ADR, the acceptance record) or the owner stated it in this
+  records it (the spike plan's Amendments file, an ADR, the acceptance record) or the owner stated it in this
   conversation. Name the source for each one: a link to the entry, or "owner, in conversation"
   with the date. Record the limits the owner set along with what was authorized.
 - Spike execution stays "not authorized" unless a document says otherwise.

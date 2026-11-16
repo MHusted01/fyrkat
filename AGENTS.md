@@ -17,7 +17,7 @@ Accepted. Read [docs/adr/README.md](docs/adr/README.md) for the ADR process.
   a snapshot that may be out of date. Check it against Git and the ADRs, raise any conflict with
   the owner, and continue only work that is already authorized.
 - **During:** stop at each approval gate. Record an approval where it can be found: an ADR, the
-  spike plan's Amendments, or the acceptance record.
+  spike plan's [Amendments](docs/research/sel4-spike-amendments.md), or the acceptance record.
 - **End, or before context runs out:** run `/handoff`. It updates the handoff file from verified
   facts and never commits, pushes, merges or changes branches. The file is committed with the
   task it describes.
@@ -81,7 +81,7 @@ The owner alone decides the following. Agents prepare the change and stop.
 Agents may commit locally on a branch other than `main` (owner, 2026-11-15); a review needs a
 commit to review. They never push, force push or merge, and never edit an Accepted ADR. Where
 the owner has authorized a push or a merge for named work, the authorization is recorded in the
-spike plan's Amendments and covers that work only. Nothing here delegates merging in general.
+spike plan's [Amendments](docs/research/sel4-spike-amendments.md) and covers that work only. Nothing here delegates merging in general.
 
 ## Agent authority
 
