@@ -197,6 +197,17 @@ if [[ -x /bin/bash ]]; then
   assert "a backtick in a name is neutralized under the system bash too" grep -qF '.github/tick?name.md' <<<"$system"
 fi
 
+# A sensitive path whose name holds an invalid UTF-8 byte is still listed.
+git checkout -q -b invalid-utf8 "$head"
+blob=$(echo x | git hash-object -w --stdin)
+git update-index --add --cacheinfo "100644,$blob,.github/workflows/w$(printf '\377')z.yml"
+git commit -q -m "invalid utf-8 name"
+# In a UTF-8 locale, macOS pattern matching fails on such a name; the script fixes its locale.
+invalid=$(LC_ALL=en_US.UTF-8 "$script" "$head" "$(git rev-parse HEAD)")
+assert "a sensitive path with an invalid UTF-8 byte is listed" env LC_ALL=C grep -q '.github/workflows/w' <<<"$invalid"
+assert "such a path is not reported as None" test "$(LC_ALL=C grep -c '^None\.' <<<"$invalid")" -eq 0
+git checkout -q --detach "$head"
+
 git checkout -q --orphan unrelated
 git rm -q -rf . >/dev/null
 echo x >AGENTS.md

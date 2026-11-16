@@ -18,6 +18,9 @@ set -euo pipefail
 # Environment variables that change how Git reads a pathspec would hide claims and evidence
 # records from the searches below.
 unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
+# A fixed locale: on macOS a name with an invalid UTF-8 byte otherwise fails to match the
+# patterns below, and the failure would read as "no sensitive path".
+export LC_ALL=C
 
 usage() {
   echo "usage: $0 <base-sha> <head-sha> [--deep]" >&2
@@ -151,9 +154,17 @@ pinned_lines=()
 if [[ ${#files[@]} -gt 0 ]]; then
   for path in "${files[@]}"; do
     name=${path##*/}
-    users=$(git -c color.grep=never grep --no-color -l -F -- "$name" "$head_sha" -- \
-      '*run-*-evidence.sh' '*verify*.py' '*preflight*.txt' '*evidence-manifest.txt' 2>/dev/null |
-      sed "s/^$head_sha://" | grep -v -F -x -- "$path" | sort -u || true)
+    # git grep exits 1 when nothing matches and above 1 when it fails. A failure must stop the
+    # script: read as "no match" it would lower a deep change to standard.
+    status=0
+    git -c color.grep=never grep --no-color -l -F -- "$name" "$head_sha" -- \
+      '*run-*-evidence.sh' '*verify*.py' '*preflight*.txt' '*evidence-manifest.txt' \
+      >"$work/grep" 2>"$work/grep-error" || status=$?
+    if [[ $status -gt 1 ]]; then
+      echo "git grep failed (exit $status): $(head -c 200 "$work/grep-error")" >&2
+      exit 70
+    fi
+    users=$(sed "s/^$head_sha://" "$work/grep" | { grep -v -F -x -- "$path" || true; } | sort -u)
     if [[ -n "$users" ]]; then
       pinned_lines+=("\`$(safe "$path")\` is named by: $(printf '%s' "$users" | tr '\n' ' ' | tr -d '`')")
     fi

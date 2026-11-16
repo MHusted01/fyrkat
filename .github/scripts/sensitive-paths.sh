@@ -11,9 +11,11 @@
 # It fails closed: if either commit is unknown, or the two share no history, it prints nothing
 # and exits with an error, so that a mistyped name is never reported as "None."
 set -euo pipefail
-# Environment variables that change how Git reads a pathspec would hide claims and evidence
-# records from the searches below.
+# Environment variables that change how Git reads a pathspec could change which names it lists.
 unset GIT_LITERAL_PATHSPECS GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_ICASE_PATHSPECS
+# A fixed locale: on macOS a name with an invalid UTF-8 byte otherwise fails to match the
+# patterns below, and the failure would read as "no sensitive path".
+export LC_ALL=C
 
 if [[ $# -ne 2 ]]; then
   echo "usage: $0 <base-sha> <head-sha>" >&2

@@ -231,11 +231,28 @@ git checkout -q main
 git reset -q --hard "$base"
 change append spikes/sel4-feasibility/helper.py "# change"
 expect "a preflight record that pins a changed file is named" has 'helper.py` is named by: spikes/sel4-feasibility/results/E9/00-preflight.txt' "$(packet)"
+# A Git failure in the evidence search stops the script and prints no depth.
+git_grep_status=0
+out=$(GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=grep.threads GIT_CONFIG_VALUE_0=abc bash "$script" "$base" "$head" 2>/dev/null) || git_grep_status=$?
+expect "a failing git grep exits non-zero" test "$git_grep_status" -ne 0
+expect "a failing git grep prints no depth" lacks "Depth:" "$out"
 pin_in_manifest() { echo "sha256 tools/notes.py" >spikes/sel4-feasibility/results/evidence-manifest.txt; echo "cp tools/notes.py out/" >spikes/sel4-feasibility/run-e9-evidence.sh; append tools/notes.py "# change"; }
 change pin_in_manifest
 out=$(packet)
 expect "a manifest that pins a changed file is named" has 'spikes/sel4-feasibility/results/evidence-manifest.txt' "$(grep -F 'notes.py` is named by' <<<"$out")"
 expect "an evidence driver that names a changed file is named" has 'spikes/sel4-feasibility/run-e9-evidence.sh' "$(grep -F 'notes.py` is named by' <<<"$out")"
+# macOS cannot hold a file with such a name, so the commit is built in Git's index alone.
+n=$((n + 1))
+git checkout -q -b "case-$n" "$base"
+blob=$(echo x | git hash-object -w --stdin)
+git update-index --add --cacheinfo "100644,$blob,.github/workflows/w$(printf '\377')z.yml"
+git commit -q -m "invalid utf-8 name"
+head=$(git rev-parse HEAD)
+# In a UTF-8 locale, macOS pattern matching fails on such a name; the script fixes its locale.
+utf8_status=0
+out=$(LC_ALL=en_US.UTF-8 bash "$script" "$base" "$head") || utf8_status=$?
+expect "a sensitive path with an invalid UTF-8 byte is deep in a UTF-8 locale" depth_is deep "$out"
+expect "the packet for such a path completes in a UTF-8 locale" test "$utf8_status" -eq 0
 hostile() { echo x >'spikes/a`b.rs'; }
 change hostile
 expect "a backtick in a file name is neutralized" has 'spikes/a?b.rs` (compiled or linked source)' "$(packet)"
