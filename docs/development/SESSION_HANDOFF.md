@@ -93,8 +93,8 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 ## Verified, and not verified
 
 Verified on the K3 commits rebased onto `main` at `b617525`, 2026-11-17: `cargo xtask check` (12
-steps), `verify-evidence.py` (174 of 174), its `--self-test` (191 of 191). K3 had a deep review,
-three rounds of follow-up and then no open Blocker or Major (K3 section 10d). `main` requires the
+steps), `verify-evidence.py` (174 of 174), its `--self-test` (191 of 191). K3 had a deep review and rounds of
+follow-up until no Blocker or Major was open (K3 section 10d). `main` requires the
 checks `check and boot (ubuntu x86-64)`, `boot (ubuntu arm64)`, `security-sensitive paths` and
 `spike evidence`, with `enforce_admins` on (`gh api`).
 **Not verified:** that K3 can be rebuilt after the cleanup (no rebuild was attempted); anything on
@@ -104,12 +104,12 @@ results) and H5 (seeded-defect tests not run).
 
 ## Next actions
 
-1. **Authorized (owner, 2026-11-17):** push the K3 branch, open the pull request, and merge it under the
-   conditions in the Amendments; disclose the merge in the pull request and list the open Minors there.
-   If anything changes on the branch first, a `reviewer-delta` follow-up is needed (deep unit).
-2. **Authorized (owner left it to the agent, 2026-11-17):** after K3 merges, in a fresh session, the
-   successor run on a new branch from `main`: see "What would change it" in the K3-decision Amendments
-   entry. **Needs the owner:** Waiting items 2 to 4, and Stage B, A4 and the comparator.
+1. **Authorized (owner left it to the agent, 2026-11-17):** the successor run, in a fresh session on a
+   new branch from `main`: see "What would change it" in the K3-decision Amendments entry. It must not
+   edit any file that merged evidence pins. **Needs the owner:** Waiting items 2 to 4, and Stage B, A4
+   and the comparator.
+2. The owner's permission to push, open and merge the K3 branch (Amendments, 2026-11-17) was for that
+   one pull request and is used up with it.
 3. **Authorized (workflow grant):** finish the validation: replay `004bf9e` (re-export base
    `44d1d70` and head `004bf9e`), design the seeded-defect test for H5, measure H1 and H2 with
    one-task sessions at `--autocompact 200000`; record in the baseline note, section 6. Run one
