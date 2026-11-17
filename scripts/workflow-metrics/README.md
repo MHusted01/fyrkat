@@ -11,7 +11,8 @@ Run them from the repository root:
 python3 -B scripts/workflow-metrics/usage.py      # tokens and estimated cost by role and model
 python3 -B scripts/workflow-metrics/context.py    # context size, limit stops, repeated work
 python3 -B scripts/workflow-metrics/reviews.py    # one line per review run, and what reviewers read
-bash scripts/workflow-metrics/test.sh             # tests for the shared helpers
+python3 -B scripts/workflow-metrics/audit.py --root DIR   # tool calls of a blind review run that may have left it
+bash scripts/workflow-metrics/test.sh             # tests for the helpers and the audit
 ```
 
 Each takes `--project-dir` to measure another checkout or a scratch directory, and `--help`.
@@ -38,5 +39,11 @@ Each takes `--project-dir` to measure another checkout or a scratch directory, a
   requests are not in the transcripts.
 - Which files a shell command changed, and what a review read, are worked out from command text.
   Both are approximate.
+- `audit.py` reads the text of a run's tool calls after the fact and flags any that may have
+  reached outside the run. It prefers a false alarm to a miss, so its flags are for reading, not a
+  verdict, and each is read by a person or an agent. It checks a reviewer that was told the rules,
+  not one that tries to evade them: a path or a program name built at run time is not caught. It
+  quotes the start of each flagged command, with the home directory and session identifiers
+  replaced, so read its output before pasting it anywhere public.
 - Output may include the description a caller gave a review. Check it for private details
   before pasting it into a public document.
