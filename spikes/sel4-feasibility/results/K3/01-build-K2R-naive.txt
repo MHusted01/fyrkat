@@ -1,0 +1,536 @@
+## K2R-naive: build exit 0
+# K2R (K2R-k3-naive), root task: relk_root_task, mutant: none, prebuilt root task: <REPO>/spikes/sel4-feasibility/external/k3-build/K2R-naive/k3_root_task.elf
+# 1. kernel interface (prefix), in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/prefix
+cmake -DCROSS_COMPILER_PREFIX=aarch64-elf- -DCMAKE_INSTALL_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/prefix/install -DKernelPlatform=qemu-arm-virt -DKernelArmHypervisorSupport=OFF -DKernelVerificationBuild=OFF -DARM_CPU=cortex-a57 -DKernelMaxNumNodes=4 -DKernelDebugBuild=OFF -DKernelPrinting=OFF -G Ninja -S <REPO>/spikes/sel4-feasibility/external/seL4 -B <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/prefix/sel4
+ninja -C <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/prefix/sel4 all install
+# 2. root task, with SEL4_PREFIX=<REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/prefix/install
+cargo build --locked --release -p e2-root-task --bin relk_root_task --target aarch64-sel4 ...
+# 3. image, in <REPO>/spikes/sel4-feasibility/external/relk-build/K2R-k3-naive/build
+../init-build.sh -DPLATFORM=qemu-arm-virt -DAARCH64=1 -DCROSS_COMPILER_PREFIX=aarch64-elf- -DRELK_RELEASE=1 -DSMP=TRUE -DNUM_NODES=4 -DQEMU_DTB=<REPO>/spikes/sel4-feasibility/external/relk-build/k2-smc-a5s2.dtb
+ninja
+ninja kernel_all_pp_wrapper
+   Compiling e2-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-task)
+warning: constant `SLOT_FAULT` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:33:11
+   |
+33 | pub const SLOT_FAULT: u64 = 10;
+   |           ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `is_communication_slot` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:36:14
+   |
+36 | pub const fn is_communication_slot(s: u64) -> bool {
+   |              ^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant `SLOT_RECV_FIRST` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:40:11
+   |
+40 | pub const SLOT_RECV_FIRST: u64 = 32;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `RECV_SLOTS` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:41:11
+   |
+41 | pub const RECV_SLOTS: u64 = 16;
+   |           ^^^^^^^^^^
+
+warning: constant `SLOT_OWN_FIRST` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:43:11
+   |
+43 | pub const SLOT_OWN_FIRST: u64 = 64;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `SLOT_LAST` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:45:11
+   |
+45 | pub const SLOT_LAST: u64 = (1 << CNODE_BITS) - 1;
+   |           ^^^^^^^^^
+
+warning: constant `SLOT_DONATED_FIRST` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:60:11
+   |
+60 | pub const SLOT_DONATED_FIRST: u64 = 121;
+   |           ^^^^^^^^^^^^^^^^^^
+
+warning: constant `PAGE` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:65:11
+   |
+65 | pub const PAGE: usize = 4096;
+   |           ^^^^
+
+warning: constant `WINDOW_BAR_PAGE` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:67:11
+   |
+67 | pub const WINDOW_BAR_PAGE: usize = 0;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `ID_M` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:73:11
+   |
+73 | pub const ID_M: u64 = 3;
+   |           ^^^^
+
+warning: constant `ID_S` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:74:11
+   |
+74 | pub const ID_S: u64 = 4;
+   |           ^^^^
+
+warning: constant `FAULT_FLAG` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:78:11
+   |
+78 | pub const FAULT_FLAG: u64 = 0x1000;
+   |           ^^^^^^^^^^
+
+warning: constant `LBL_PARAMS` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:116:11
+    |
+116 | pub const LBL_PARAMS: u64 = 1;
+    |           ^^^^^^^^^^
+
+warning: constant `LBL_DONE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:120:11
+    |
+120 | pub const LBL_DONE: u64 = 3;
+    |           ^^^^^^^^
+
+warning: constant `STEP_INIT` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:123:11
+    |
+123 | pub const STEP_INIT: u64 = 1;
+    |           ^^^^^^^^^
+
+warning: constant `STEP_ALLOC` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:125:11
+    |
+125 | pub const STEP_ALLOC: u64 = 2;
+    |           ^^^^^^^^^^
+
+warning: constant `STEP_FILL` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:127:11
+    |
+127 | pub const STEP_FILL: u64 = 3;
+    |           ^^^^^^^^^
+
+warning: constant `STEP_COUNT` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:129:11
+    |
+129 | pub const STEP_COUNT: u64 = 4;
+    |           ^^^^^^^^^^
+
+warning: constant `STEP_DEVOP` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:133:11
+    |
+133 | pub const STEP_DEVOP: u64 = 5;
+    |           ^^^^^^^^^^
+
+warning: constant `STEP_FREE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:135:11
+    |
+135 | pub const STEP_FREE: u64 = 6;
+    |           ^^^^^^^^^
+
+warning: constant `STEP_CSPACE_ATTACK` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:137:11
+    |
+137 | pub const STEP_CSPACE_ATTACK: u64 = 7;
+    |           ^^^^^^^^^^^^^^^^^^
+
+warning: constant `STEP_REMAP` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:139:11
+    |
+139 | pub const STEP_REMAP: u64 = 8;
+    |           ^^^^^^^^^^
+
+warning: constant `STEP_DROP_FRAME` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:141:11
+    |
+141 | pub const STEP_DROP_FRAME: u64 = 9;
+    |           ^^^^^^^^^^^^^^^
+
+warning: constant `STEP_TRY_ADMIN` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:143:11
+    |
+143 | pub const STEP_TRY_ADMIN: u64 = 10;
+    |           ^^^^^^^^^^^^^^
+
+warning: constant `STEP_M_FRAME` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:145:11
+    |
+145 | pub const STEP_M_FRAME: u64 = 11;
+    |           ^^^^^^^^^^^^
+
+warning: constant `STEP_M_DONATE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:147:11
+    |
+147 | pub const STEP_M_DONATE: u64 = 12;
+    |           ^^^^^^^^^^^^^
+
+warning: constant `STEP_MAP_RECEIVED` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:149:11
+    |
+149 | pub const STEP_MAP_RECEIVED: u64 = 13;
+    |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `STEP_IDLE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:150:11
+    |
+150 | pub const STEP_IDLE: u64 = 14;
+    |           ^^^^^^^^^
+
+warning: constant `STEP_ALLOC_MANY` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:152:11
+    |
+152 | pub const STEP_ALLOC_MANY: u64 = 15;
+    |           ^^^^^^^^^^^^^^^
+
+warning: constant `PATTERN_WORDS` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:155:11
+    |
+155 | pub const PATTERN_WORDS: usize = 16;
+    |           ^^^^^^^^^^^^^
+
+warning: constant `PATTERN_BYTES` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:156:11
+    |
+156 | pub const PATTERN_BYTES: u64 = 64;
+    |           ^^^^^^^^^^^^^
+
+warning: function `pattern` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:158:14
+    |
+158 | pub const fn pattern(base: u64, j: usize) -> u32 {
+    |              ^^^^^^^
+
+warning: methods `addr` and `r64` are never used
+  --> crates/e2-task/src/bin/../k3_mmio.rs:32:12
+   |
+23 | impl Page {
+   | --------- methods in this implementation
+...
+32 |     pub fn addr(self) -> usize {
+   |            ^^^^
+...
+47 |     pub fn r64(self, off: usize) -> u64 {
+   |            ^^^
+
+warning: constant `PAGE1_OFFSET` is never used
+  --> crates/e2-task/src/bin/../k3_smmu.rs:34:7
+   |
+34 | const PAGE1_OFFSET: usize = 0x1_0000;
+   |       ^^^^^^^^^^^^
+
+warning: constant `EVT_C_BAD_STE` is never used
+  --> crates/e2-task/src/bin/../k3_smmu.rs:59:11
+   |
+59 | pub const EVT_C_BAD_STE: u8 = 0x04;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `EVT_F_TRANSLATION` is never used
+  --> crates/e2-task/src/bin/../k3_smmu.rs:60:11
+   |
+60 | pub const EVT_F_TRANSLATION: u8 = 0x10;
+   |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `EVT_F_PERMISSION` is never used
+  --> crates/e2-task/src/bin/../k3_smmu.rs:61:11
+   |
+61 | pub const EVT_F_PERMISSION: u8 = 0x13;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: fields `kind`, `write`, and `addr` are never read
+  --> crates/e2-task/src/bin/../k3_smmu.rs:88:9
+   |
+87 | pub struct Event {
+   |            ----- fields in this struct
+88 |     pub kind: u8,
+   |         ^^^^
+89 |     pub sid: u32,
+90 |     pub write: bool,
+   |         ^^^^^
+91 |     pub addr: u64,
+   |         ^^^^
+   |
+   = note: `Event` has a derived impl for the trait `Clone`, but this is intentionally ignored during dead code analysis
+
+warning: method `is_mapped` is never used
+   --> crates/e2-task/src/bin/../k3_smmu.rs:165:12
+    |
+112 | impl AddrSpace {
+    | -------------- method in this implementation
+...
+165 |     pub fn is_mapped(&self, iova: u64) -> bool {
+    |            ^^^^^^^^^
+
+warning: `e2-task` (bin "k3_server") generated 39 warnings
+    Finished `release` profile [optimized] target(s) in 0.52s
+warning: constant `SLOT_DEVICE1` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:27:11
+   |
+27 | pub const SLOT_DEVICE1: u64 = 7;
+   |           ^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `SLOT_UNTYPED_B` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:31:11
+   |
+31 | pub const SLOT_UNTYPED_B: u64 = 9;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `POOL_PAGES` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:48:11
+   |
+48 | pub const POOL_PAGES: usize = 8;
+   |           ^^^^^^^^^^
+
+warning: constant `SLOT_POOL_UNTYPED` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:50:11
+   |
+50 | pub const SLOT_POOL_UNTYPED: u64 = 64;
+   |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `SLOT_POOL_FRAME` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:52:11
+   |
+52 | pub const SLOT_POOL_FRAME: u64 = 80;
+   |           ^^^^^^^^^^^^^^^
+
+warning: constant `SLOT_SMMU_RAM` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:54:11
+   |
+54 | pub const SLOT_SMMU_RAM: u64 = 100;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `SLOT_PROBE` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:56:11
+   |
+56 | pub const SLOT_PROBE: u64 = 119;
+   |           ^^^^^^^^^^
+
+warning: constant `SLOT_DONATION` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:58:11
+   |
+58 | pub const SLOT_DONATION: u64 = 120;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `SLOT_DONATED_FIRST` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:60:11
+   |
+60 | pub const SLOT_DONATED_FIRST: u64 = 121;
+   |           ^^^^^^^^^^^^^^^^^^
+
+warning: constant `PAGE` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:65:11
+   |
+65 | pub const PAGE: usize = 4096;
+   |           ^^^^
+
+warning: constant `ID_C1` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:71:11
+   |
+71 | pub const ID_C1: u64 = 1;
+   |           ^^^^^
+
+warning: constant `ID_C2` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:72:11
+   |
+72 | pub const ID_C2: u64 = 2;
+   |           ^^^^^
+
+warning: constant `ID_M` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:73:11
+   |
+73 | pub const ID_M: u64 = 3;
+   |           ^^^^
+
+warning: constant `ID_S` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:74:11
+   |
+74 | pub const ID_S: u64 = 4;
+   |           ^^^^
+
+warning: constant `FAULT_FLAG` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:78:11
+   |
+78 | pub const FAULT_FLAG: u64 = 0x1000;
+   |           ^^^^^^^^^^
+
+warning: constant `OP_ADMIN_BIND` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:86:11
+   |
+86 | pub const OP_ADMIN_BIND: u64 = 11;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `OP_ADMIN_DEAD` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:88:11
+   |
+88 | pub const OP_ADMIN_DEAD: u64 = 12;
+   |           ^^^^^^^^^^^^^
+
+warning: constant `OP_ADMIN_STATS` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:93:11
+   |
+93 | pub const OP_ADMIN_STATS: u64 = 14;
+   |           ^^^^^^^^^^^^^^
+
+warning: constant `OP_ADMIN_PAGEINFO` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:95:11
+   |
+95 | pub const OP_ADMIN_PAGEINFO: u64 = 15;
+   |           ^^^^^^^^^^^^^^^^^
+
+warning: constant `OP_ADMIN_SMMU_PA` is never used
+  --> crates/e2-task/src/bin/../k3_abi.rs:98:11
+   |
+98 | pub const OP_ADMIN_SMMU_PA: u64 = 16;
+   |           ^^^^^^^^^^^^^^^^
+
+warning: constant `OP_ADMIN_PROBE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:102:11
+    |
+102 | pub const OP_ADMIN_PROBE: u64 = 17;
+    |           ^^^^^^^^^^^^^^
+
+warning: constant `RC_BAD_OP` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:105:11
+    |
+105 | pub const RC_BAD_OP: u64 = 1;
+    |           ^^^^^^^^^
+
+warning: constant `RC_NOT_OWNER` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:106:11
+    |
+106 | pub const RC_NOT_OWNER: u64 = 2;
+    |           ^^^^^^^^^^^^
+
+warning: constant `RC_NO_MEMORY` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:107:11
+    |
+107 | pub const RC_NO_MEMORY: u64 = 3;
+    |           ^^^^^^^^^^^^
+
+warning: constant `RC_BAD_HANDLE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:108:11
+    |
+108 | pub const RC_BAD_HANDLE: u64 = 4;
+    |           ^^^^^^^^^^^^^
+
+warning: constant `RC_NO_DONATIONS` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:109:11
+    |
+109 | pub const RC_NO_DONATIONS: u64 = 5;
+    |           ^^^^^^^^^^^^^^^
+
+warning: constant `RC_ADMIN_ONLY` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:110:11
+    |
+110 | pub const RC_ADMIN_ONLY: u64 = 6;
+    |           ^^^^^^^^^^^^^
+
+warning: constant `RC_SMMU` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:111:11
+    |
+111 | pub const RC_SMMU: u64 = 7;
+    |           ^^^^^^^
+
+warning: constant `RC_BAD_ARGS` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:112:11
+    |
+112 | pub const RC_BAD_ARGS: u64 = 8;
+    |           ^^^^^^^^^^^
+
+warning: constant `STEP_IDLE` is never used
+   --> crates/e2-task/src/bin/../k3_abi.rs:150:11
+    |
+150 | pub const STEP_IDLE: u64 = 14;
+    |           ^^^^^^^^^
+
+warning: methods `addr` and `r64` are never used
+  --> crates/e2-task/src/bin/../k3_mmio.rs:32:12
+   |
+23 | impl Page {
+   | --------- methods in this implementation
+...
+32 |     pub fn addr(self) -> usize {
+   |            ^^^^
+...
+47 |     pub fn r64(self, off: usize) -> u64 {
+   |            ^^^
+
+warning: `e2-task` (bin "k3_client") generated 31 warnings
+    Finished `release` profile [optimized] target(s) in 0.15s
+   Compiling e2-root-task v0.1.0 (<REPO>/spikes/sel4-feasibility/crates/e2-root-task)
+warning: unused import: `sel4::CapTypeForObjectOfFixedSize`
+  --> crates/e2-root-task/src/bin/k3_root_task.rs:23:5
+   |
+23 | use sel4::CapTypeForObjectOfFixedSize;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `BUFFER` is never used
+  --> crates/e2-root-task/src/bin/../edu.rs:26:7
+   |
+26 | const BUFFER: u64 = 0x4_0000;
+   |       ^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: constant `BUFFER_BYTES` is never used
+  --> crates/e2-root-task/src/bin/../edu.rs:27:18
+   |
+27 | pub(crate) const BUFFER_BYTES: u64 = 4096;
+   |                  ^^^^^^^^^^^^
+
+warning: constant `POLL_LIMIT` is never used
+  --> crates/e2-root-task/src/bin/../edu.rs:28:7
+   |
+28 | const POLL_LIMIT: u32 = 40_000_000;
+   |       ^^^^^^^^^^
+
+warning: field `regs` is never read
+  --> crates/e2-root-task/src/bin/../edu.rs:31:5
+   |
+30 | pub(crate) struct Edu {
+   |                   --- field in this struct
+31 |     regs: Page,
+   |     ^^^^
+
+warning: methods `read_from`, `write_to`, and `transfer` are never used
+  --> crates/e2-root-task/src/bin/../edu.rs:64:19
+   |
+61 | impl Edu {
+   | -------- methods in this implementation
+...
+64 |     pub(crate) fn read_from(&self, addr: u64, count: u64) -> bool {
+   |                   ^^^^^^^^^
+...
+69 |     pub(crate) fn write_to(&self, addr: u64, count: u64) -> bool {
+   |                   ^^^^^^^^
+...
+73 |     fn transfer(&self, src: u64, dst: u64, count: u64, command: u64) -> bool {
+   |        ^^^^^^^^
+
+warning: fields `name` and `vspace` are never read
+  --> crates/e2-root-task/src/bin/../k3_spawn.rs:48:16
+   |
+46 | pub(crate) struct Domain {
+   |                   ------ fields in this struct
+47 |     pub(crate) id: u64,
+48 |     pub(crate) name: &'static str,
+   |                ^^^^
+...
+51 |     pub(crate) vspace: sel4::cap::VSpace,
+   |                ^^^^^^
+
+warning: `e2-root-task` (bin "k3_root_task") generated 7 warnings (run `cargo fix --bin "k3_root_task" -p e2-root-task` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 0.79s
+K2R-k3-naive: build exit 0
+f9ad28dc0d8392f6efcd8408b62533f931400519d5ef9ce5edd7c4f5bef2266a  relk_root_task.elf
+82bf24eb0e1034c97e8d52bee00ac090c80376b13cf34f9d74d79aa3580b1139  build/images/rust-root-task-image-arm-qemu-arm-virt
+8e2ad99bf8319616a6973da6deb27e17bc17b99c49ec08b913992193f7e60791  build/kernel/kernel.elf
+c0ad3f4e55fbcf63bbcc55880ed14fd6df43c8469fecfcf587099fb1c6ea292f  build/kernel/gen_config/kernel/gen_config.json
+c0ad3f4e55fbcf63bbcc55880ed14fd6df43c8469fecfcf587099fb1c6ea292f  prefix/install/libsel4/include/kernel/gen_config.json

@@ -1,0 +1,696 @@
++ /opt/homebrew/bin/qemu-system-aarch64 -machine virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off -accel tcg -cpu cortex-a57 -smp 4 -m size=1024M -nographic -monitor none -serial stdio -kernel <REPO>/spikes/sel4-feasibility/external/k3-build/K2R-reclaim-while-mapped/image -device edu,dma_mask=0xffffffffff -device edu,dma_mask=0xffffffffff -trace smmuv3_propagate_event
+
+ELF-loader started on CPU: ARM Ltd. Cortex-A57 r1p0
+  paddr=[40354000..403e00a7]
+No DTB passed in from boot loader.
+Looking for DTB in CPIO archive...found at 40381498.
+Loaded DTB from 40381498.
+   paddr=[40231000..40233fff]
+ELF-loading image 'kernel' to 40000000
+  paddr=[40000000..40230fff]
+  vaddr=[ffffffffc0000000..ffffffffc0230fff]
+  virt_entry=ffffffffc0000000
+ELF-loading image 'rootserver' to 40234000
+  paddr=[40234000..40333fff]
+  vaddr=[200000..2fffff]
+  virt_entry=255650
+Boot cpu id = 0x0, index=0
+Core 1 is up with logic id 1
+Core 2 is up with logic id 2
+Core 3 is up with logic id 3
+Enabling MMU and jumping to entry point...
+
+K3 start built-for PRINTING=false MAX_NUM_NODES=4 ARM_HYPERVISOR_SUPPORT=false mode=design mutant=reclaim-while-mapped
+K3 untypeds pool_bits=15 pool_paddr=0x40338000 srv_bits=16 srv_paddr=0x40000000 (boot untypeds, moved to the server)
+K3 seed dom=S slot=3 kind=mint what="send to the conductor's endpoint, badged with the task id"
+K3 seed dom=S slot=10 kind=mint what="fault endpoint (the conductor's endpoint, fault badge)"
+K3 seed dom=S slot=4 kind=mint what="step notification (wait only)"
+K3 seed dom=S slot=5 kind=copy what="the server's own endpoint (receive)"
+K3 seed dom=S slot=6 kind=copy what="SMMU registers, page 0 (device frame)"
+K3 seed dom=S slot=7 kind=copy what="SMMU registers, page 1 (device frame)"
+K3 seed dom=S slot=8 kind=move what="U_srv: boot untyped for the SMMU's tables and queues (moved)"
+K3 seed dom=S slot=9 kind=move what="U_pool: the DMA pool, a boot untyped (moved: no ancestor anywhere)"
+K3 domain name=S id=4 started
+K3 seed dom=C1 slot=3 kind=mint what="send to the conductor's endpoint, badged with the task id"
+K3 seed dom=C1 slot=10 kind=mint what="fault endpoint (the conductor's endpoint, fault badge)"
+K3 seed dom=C1 slot=4 kind=mint what="step notification (wait only)"
+K3 seed dom=C1 slot=5 kind=mint what="send to the server, badged with the client id (write, grant)"
+K3 seed dom=C1 slot=6 kind=copy what="BAR frame of its own edu device (device frame)"
+K3 domain name=C1 id=1 started
+K3 seed dom=C2 slot=3 kind=mint what="send to the conductor's endpoint, badged with the task id"
+K3 seed dom=C2 slot=10 kind=mint what="fault endpoint (the conductor's endpoint, fault badge)"
+K3 seed dom=C2 slot=4 kind=mint what="step notification (wait only)"
+K3 seed dom=C2 slot=5 kind=mint what="send to the server, badged with the client id (write, grant)"
+K3 seed dom=C2 slot=6 kind=copy what="BAR frame of its own edu device (device frame)"
+K3 domain name=C2 id=2 started
+K3 seed dom=M slot=3 kind=mint what="send to the conductor's endpoint, badged with the task id"
+K3 seed dom=M slot=10 kind=mint what="fault endpoint (the conductor's endpoint, fault badge)"
+K3 seed dom=M slot=4 kind=mint what="step notification (wait only)"
+K3 seed dom=M slot=5 kind=mint what="send to the server, badged with the client id (write, grant)"
+K3 seed dom=M slot=8 kind=copy what="U_M: a child of an untyped the root task (as memory manager) keeps"
+K3 domain name=M id=3 started
+K3 script mode=design mutant=reclaim-while-mapped
+K3 adm op=10 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 test id=S0a result=PASS note="the server answers its first admin call (it is serving)"
+K3 adm op=11 args=[1, 10, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 test id=S0b result=PASS note="a client's stream is bound to its own address space"
+K3 adm op=11 args=[2, 18, 1, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 test id=S0c result=PASS note="a client's stream is bound to its own address space"
+K3 step dom=C1 step=1 params=[0, 0, 0, 0]
+K3 rep dom=C1 tag=1 v1=0 v2=16777453 v3=1
+K3 test id=S0d result=PASS note="a client mapped its device and read the edu identification"
+K3 step dom=C2 step=1 params=[0, 0, 0, 0]
+K3 rep dom=C2 tag=1 v1=0 v2=16777453 v3=1
+K3 test id=S0d result=PASS note="a client mapped its device and read the edu identification"
+K3 step dom=M step=1 params=[0, 0, 0, 0]
+K3 rep dom=M tag=1 v1=3 v2=0 v3=0
+K3 inventory dom=C1 when=start populated=7 frames=1 untyped=0 frame_pas=[10000000]
+K3 inventory dom=C2 when=start populated=7 frames=1 untyped=0 frame_pas=[10100000]
+K3 inventory dom=M when=start populated=7 frames=0 untyped=0 frame_pas=[]
+K3 adm op=14 args=[0, 0, 0, 0] rc=0 m0=9 m1=3 m2=0 m3=0
+K3 step dom=C1 step=2 params=[0, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294967296 v3=0
+K3 rep dom=C1 tag=2 v1=0 v2=1077116928 v3=0
+K3 adm op=14 args=[0, 0, 0, 0] rc=0 m0=9 m1=3 m2=0 m3=1
+K3 step dom=C1 step=2 params=[1, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294971392 v3=1
+K3 rep dom=C1 tag=2 v1=0 v2=1077121024 v3=0
+K3 step dom=C2 step=2 params=[0, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294967296 v3=2
+K3 rep dom=C2 tag=2 v1=0 v2=1077125120 v3=0
+K3 test id=T1pre result=PASS note="the clients obtained distinct pool pages"
+K3 cost op=alloc commands=0 syncs=0 revokes=0
+K3 step dom=C1 step=3 params=[0, 11, 0, 0]
+K3 step dom=C1 step=3 params=[1, 22, 0, 0]
+K3 step dom=C2 step=3 params=[0, 33, 0, 0]
+K3 step dom=M step=11 params=[0, 0, 0, 0]
+K3 rep dom=M tag=11 v1=0 v2=0 v3=1610678272
+K3 step dom=M step=3 params=[0, 99, 0, 0]
+K3 pages C1a_pa=0x40338000 C1b_pa=0x40339000 C2c_pa=0x4033a000 M_pa=0x60010000 C1a_iova=0x100000000 C1b_iova=0x100001000 C2c_iova=0x100000000
+K3 step dom=C1 step=5 params=[0, 100000000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 11, 22, 0]
+K3 rep dom=C1 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1a kind=roundtrip attacker=C1 words_from_source=16 words_old=0
+K3 test id=T1a result=PASS note="positive control: the device reached its own mapped pages in both directions"
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 100064000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 33, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1b kind=leak attacker=C1 target=0x100064000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 test id=T1b result=PASS note="a read of an unmapped I/O address is refused and a translation fault is recorded"
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 4033a000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 33, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1c1 kind=leak attacker=C1 target=0x4033a000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 60010000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 99, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1c2 kind=leak attacker=C1 target=0x60010000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 test id=T1c result=PASS note="a read at the physical address of C2's page and of M's page is refused"
+K3 adm op=16 args=[0, 0, 0, 0] rc=0 m0=1073741824 m1=0 m2=0 m3=0
+K3 adm op=16 args=[1, 0, 0, 0] rc=0 m0=1073745920 m1=0 m2=0 m3=0
+K3 adm op=16 args=[3, 0, 0, 0] rc=0 m0=1073754112 m1=0 m2=0 m3=0
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 40000400, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, f0, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1c3-strtab kind=leak attacker=C1 target=0x40000400 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 40001000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, f0, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1c3-cmdq kind=leak attacker=C1 target=0x40001000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 40003000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, f0, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T1c3-l1 kind=leak attacker=C1 target=0x40003000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 test id=T1c3 result=PASS note="a read at the physical address of the SMMU's stream table entry, command queue and level-1 table is refused"
+K3 step dom=C2 step=5 params=[0, 100000000, 0, 0]
+K3 rep dom=C2 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C2 step=2 params=[7, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294971392 v3=3
+K3 rep dom=C2 tag=2 v1=0 v2=1077129216 v3=0
+K3 step dom=C2 step=3 params=[7, 22, 0, 0]
+K3 step dom=C2 step=5 params=[0, 100000000, 0, 0]
+K3 rep dom=C2 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C2 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C2 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C2 step=4 params=[7, 33, 22, 0]
+K3 rep dom=C2 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1g kind=roundtrip attacker=C2 words_from_source=16 words_old=0
+K3 test id=T1g result=PASS note="C2's device reads C2's own page at an I/O address that C1's device also uses"
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 100000000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 33, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 obs id=T1d kind=leak attacker=C1 target=0x100000000 marker_words=0 zero_words=0 secret_words=0 faults=0 finished=true outcome=MIXED
+K3 step dom=C1 step=4 params=[1, 11, 33, 0]
+K3 rep dom=C1 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1d2 kind=aliasing attacker=C1 target=0x100000000 words_of_C1_page_a=16 words_of_C2_secret=0
+K3 test id=T1d result=PASS note="the I/O address of C2's page, in C1's space, reaches C1's own page and not C2's data"
+K3 step dom=C1 step=3 params=[1, 22, 0, 0]
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 100064000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[0, 33, 55, 0]
+K3 rep dom=C2 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1e1 kind=clobber attacker=C1 target=0x100064000 victim=C2 intact_words=16 attacked_words=0 faults=16 finished=true outcome=INTACT
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 4033a000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[0, 33, 55, 0]
+K3 rep dom=C2 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1e2 kind=clobber attacker=C1 target=0x4033a000 victim=C2 intact_words=16 attacked_words=0 faults=16 finished=true outcome=INTACT
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 100000000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[0, 33, 55, 0]
+K3 rep dom=C2 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1e3 kind=clobber attacker=C1 target=0x100000000 victim=C2 intact_words=16 attacked_words=0 faults=0 finished=true outcome=INTACT
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 60010000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 step dom=M step=4 params=[0, 99, 55, 0]
+K3 rep dom=M tag=4 v1=16 v2=0 v3=0
+K3 obs id=T1e4 kind=clobber attacker=C1 target=0x60010000 victim=M intact_words=16 attacked_words=0 faults=16 finished=true outcome=INTACT
+K3 test id=T1e result=PASS note="no write reached C2's or M's page"
+K3 test id=T1e0 result=PASS note="the refused writes left fault records"
+K3 step dom=C1 step=2 params=[3, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294975488 v3=4
+K3 rep dom=C1 tag=2 v1=0 v2=1077133312 v3=0
+K3 step dom=C2 step=6 params=[4, 0, 0, 0]
+K3 rep dom=C2 tag=6 v1=2 v2=0 v3=0
+K3 adm op=15 args=[4, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077133312 m3=4294975488
+K3 obs id=T1f kind=free rc_other=2 mapped=1 owner=1
+K3 test id=T1f result=PASS note="C2 cannot free C1's page; the page stays mapped and owned by C1"
+K3 step dom=C1 step=6 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=6 v1=0 v2=0 v3=0
+K3 step dom=C1 step=2 params=[2, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294975488 v3=4
+K3 rep dom=C1 tag=2 v1=0 v2=1077133312 v3=0
+K3 step dom=C1 step=3 params=[2, 66, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=3 params=[1, 22, 0, 0]
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 66, 22, 0]
+K3 rep dom=C1 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T2pre kind=roundtrip rc=0 words_from_source=16
+K3 test id=T2pre result=PASS note="positive control: the device reached the page before it was freed"
+K3 adm op=14 args=[0, 0, 0, 0] rc=0 m0=9 m1=3 m2=1 m3=6
+K3 step dom=C1 step=6 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=6 v1=0 v2=0 v3=0
+K3 adm op=14 args=[0, 0, 0, 0] rc=0 m0=9 m1=3 m2=2 m3=6
+K3 cost op=free commands=0 syncs=0 revokes=1
+K3 test id=T2free result=PASS note="the owner can free its page"
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 66, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=16 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 obs id=T2a kind=leak attacker=C1 target=0x100002000 marker_words=0 zero_words=0 secret_words=16 faults=0 finished=true outcome=REACHED
+K3 test id=T2a result=FAIL note="after the free, the old I/O address is refused and a fault is recorded"
+K3 obs id=T2b kind=slot dom=C1 slot=34 copy=Some(FailedLookup)
+K3 test id=T2b result=PASS note="C1's capability to the freed frame is gone"
+K3 step dom=C2 step=2 params=[1, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294975488 v3=4
+K3 rep dom=C2 tag=2 v1=0 v2=1077133312 v3=0
+K3 pages C1x_pa=0x4033c000 C2x_pa=0x4033c000
+K3 step dom=C2 step=3 params=[1, 77, 0, 0]
+K3 step dom=C1 step=6 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=6 v1=2 v2=0 v3=0
+K3 adm op=15 args=[4, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077133312 m3=4294975488
+K3 obs id=T2e kind=free rc_stale=2 mapped=1 owner=2
+K3 test id=T2e result=PASS note="C1's free of a handle that now belongs to C2 is refused and the page stays C2's"
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, 77, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=16 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 obs id=T2d1 kind=leak attacker=C1 target=0x100002000 marker_words=0 zero_words=0 secret_words=16 faults=0 finished=true outcome=REACHED
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[1, 77, 55, 0]
+K3 rep dom=C2 tag=4 v1=0 v2=16 v3=0
+K3 obs id=T2d2 kind=clobber attacker=C1 target=0x100002000 victim=C2 intact_words=0 attacked_words=16 faults=0 finished=true outcome=REACHED
+K3 test id=T2d result=FAIL note="C2 holds the reused page; C1's device reaches nothing of it through the old address"
+K3 step dom=C1 step=2 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294975488 v3=5
+K3 rep dom=C1 tag=2 v1=0 v2=1077137408 v3=0
+K3 step dom=C1 step=3 params=[4, 88, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=3 params=[1, 22, 0, 0]
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 88, 22, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=0
+K3 obs id=T3pre kind=roundtrip rc=0 words_from_source=0
+K3 test id=T3pre result=FAIL note="positive control: the device reaches a mapped page before the attempts"
+K3 inventory dom=C1 when=before-attack populated=10 frames=4 untyped=0 frame_pas=[10000000, 40338000, 40339000, 4033d000]
+K3 step dom=C1 step=7 params=[0, 0, 0, 0]
+K3 rep dom=C1 tag=7 v1=10 v2=4 v3=0
+K3 rep dom=C1 tag=7 v1=0 v2=0 v3=0
+K3 obs id=T3a1 kind=cspace attacker=C1 populated=10 frames=4 untyped_ok=0 tcb_ok=0 revoke_failed=0 root_populated=10 root_frames=4 root_untyped=0
+K3 test id=T3a1 result=PASS note="C1 holds exactly the capabilities the root task gave it, no untyped and no TCB, and an Untyped_Retype or TCB call on any slot fails, and a Revoke on every slot succeeds"
+K3 step dom=C1 step=10 params=[0, 0, 0, 0]
+K3 rep dom=C1 tag=10 v1=6 v2=6 v3=4
+K3 obs id=T3a2 kind=admin ping_rc=6 events_rc=6 rebadge_rc=4
+K3 test id=T3a2 result=PASS note="C1 cannot use the admin operations or re-badge its endpoint capability"
+K3 step dom=C1 step=8 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=8 v1=0 v2=0 v3=0
+K3 obs id=T3a3 kind=remap unmap_rc=0 map_rc=0
+K3 test id=T3a3 result=PASS note="C1 can unmap and map its own frame (a legitimate self-operation)"
+K3 step dom=C1 step=9 params=[4, 0, 0, 0]
+K3 rep dom=C1 tag=9 v1=0 v2=0 v3=0
+K3 step dom=C1 step=3 params=[1, 22, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100002000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 88, 22, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=0
+K3 adm op=15 args=[5, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077137408 m3=4294975488
+K3 obs id=T3a4 kind=drop-frame revoke_rc=0 delete_rc=0 words_from_source=0 mapped=1 owner=1
+K3 test id=T3a4 result=FAIL note="after C1 revoked and deleted its capability, the page is still the pool's and still mapped: the device reaches it"
+K3 adm op=17 args=[5, 0, 0, 0] rc=0 m0=1077137408 m1=11 m2=0 m3=0
+K3 obs id=T3a7 kind=kernel-probe handle=5 frame_pa=0x4033d000 retype_rc=11
+K3 test id=T3a7 result=PASS note="the kernel still answers for the frame the server holds, and refuses to retype its untyped, after C1 revoked and deleted its own capability"
+K3 step dom=C2 step=15 params=[8, 0, 0, 0]
+K3 rep dom=C2 tag=15 v1=2 v2=3 v3=192
+K3 adm op=15 args=[0, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077116928 m3=4294967296
+K3 adm op=15 args=[1, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077121024 m3=4294971392
+K3 adm op=15 args=[2, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077125120 m3=4294967296
+K3 adm op=15 args=[3, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077129216 m3=4294971392
+K3 adm op=15 args=[4, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077133312 m3=4294975488
+K3 adm op=15 args=[5, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077137408 m3=4294975488
+K3 adm op=15 args=[6, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077141504 m3=4294979584
+K3 adm op=15 args=[7, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077145600 m3=4294983680
+K3 obs id=T3a5 kind=exhaustion obtained=2 last_rc=3 handles_mask=0xc0 mapped=8 distinct_pas=true y_pa_once_with_C1=true
+K3 test id=T3a5 result=PASS note="when the pool is used up no page is handed out twice, and the page whose capability C1 dropped is still C1's"
+K3 step dom=C2 step=6 params=[6, 0, 0, 0]
+K3 rep dom=C2 tag=6 v1=0 v2=0 v3=0
+K3 step dom=C2 step=6 params=[7, 0, 0, 0]
+K3 rep dom=C2 tag=6 v1=0 v2=0 v3=0
+K3 adm op=17 args=[6, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 obs id=T3a8 kind=kernel-probe-free handle=6 frame_pa=0x0 retype_rc=0
+K3 test id=T3a8 result=PASS note="control for the probe: for a freed page the kernel has no frame to answer for and accepts a retype of its untyped"
+K3 step dom=M step=7 params=[0, 0, 0, 0]
+K3 rep dom=M tag=7 v1=7 v2=1 v3=1
+K3 rep dom=M tag=7 v1=0 v2=0 v3=0
+K3 obs id=T3a6 kind=cspace attacker=M untyped_ok=1 tcb_ok=0
+K3 test id=T3a6 result=PASS note="M holds one untyped (its own) and no TCB; it cannot retype or suspend through any other slot"
+K3 step dom=M step=12 params=[0, 1, 0, 0]
+K3 rep dom=M tag=12 v1=5 v2=0 v3=0
+K3 obs id=T3c0 kind=donation mode=design rc=5 detail=0
+K3 test id=T3c0 result=PASS note="design: the server refuses a donation and keeps no capability that was sent with it"
+K3 obs id=T3c2 kind=reclaim rc=None
+K3 pages M_frame_pa=0x60010000 reused_frame_pa=0x60010000
+K3 step dom=C2 step=13 params=[2, 3c, 0, 0]
+K3 rep dom=C2 tag=13 v1=0 v2=1610678272 v3=0
+K3 step dom=C2 step=3 params=[2, aa, 0, 0]
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 100064000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, aa, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T3c3 kind=leak attacker=C1 target=0x100064000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 step dom=C1 step=3 params=[1, 44, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[0, 60010000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=5 params=[1, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[1, 44, aa, 0]
+K3 rep dom=C1 tag=4 v1=0 v2=0 v3=16
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 obs id=T3c4 kind=leak attacker=C1 target=0x60010000 marker_words=0 zero_words=16 secret_words=0 faults=16 finished=true outcome=REFUSED
+K3 step dom=C2 step=3 params=[2, aa, 0, 0]
+K3 step dom=C1 step=3 params=[1, 55, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100001000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C1 step=5 params=[1, 100064000, 0, 0]
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+smmuv3_propagate_event SMMU_EVT_F_TRANSLATION sid=0x10
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=16 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[2, aa, 55, 0]
+K3 rep dom=C2 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T3c5 kind=clobber attacker=C1 target=0x100064000 victim=C2 intact_words=16 attacked_words=0 faults=16 finished=true outcome=INTACT
+K3 test id=T3c3 result=PASS note="design: the same actions leave C1's device with nothing of C2's secret"
+K3 step dom=C1 step=2 params=[5, 0, 0, 0]
+K3 rep dom=C1 tag=2 v1=0 v2=4294979584 v3=6
+K3 rep dom=C1 tag=2 v1=0 v2=1077141504 v3=0
+K3 step dom=C1 step=3 params=[5, bb, 0, 0]
+K3 step dom=C1 step=5 params=[0, 100003000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=3 params=[5, cc, 0, 0]
+K3 step dom=C1 step=5 params=[2, 100003000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 step dom=C1 step=4 params=[5, bb, cc, 0]
+K3 rep dom=C1 tag=4 v1=16 v2=0 v3=0
+K3 obs id=T4pre kind=late-trigger finished=true words_from_device=16 words_old=0
+K3 test id=T4pre result=PASS note="control: the root task's start of a programmed transfer lands in the live page"
+K3 step dom=C1 step=3 params=[5, cc, 0, 0]
+K3 adm op=15 args=[0, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077116928 m3=4294967296
+K3 adm op=15 args=[1, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077121024 m3=4294971392
+K3 adm op=15 args=[2, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077125120 m3=4294967296
+K3 adm op=15 args=[3, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077129216 m3=4294971392
+K3 adm op=15 args=[4, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077133312 m3=4294975488
+K3 adm op=15 args=[5, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077137408 m3=4294975488
+K3 adm op=15 args=[6, 0, 0, 0] rc=0 m0=1 m1=1 m2=1077141504 m3=4294979584
+K3 adm op=15 args=[7, 0, 0, 0] rc=0 m0=0 m1=2 m2=1077145600 m3=4294983680
+K3 step dom=C1 step=5 params=[3, 100003000, 0, 0]
+K3 rep dom=C1 tag=5 v1=1 v2=0 v3=0
+K3 adm op=12 args=[1, 0, 0, 0] rc=0 m0=4 m1=0 m2=0 m3=0
+K3 adm op=15 args=[0, 0, 0, 0] rc=0 m0=0 m1=1 m2=1077116928 m3=4294967296
+K3 adm op=15 args=[1, 0, 0, 0] rc=0 m0=0 m1=1 m2=1077121024 m3=4294971392
+K3 adm op=15 args=[2, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077125120 m3=4294967296
+K3 adm op=15 args=[3, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077129216 m3=4294971392
+K3 adm op=15 args=[4, 0, 0, 0] rc=0 m0=1 m1=2 m2=1077133312 m3=4294975488
+K3 adm op=15 args=[5, 0, 0, 0] rc=0 m0=0 m1=1 m2=1077137408 m3=4294975488
+K3 adm op=15 args=[6, 0, 0, 0] rc=0 m0=0 m1=1 m2=1077141504 m3=4294979584
+K3 adm op=15 args=[7, 0, 0, 0] rc=0 m0=0 m1=2 m2=1077145600 m3=4294983680
+K3 obs id=T4a kind=kill dom=C1 pages_owned=4 dead_rc=0 freed=4 owned_after=0 transfer_running_at_kill=true transfer_running_after_teardown=true
+K3 test id=T4a result=PASS note="the server freed every page of the dead client"
+K3 step dom=C2 step=2 params=[3, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294979584 v3=0
+K3 rep dom=C2 tag=2 v1=0 v2=1077116928 v3=0
+K3 step dom=C2 step=2 params=[4, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294983680 v3=1
+K3 rep dom=C2 tag=2 v1=0 v2=1077121024 v3=0
+K3 step dom=C2 step=2 params=[5, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294987776 v3=5
+K3 rep dom=C2 tag=2 v1=0 v2=1077137408 v3=0
+K3 step dom=C2 step=2 params=[6, 0, 0, 0]
+K3 rep dom=C2 tag=2 v1=0 v2=4294991872 v3=6
+K3 rep dom=C2 tag=2 v1=0 v2=1077141504 v3=0
+K3 step dom=C2 step=3 params=[6, dd, 0, 0]
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[6, dd, bb, 0]
+K3 rep dom=C2 tag=4 v1=0 v2=16 v3=0
+K3 obs id=T4b kind=in-flight-dma armed_at_kill=true armed_after_teardown=true armed_when_c2_owned_page=true finished=true faults=0 intact_words=0 words_of_dead_drivers_buffer=16
+K3 test id=T4b result=FAIL note="the transfer running when the driver was killed faults after the teardown, and the page now owned by C2 is unchanged"
+K3 step dom=C2 step=3 params=[6, dd, 0, 0]
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 adm op=13 args=[0, 0, 0, 0] rc=0 m0=0 m1=0 m2=0 m3=0
+K3 step dom=C2 step=4 params=[6, dd, bb, 0]
+K3 rep dom=C2 tag=4 v1=0 v2=16 v3=0
+K3 obs id=T4c kind=late-dma finished=true faults=0 intact_words=0 words_of_dead_drivers_buffer=16
+K3 test id=T4c result=FAIL note="the dead driver's device, started again later, still faults"
+K3 adm op=14 args=[0, 0, 0, 0] rc=0 m0=9 m1=3 m2=8 m3=15
+K3 cost total commands=9 syncs=3 revokes=8 allocs=15
+K3 summary passed=30 failed=6 void=0 console_bytes_dropped=0 mmio_range_errors=0
+K3_FAIL
+K3_DONE
+
+[boot-a5] marker 'K3_DONE' SEEN after 6.78s (machine=virt,secure=off,gic-version=2,virtualization=on,iommu=smmuv3,highmem=off)

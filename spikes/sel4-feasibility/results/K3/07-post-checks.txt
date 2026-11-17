@@ -1,0 +1,26 @@
+# K3 post-run record, 2026-11-11T14:19:05Z
+repo HEAD: 460f385d71758afbb916ecbf578e1e6bf7ee1e3f
+seL4 source tracked diff: 0 lines
+Cargo.toml and Cargo.lock tracked diff vs HEAD: 0 lines
+src sha256: 2a13af4cf380beab30d9f027c8a21f31ff030f0ba48bd1368f00fc6c433b479e  build-k3.sh
+src sha256: 57138cdba84ce6b8f183302f5bc3f0577a240d2ea38676621976c286916de51e  build-relk.sh
+src sha256: 32e7ebc7939cbc10d85920bffae1d2efe536d278655ae8058867dd79622878eb  run-k3-evidence.sh
+src sha256: 1cd75250c41b89d9f654dbbf32a75a47929936d32d3a7e94e469f07f274b6974  verify_k3.py
+src sha256: b0ea5f770c2421322d102ca08fd56f11cf2b5df76f5f1175ac461e05e07e448b  boot-a5.py
+src sha256: 524ee83f125a8ad3511a1c97c552d31954d49d4ea3bc81ef15cf120b0ba6a3ec  a2a-compare.py
+src sha256: 91cbe0eb3ba3d90b3560c219eb31e53e7345ba7bcc59c264edcb29c8c1239520  crates/e2-task/src/k3_abi.rs
+src sha256: 4dc1347c6373dd1236ba52eb6ffe1831892977da713092303f38948d338fc118  crates/e2-task/src/k3_mmio.rs
+src sha256: 5d46c27777d96c4685c7c82b338fb341073d0a9eea6ae98e281becc4680a51cf  crates/e2-task/src/k3_smmu.rs
+src sha256: 5611d71f4a2d17b2bfd6b8c05652eac436938a708f397ea49e2787521e9cd056  crates/e2-task/src/k3_runtime.rs
+src sha256: a1bf96edb2c570c7d3a4294ac3b24aa5aa3b8065f55594375c2f3af942835288  crates/e2-task/src/bin/k3_server.rs
+src sha256: ad326b850ad4c8a43723d3683707e91de2246bf4ea57cf6f747e831ab468aa2f  crates/e2-task/src/bin/k3_client.rs
+src sha256: dad2bf9a0e9cee90cfa15262ed2de94e05dd508ab5d9094baae2e89da267fd41  crates/e2-root-task/src/bin/k3_root_task.rs
+src sha256: 34a1b2fda0535f772574bd02779c09bc18129bc226901dd6b0115c7a5417b4dc  crates/e2-root-task/src/k3_script.rs
+src sha256: 13ff2ddcc515147a8d8d352bffb88b11d6d000345da6fbe7fd421ee11d83514c  crates/e2-root-task/src/k3_spawn.rs
+src sha256: 569fed594e3961080b71558c2e14c1bc6fc155333a3a12ea55a23d4000c50823  crates/e2-root-task/src/k3_world.rs
+src sha256: 9c9432c271430df6bc3b11725a89a87e476cdcc73b42538e2aaf509065dc95bc  crates/e2-root-task/src/a5_mmio.rs
+src sha256: d19f32377afe8d5fba66ce1eec1b55fb9ae82d2c98beba1198adf7bdeb862202  crates/e2-root-task/src/child_vspace.rs
+src sha256: 3d4242064e64503ad7c86c1ea031bb0328fe31cca6aa913e5199a5462daf1f25  crates/e2-root-task/src/edu.rs
+src sha256: abc20df95b76e2818d1e307930bf03bdc66c4c214e2ac3ac1eed86dbfeba93d4  crates/e2-root-task/src/object_allocator.rs
+src sha256: 6957f7ef493f5d132d14bfafa2a8a2d85066ae63fbb608045120141165ce104b  crates/e2-root-task/src/pl011.rs
+src sha256: 6a8d9db08c1058f4a0dc6626ba7b0e1233d5f6b037d9f3155580e37019cd59c9  crates/e2-root-task/src/slots.rs
