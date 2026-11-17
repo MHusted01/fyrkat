@@ -751,3 +751,19 @@ criterion, outcome definition, property or decision rule is changed. No ADR stat
 | The owner's answer | "whatever you deem correct and best" |
 | The agent's decision (the agent's, under that answer) | The remaining pull requests that implement the workflow are merged on the owner's token, and each merge is disclosed in the pull request. A pull request is merged only after its required checks have passed and its review is complete at the reviewed head commit, with `gh pr merge --squash --match-head-commit <reviewed SHA>` and never with auto-merge. `enforce_admins` is on, so a merge on the owner's token still needs the three required checks. The reasons: the owner's message directed these merges; the agent holds the same token whether it merges or waits, so waiting would not reduce what it can do; the pull requests are reviewed to the workflow's own standard; and waiting would stop the work for an account action that only the owner can take. **The limits of that protection:** the token could also change the protection, and the required approving review count is 0, so "the review is complete", `--match-head-commit` and the disclosure are conditions this entry records and the agent keeps, not controls that GitHub enforces |
 | What the decision does not cover | Any other merge. The merge-delegation draft stays out of force. A separate agent account, with the owner's token out of the agent's environment, and the rulesets, remain **account actions for the owner**: until they exist, GitHub cannot show who merged and cannot enforce a rule that needs the owner's review of an agent's work |
+
+### 2026-11-17: the owner declines a separate agent account
+
+Source: the owner, in conversation on 2026-11-17, answering the open item that the entries of
+2026-11-15 and 2026-11-16 left as an account action for the owner. In the owner's words: "I don't
+want to make a seperate account for claude. Using it from mine is fine, and still keeping claude
+from not showing up as author or co-author is fine by me as well." The agent reads the second
+sentence as: agents work from the owner's account, and Claude appears as neither author nor
+co-author of a commit or pull request. **No criterion, outcome definition, property or decision
+rule is changed. No ADR status is changed.**
+
+| Item | Entry |
+|---|---|
+| A separate agent account | Declined. The agent keeps using the owner's token. The owner's token stays in the agent's environment, so GitHub shows the owner's login for every agent action and a server-side rule remains a convention, as the entry of 2026-11-16 records. The rulesets are not part of this answer |
+| Authorship | No `Co-Authored-By` or "Generated with" line, as `~/.claude/settings.json` already sets |
+| What this does not do | It authorizes no push, pull request or merge. Those stay as the entries of 2026-11-15 and 2026-11-16 limit them |

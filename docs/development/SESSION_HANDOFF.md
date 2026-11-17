@@ -11,113 +11,130 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
   work): local commits on branches other than `main`; the review, follow-up review and
   adjudication agents the workflow calls for; settlement of routine technical disagreements by
   the workflow.
-- **Workflow implementation (owner, 2026-11-15)**, for implementing the approved engineering
-  workflow and completing its validation: edits to security-sensitive paths; the replays,
-  seeded-defect tests and paired reviews; merging the pull requests that implement the workflow.
-  "And not for other work" is the agent's reading. Conditions: security requirements are
-  preserved; no GitHub protection is bypassed; a pull request is merged only after its required
-  checks pass and its review is complete at the reviewed head commit, with `--match-head-commit`
-  and never with auto-merge. The approved proposal also asks for a separate agent account and
-  rulesets "before any delegated merge": pull request 18 was merged on the owner's token on the
-  agent's reading that the explicit direction governs. See Waiting item 1. Recorded in the
-  [Amendments, 2026-11-15](../research/sel4-spike-amendments.md#2026-11-15-the-owners-approval-of-the-engineering-workflow-and-its-standing-authorizations).
-- **K3 (owner, 2026-11-11).** The owner authorized K3 and left its design to the agent. That
-  authorization is recorded only in an uncommitted Amendments entry in the main checkout. See
-  Blockers.
-- **Not authorized:** any other push, pull request or merge; Stage B; A4; the comparator; any
-  change to the seL4 kernel, ABI, dependencies or ADR statuses; new tools or installations;
-  touching PR 9; any change to CI beyond the two the 2026-11-15 entry names; bypassing CI or a
-  GitHub protection.
+- **Workflow implementation (owner, 2026-11-15 and 2026-11-16):** merging the pull requests that
+  implement the approved workflow, on the owner's token, under the conditions recorded in the
+  [Amendments, 2026-11-15](../research/sel4-spike-amendments.md#2026-11-15-the-owners-approval-of-the-engineering-workflow-and-its-standing-authorizations)
+  and [2026-11-16](../research/sel4-spike-amendments.md#2026-11-16-the-owners-answer-on-merging-the-workflows-pull-requests).
+  "And not for other work" is the agent's reading. It covers neither K3 nor the policy draft.
+- **K3 (owner, 2026-11-11):** authorized, design left to the agent. Recorded in the
+  [Amendments](../research/sel4-spike-amendments.md#2026-11-11-k3-the-owners-authorization-and-the-agents-results-the-agents-measurement-for-the-owner).
+- **No separate agent account (owner, 2026-11-17):** agents use the owner's account, and Claude
+  appears as neither author nor co-author. See the
+  [Amendments](../research/sel4-spike-amendments.md#2026-11-17-the-owner-declines-a-separate-agent-account).
+  It authorizes no push, pull request or merge.
+- **Not authorized:** any push, pull request or merge of K3 or of the policy draft; Stage B; A4;
+  the comparator; any change to the seL4 kernel, ABI, dependencies or ADR statuses; new tools or
+  installations; touching PR 9 (Dependabot `protobuf`: not to be merged, its alerts not to be
+  dismissed); any change to CI beyond the two the 2026-11-15 entry names. Isolated kernel
+  prototypes are allowed in principle by the K3 message, the plan's Class 3 rule still applies,
+  and none was built: ask first.
 
 ## Waiting for the owner
 
-1. **An identity for agents.** A separate GitHub account with write access, and
-   the owner's token out of the agent's environment. Agents use the owner's admin token today, so
-   every server-side rule is a convention. See the
-   [baseline, section 2](../research/workflow-baseline-2026-11.md#2-github-what-is-confirmed-and-what-is-inferred).
-   On 2026-11-16 the owner answered the question of merging the remaining workflow pull
-   requests on the owner's token with "whatever you deem correct and best". The agent decided
-   to merge them on that token, disclosed in each pull request, under the conditions in the
-   [Amendments, 2026-11-16](../research/sel4-spike-amendments.md#2026-11-16-the-owners-answer-on-merging-the-workflows-pull-requests).
-   The account and the rulesets are still the owner's to set up.
-2. **K3.** Accept or reject K3's interpretation of the plan's wording, and decide the A5-arm
-   outcome. Whether K3 is committed, pushed and opened as a pull request.
-3. **The merge-delegation draft:** take, change or drop it. Its clause that a disputed finding is
-   the owner's to settle predates the approved workflow.
-4. **After K3:** a kernel-assisted pin of an untyped in a copy of seL4 (a Class 3 change: a new
-   ADR and an amendment); a new crate for an SMMUv3 format library; whether a hypervisor-mode row
-   joins the Stage B matrix.
-5. Toolchain policy (`nightly-2026-08-21` is S1-only); ADR 0002 and 0004 text; Tier 2 for A4's
+1. **K3.** Accept or reject its interpretation (K3 section 1: the revoke-while-mapped test where
+   nothing untrusted can reclaim; the control's REACHED is not an A5-arm Fail; the trusted base is
+   the server, the whole initial task, the elfloader and the kernel). Then decide the A5-arm
+   outcome, and whether K3 is pushed and opened as a pull request.
+   [K3 record](../../spikes/sel4-feasibility/results/K3.md). The agent's reading is a
+   measurement, not an outcome.
+2. **Rulesets** (drafts only, see Context): apply `protect-main` and `block-local-only` after a
+   test on a throwaway branch with the owner watching, then delete the classic rule.
+3. **The merge-delegation draft** in the `fyrkat-policy` worktree: take, change or drop. Its clause
+   that a disputed finding is the owner's to settle predates the approved workflow, and its
+   `AGENTS.md` edits will conflict with `main`'s.
+4. **After K3:** E-pin (a Class 3 change: a new ADR and an amendment); a new crate for an SMMUv3
+   format library (a `Cargo.toml` gate); whether a hypervisor-mode row joins the Stage B matrix;
+   toolchain policy (`nightly-2026-08-21` is S1-only); ADR 0002 and 0004 text; Tier 2 for A4's
    x86-64 half.
-
-Items 2 to 4 are set out in the K3 record and in the handoff beside it, both uncommitted in the
-main checkout.
 
 ## Blockers and open findings
 
-- **K3 is not in Git.** The main checkout, on `spike/k3-isolation`, holds uncommitted K3 code,
-  evidence and results, an Amendments entry dated 2026-11-11 written into the plan as it was
-  before the split, and a newer handoff. The branch itself has no K3 commit. When K3 is committed,
-  its entry goes into `sel4-spike-amendments.md` and its handoff is merged into this one.
-- **A merge-delegation draft** is uncommitted in a second worktree, on
-  `docs/merge-authority-policy`. It is not in force.
-- **Privacy exposure remains:** `refs/pull/7/head` still resolves to `c99300d`. `main` never held it.
-  See [EVIDENCE-PRIVACY](../../spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md).
-- The macOS workflow has never passed. It is started by hand only.
-- The `spike evidence` CI job blocks nothing until it is a required check.
-- The script that audits a blind replay is not on `main`: its review did not converge and it was
-  split out of pull request 18 to be redone on its own. Earlier versions of it are in that pull
-  request's history.
-- **An identifier in pull request 18's history.** Commit `e163dff`, reachable through
-  `refs/pull/18/head`, holds a Claude Code session identifier that was used as test data. It is a
-  random ID, not a credential and not personal data, and it is not on `main`. Like the pull
-  request 7 ref, it cannot be removed from here.
-- Open: `RUSTSEC-2024-0449` (host-side); a base-controlled `pull_request_target` check; CI uses
-  QEMU 8.2.2 against the spike's 11.1.3.
+- **K3's deep review** comes before any push (Next actions 1). No finding is recorded yet.
+- **Privacy exposure remains:** `refs/pull/7/head` still resolves to `c99300d`; commit `e163dff`,
+  reachable through `refs/pull/18/head`, holds a random Claude Code session identifier used as
+  test data (not a credential, not on `main`). Neither can be removed from here. See
+  [EVIDENCE-PRIVACY](../../spikes/sel4-feasibility/results/EVIDENCE-PRIVACY.md).
+- The macOS workflow has never passed and is started by hand only. Open: `RUSTSEC-2024-0449`
+  (host-side); a base-controlled `pull_request_target` check; CI uses QEMU 8.2.2 against the
+  spike's 11.1.3.
+- The replay-audit script is on its own branch (`chore/replay-audit`), not on `main`: its review
+  did not converge and it was split out of pull request 18.
+- **A resumed reviewer ran at `high`**, not the `xhigh` its file sets (baseline note, section 6;
+  cause open). Start deep follow-up reviews as fresh agents.
 
 ## Local state that Git does not show
 
-- **Untracked, not the project's:** `.agents/` and `.codex/` (they include hooks and absolute home
-  paths). Never stage them. Stage by name, never `git add -A`.
-- **Gitignored, local only, keep:** `spikes/sel4-feasibility/external/` and `results-raw/` (raw
-  logs, including earlier runs kept on purpose). Do not `git clean`, `checkout .`, `stash` or
-  `reset` in the main checkout.
-- **Most build output is gone.** On 2026-11-11 and 12, at the owner's request, `external/` was cut
-  from 11 GB to 328 MB: the builds of A1, A2a, E1 to E3 and A5 steps 0 to 2 were deleted. An
-  evidence driver for any of them needs a rebuild first. The record of what was deleted is in the
-  uncommitted handoff in the main checkout.
-- **Never push** `local-only/s1-workspace-unsanitized`. A local pre-push hook, set through
-  `core.hooksPath`, refuses it by ancestry and by name. It is a guard on this machine only.
+- **Untracked, not the project's:** `.agents/` and `.codex/` (hooks, home paths). Never stage them.
+  Stage by name, never `git add -A`. A `~/.codex` pre-commit hook runs on commits here and prints
+  "Broken pipe" noise; the commits succeed.
+- **Gitignored, keep:** `spikes/sel4-feasibility/external/` (328 MB, was 11 GB) and `results-raw/`.
+  In `external/` kept: the sources (`seL4`, `rust-sel4`, `sel4test-workspace`), tools, small logs,
+  the K3 images in `k3-build/`, and in `relk-build` only `K2`, `K2R` and the three dtbs. The build
+  outputs of A1, A2a, E1 to E3, A5 steps 0 to 2, Route I and the K3 cargo targets were deleted: an
+  earlier evidence driver needs a rebuild first, and `build-k3.sh` needs `relk-build/K2` and
+  `K2R`. `verify-evidence.py` needs no images. Do not `git clean`, `checkout .`, `stash` or `reset`.
+- **Worktrees:** `../fyrkat-policy` (`docs/merge-authority-policy`) holds uncommitted policy work.
+  Five more hold squash-merged workflow branches and are clean: `../fyrkat-audit`, `-stage1`,
+  `-stage2`, `-validation`, `-workflow`. Removing them needs `git worktree remove` and
+  `git branch -D`. Other local branches: `docs/s1-session-record`, `spike/s1-prep-work`,
+  `spike/stage-b-prep`, `spike/a5-smmu`.
+- **Never push** `local-only/s1-workspace-unsanitized`. A `core.hooksPath` guard refuses it by
+  ancestry and by name; it guards this machine only.
 
 ## Verified, and not verified
 
-CI shows the checks for each merged commit, and runs `verify-evidence.py` and its self-test.
-**Not verified:** anything on hardware; the CI QEMU against the spike's images; clippy on the
-spike workspace.
+Verified on the K3 commits rebased onto `main` at `b617525`, 2026-11-17: `cargo xtask check` (12
+steps), `verify-evidence.py` (174 of 174), its `--self-test` (191 of 191). `main` requires the
+checks `check and boot (ubuntu x86-64)`, `boot (ubuntu arm64)`, `security-sensitive paths` and
+`spike evidence`, with `enforce_admins` on (`gh api`).
+**Not verified:** that K3 can be rebuilt after the cleanup (no rebuild was attempted); anything on
+hardware; the CI QEMU against the spike's images; clippy on the spike workspace; that the draft
+rulesets behave as assumed (none applied); the workflow hypotheses H1 to H3, H6 and H7 (no
+results) and H5 (seeded-defect tests not run).
 
 ## Next actions
 
-1. **Authorized:** make `spike evidence` a required check once it has passed on `main`; continue
-   the workflow validation in the [baseline](../research/workflow-baseline-2026-11.md#5-hypotheses)
-   and record each result there; redo the replay audit script as a change of its own.
-2. **Needs the owner:** the list above. Until item 2 is decided, no new experiment.
-3. If the owner accepts K3: record the A5-arm outcome in the Amendments (needs approval), then
-   Stage B and A4, each of which needs authorization.
-4. A2b (complete the dependency lists for K1, K1R, K2, K2R) is future work for A2-final.
+1. **Authorized (general rules):** the deep review of K3: a fresh `reviewer` agent, packet from
+   `.github/scripts/review-packet.sh <base> <head>`, at a fixed commit; fixes get a `reviewer-delta`
+   follow-up. Do not edit a K3 pinned file during the review.
+2. **Needs the owner:** Waiting items 1 to 4. Until item 1 is decided, no new experiment.
+3. **Authorized (workflow grant):** finish the validation: replay `004bf9e` (re-export base
+   `44d1d70` and head `004bf9e`), design the seeded-defect test for H5, measure H1 and H2 with
+   one-task sessions at `--autocompact 200000`; record in the baseline note, section 6. Run one
+   review at a time: the usage limit cut three runs.
+4. If the owner accepts K3: record the A5-arm outcome in the Amendments (needs approval), then
+   Stage B and A4, each of which needs authorization. A2b is future work for A2-final.
 
 ## Context not recorded elsewhere
 
-- **Evidence pins.** Each evidence set records the SHA-256 of its inputs, and shared files are
-  inputs of several sets. Editing one means re-running the drivers that list it, then
-  `sanitize-run.py` and `verify-evidence.py`. Never edit a listed file while its driver runs or
-  while a reviewer is reading the tree. Files pinned by merged evidence are not changed: write a
-  new script.
-- **Running the experiments by hand.** The commands for the release kernels and for A5 are in
-  this file's history at `460f385`. The images they name were deleted and must be rebuilt first.
-  The K3 commands are in the uncommitted handoff in the main checkout.
-- **QEMU's sources** for the SMMU and `edu` were read from the public repository at tag `v11.1.3`
-  as documentation. Nothing of them is in this repository.
-- `git log --show-signature` fails on this machine although the commits carry signatures and
-  GitHub verifies them. Run the spike's drivers under bash: zsh does not split words.
-- `cargo xtask check` in a new worktree needs `.tools/` copied from the main checkout, and its own
-  `target/` directory.
+- **Evidence pins.** Each set records the SHA-256 of its inputs. `run-k3-evidence.sh` hashes the K3
+  sources, scripts and checker before the first build and after the last boot, and `verify_k3.py`
+  requires them unchanged. Editing a listed file means re-running the driver (about 25 minutes,
+  after rebuilding the kernel variants), then `sanitize-run.py K3`, refreshing K3 sections 8 and 9,
+  and `verify-evidence.py`. Dry-test a changed checker against a log recorded with QEMU's trace on.
+  Shared files (`a5_mmio.rs`, `pl011.rs`, `slots.rs`, `smmuv3.rs`, `edu.rs`, `child_vspace.rs`,
+  `object_allocator.rs`, `boot-a5.py`, `build-relk.sh`) are read by K3 and were not edited; files
+  pinned by merged evidence are not changed: write a new script.
+- **Running K3 by hand** (under bash, not zsh): `./build-k3.sh K2|K2R [design|naive|MUTANT]`, then
+  `boot-a5.py --smp 4 --machine-extra iommu=smmuv3,highmem=off --device edu,dma_mask=0xffffffffff
+  --device edu,dma_mask=0xffffffffff --marker K3_DONE external/k3-build/ID-VARIANT/image`. Keep the
+  machine quiet during an evidence run: the in-flight kill test relies on the `edu` 100 ms timer
+  on the virtual clock.
+- **Hazards found.** Invoking any operation on an endpoint or notification capability is an IPC or
+  a signal, not an error: never type-probe a CSpace by invocation without skipping communication
+  slots. A `Revoke` of an untyped holder's untyped destroys its own frames. QEMU's SMMU leaves a
+  device buffer zero when a read is refused, and `pattern(0, 0)` is zero.
+- **Draft rulesets** (no copy survives outside this description). `protect-main`: target the default
+  branch, empty bypass list, rules deletion, non-fast-forward, linear history, pull request (squash
+  only, review count 0, thread resolution), required status checks (strict; the required checks,
+  bound to the GitHub Actions app, id 15368). `block-local-only`: `refs/heads/local-only/**`, empty
+  bypass list, rules creation and update. Modelled on the two active rulesets of another public
+  repository of the owner; the exact shape comes from `gh api repos/<owner>/<repo>/rulesets/<id>`.
+- **Replay materials** (the keys are the original reports of reviews of `96f68c2`, `05c40b2`,
+  `004bf9e`, recoverable from the review transcripts). Matching rules: score a finding strict if it
+  names the same defect at the same place, lenient if the same problem less exactly; reject a
+  configuration for missing a checkable Blocker, Critical or High; a miss both arms make is
+  attributed to the replay conditions. The first replay's scoring is in the baseline note.
+- `git log --show-signature` fails on this machine although the commits carry signatures and GitHub
+  verifies them. `cargo xtask check` in a new worktree needs `.tools/` copied from the main
+  checkout and its own `target/`.
