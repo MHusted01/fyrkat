@@ -97,7 +97,7 @@ All rows are [Measured, local].
 
 - That the token could weaken the protection of `main` today. Testing it would change a setting.
 - That the `ask` rule produced a prompt for those writes. The transcripts do not record prompts.
-- That a ruleset with a `creation` rule can be made on Fyrkat. Section 6 records the test.
+- That a ruleset with a `creation` rule can be made on Fyrkat. The test is not yet run; it is listed under "Not yet tested" in section 6.
 
 Consequences [Inferred]:
 
@@ -180,11 +180,117 @@ strict and lenient.
 
 ## 6. Validation log
 
-Results are appended here as they are produced.
+Results are appended here as they are produced. Nothing in this section changes a setting: the
+values in `CLAUDE.md` and the agent files stay as they are until a hypothesis in section 5 has
+a result that meets its rule, and these results do not. Figures marked [Measured, local] come
+from the session transcripts on the owner's machine, through `scripts/workflow-metrics` unless
+a source is named. Sentences marked [Inferred] are the author's reading of those figures.
 
-| Date | Hypothesis | What ran | Result | Label |
+### Review rounds and convergence [Measured, local: the review reports of this work and `git log`]
+
+| Unit | Rounds | Open Blocker + Major after each round |
+|---|---|---|
+| Foundation (this note and the scripts), #18 | 3 | 9, then 2, then 3. The last round did not shrink the set, so the audit script was split out and the rest merged |
+| Review system, #19 | 5 | 12 distinct (two independent reviews), then 4, 2, 2, 0 |
+| Records and CI, #20 | 6 | 6 distinct (two independent reviews), then 3, 1, 0, 0, 0 |
+
+A round is one review report, so a reviewer that reported twice counts twice, except that the
+two paired reports of round 1 count as one round. Rounds 5 and 6 of
+#20 each reviewed one new commit, and nothing was open before either: one recorded the owner's
+answer on merging, and one corrected an overstated reason in it. The workflow sends any change
+to a deep unit to a follow-up review, and both changed one.
+
+The first round of each unit found the most. Later rounds found problems in what the previous
+fix added, or older problems of the same kind. In the review system the findings after round 3
+were increasingly exotic Git settings, and the review's question was narrowed to configurations
+a developer could plausibly have. [Inferred: the narrowing is the author's judgment; the
+reviewer applied it.] Round 5 of #19, which closed it, ran wholly at `high` effort: the reviewer
+that gave the round 4 report at `xhigh` was resumed to check the next commit, and every request
+after the resume ran at `high`, although its agent file says `xhigh`. [Measured, local:
+per-request effort in the transcript] The cause is not established. It means that a resumed
+reviewer may not keep the effort its file sets.
+
+### H4 and H5: effort for review
+
+**Replay of `96f68c2`** (PR 6, the C1 and C2 method files). One replay per arm, each a separate
+headless session in an exported two-commit tree, with a mechanically built packet. The key was
+the original review's report, saved before any replay ran, with its matching rules written
+first. Finding 6 of the original needed the network and was excluded. The packet printed depth
+**deep**, only because the review scripts were newer than the exported tree; the content was
+standard depth, and both replay reports are headed "deep".
+
+| | Original, `xhigh` | Replay, `xhigh` | Replay, `high` |
+|---|---|---|---|
+| Brief and means | written by hand, full repository, network | mechanical packet, export only, no network | the same |
+| Checkable original findings found, of 6 (strict, lenient) | n/a | 2, 4 | 1, 3 |
+| Estimated cost, requests, wall time [Measured, local] | $3.4, 49, 16 min | $1.3, 19, 5.9 min | $0.6, 10, 2.8 min |
+
+- **Scoring** [Inferred]. The scorer wrote the key's rules and knows the key, which favours a
+  match. Findings 2 and 7 were each matched on one sub-point of a finding that has several, and
+  scored lenient; read as strict, the counts would be 4 and 3.
+- **Rule 6 had nothing to test.** The original has no Blocker, Critical or High finding, so the
+  rule that rejects a configuration for missing one could not fire on this case, whatever the
+  arms found. H4's adoption rule is therefore met vacuously, by one replay of the three planned.
+  The word for the state of H4 is incomplete.
+- **Misses.** The one miss only the `high` arm made, on first-touch cost in the C2 method, was a
+  Major. Findings 4 and 5 were missed by both arms. [Inferred] They rest on text that is in the
+  export, so the cause is not the missing network or history. Two differences remain: the
+  original's brief was written by hand and asked about each plan item the method files must fix,
+  which points at findings 5, 2, 3 and 7; and a second run of the same configuration might
+  differ. By matching rule 7 the misses are attributed to the replay conditions or run
+  variance, and not to effort.
+- **What the replays raised.** Four of each arm's six Majors were Minors in the original. Both
+  arms rated the per-hop divisor, the F4 page counts and the claim of three marked interpretations
+  Major. The abort threshold was Major for the `high` arm and Minor for `xhigh`. The `xhigh` arm
+  rated the point about the `Yield` loops Major; `high` listed a related point as Minor. The
+  original had all of these as Minors, and its Minor on the divisor led to its fix. Both arms also
+  listed a contradiction in the C2 text ("F3 starts from the state F2 leaves" against "F2 does not
+  warm F3") that the original does not mention. It is a wording defect, rated Nit by `xhigh` and
+  Minor by `high`. The replays found no material defect the original missed, and an earlier
+  version of this note said they found one.
+- The replay of `004bf9e` was started twice and cut off both times by the usage limit. Both
+  attempts are void and were not scored. A third pair is prepared and has not run.
+
+**Paired live reviews** of two changes at deep depth, `xhigh` against `high`, the same brief,
+neither able to see the other's work.
+
+| Change | Effort | Findings | Distinct material issues found, of the union | Estimated cost, tokens consumed [Measured, local] |
 |---|---|---|---|---|
-| | | *(none yet)* | | |
+| Review system, first commit | `xhigh` | 1 Blocker, 9 Major | 10 of 12 | $2.4, 3.3M |
+| | `high` | 8 Major | 10 of 12 | $1.6, 1.9M |
+| Records and CI, first commit | `xhigh` | 4 Major | 5 of 6 | $4.8, 5.7M (the review sat idle 322 minutes, so its cache was written again) |
+| | `high` | 6 Major | 6 of 6 | $1.6, 2.6M |
+
+Tokens consumed is cache reads, cache writes and output. The figures that an earlier version of
+this note gave were each run's final context, not what it consumed.
+
+- **Neither arm missed a Blocker the other found**, but there was one Blocker. The `xhigh` arm
+  rated an issue Blocker that the `high` arm found and rated Major. [Inferred] That is one data
+  point.
+- By the estimate, the `high` arm cost 0.66 and 0.33 of the `xhigh` arm on the two changes, and
+  0.46 on the replay. The idle time inflates the second `xhigh` figure; without the extra cache
+  writes that figure would be about 0.55. [Inferred]
+
+**What this supports** [Inferred]. On these cases `high` found about as many of the material
+issues as `xhigh` for about half to two thirds of the cost. That is two paired reviews and
+one replay, scored by the author. It is not enough to change a setting: H5 asks for seeded
+defects in `unsafe`, MMIO and verifier code, and none has been run, and the replay cannot decide
+H5 at all. **Decision: effort stays as it is.**
+
+### Not yet tested
+
+- **H1, H2:** sessions have not yet been run one task at a time with the 200k window, so there
+  is no comparison.
+- **H3:** the review packet is in use, but reviewer intake was not measured separately, so the
+  hypothesis that it cuts intake by a third has no result.
+- **H6, H7:** not measured.
+- **Seeded-defect tests** for H5: not run.
+- **The replays of `004bf9e` and `05c40b2`:** not scored. A third pair for `004bf9e` is prepared
+  locally and has not run.
+- **Rulesets:** drafted in a working file outside the repository, and not applied. They need a
+  test on a throwaway branch.
+- **The replay audit script** is not in the repository. Its review did not converge and it was
+  split out of #18. It has since been reworked in a scratch copy and still needs its own review.
 
 ## 7. Limits of this note
 
