@@ -180,11 +180,70 @@ strict and lenient.
 
 ## 6. Validation log
 
-Results are appended here as they are produced.
+Results are appended here as they are produced. Nothing in this section changes a setting: the
+values in `CLAUDE.md` and the agent files stay as they are until a hypothesis in section 5 has
+a result that meets its rule, and these results do not.
 
-| Date | Hypothesis | What ran | Result | Label |
-|---|---|---|---|---|
-| | | *(none yet)* | | |
+### Review rounds and convergence [Measured, local; review reports and `git log`]
+
+| Unit | Rounds | Open Blocker + Major after each round |
+|---|---|---|
+| Foundation (this note and the scripts), #18 | 3 | 9, then 2, then 3. The last round did not shrink the set, so the audit script was split out and the rest merged |
+| Review system, #19 | 5 | 12 distinct (two independent reviews), then 4, 2, 2, 0 |
+| Records and CI, #20 | 5 | 6 distinct (two independent reviews), then 3, 1, 0, 0 |
+
+The first round of each unit found the most. Later rounds found problems in what the previous
+fix added, or older problems of the same kind. In the review system the findings after round 3
+were increasingly exotic Git settings, and the review's question was narrowed to configurations
+a developer could plausibly have. [Inferred: the narrowing is the author's judgment; the
+reviewer applied it.]
+
+### H4 and H5: effort for review [Measured, local; one replay and two paired reviews]
+
+**Replay of `96f68c2`** (PR 6, the C1 and C2 method files). One replay per arm, each a separate
+headless session in an exported two-commit tree, with a mechanically built packet. The key was
+the original review's report, saved before any replay ran, with its matching rules written first. Finding 6 of the original needed the network and was excluded.
+
+| | Original, `xhigh`, full repository | Replay, `xhigh` | Replay, `high` |
+|---|---|---|---|
+| Checkable original findings found (strict, lenient), of 6 | n/a | 2, 4 | 1, 3 |
+| Estimated cost, requests, wall time | $3.4, 49, 16 min | $1.3, 19, 5.9 min | $0.6, 10, 2.8 min |
+
+- Neither arm missed a Blocker or High: the original had none. The one miss that only the `high`
+  arm made, on first-touch cost in the C2 method, was a Major. By rule 6 of the matching rules
+  this does not reject `high` for standard depth. By rule 7, the two findings both arms missed
+  are attributed to the replay conditions (no network, no repository history).
+- Both arms found a real defect the original did not: the per-hop figure divides by 4 call-reply
+  pairs where the chain has 3. A later review round fixed that on `main`.
+- The replay of `004bf9e` was started twice and cut off both times by the usage limit. Both
+  attempts are void and were not scored.
+
+**Paired live reviews** of two changes at deep depth, `xhigh` against `high`, same brief, blind
+to each other.
+
+| Change | `xhigh` | `high` |
+|---|---|---|
+| Review system, first commit | 1 Blocker and 9 Major; 10 of 12 distinct material issues; 134k tokens | 8 Major (the Blocker's issue rated Major); 10 of 12; 101k tokens |
+| Records and CI, first commit | 4 Major; 5 of 6 (rated the sixth Minor); 156k tokens | 6 Major; 6 of 6; 104k tokens |
+
+Neither arm missed a finding the other rated Blocker. Each missed material issues the other
+found on the first change.
+
+**What this supports.** On these cases `high` did about as well as `xhigh` at about two thirds
+to three quarters of the tokens. That is two paired reviews and one replay. It is not enough to
+change a setting: H5 asks for seeded defects in `unsafe`, MMIO and verifier code, and none has
+been run, and the replay cannot decide H5 at all. **Decision: effort stays as it is.**
+
+### Not yet tested
+
+- **H1, H2:** sessions have not yet been run one task at a time with the 200k window, so there
+  is no comparison.
+- **H3:** the review packet is in use. Intake per review was not measured separately for the
+  replays; the usage figures above include the reading the packet saved. [Speculative]
+- **H6, H7:** not measured.
+- **Seeded-defect tests** for H5: not run.
+- **The replay audit script** is not in the repository. Its review did not converge and it was
+  split out of #18. It has since been reworked in a scratch copy and still needs its own review.
 
 ## 7. Limits of this note
 
