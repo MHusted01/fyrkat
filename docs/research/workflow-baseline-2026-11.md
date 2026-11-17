@@ -192,18 +192,22 @@ a source is named. Sentences marked [Inferred] are the author's reading of those
 |---|---|---|
 | Foundation (this note and the scripts), #18 | 3 | 9, then 2, then 3. The last round did not shrink the set, so the audit script was split out and the rest merged |
 | Review system, #19 | 5 | 12 distinct (two independent reviews), then 4, 2, 2, 0 |
-| Records and CI, #20 | 5 | 6 distinct (two independent reviews), then 3, 1, 0, 0 |
+| Records and CI, #20 | 6 | 6 distinct (two independent reviews), then 3, 1, 0, 0, 0 |
 
-The fifth round of #20 reviewed one new commit that recorded the owner's answer on merging and
-corrected an overstated reason. Nothing was open before it: the workflow sends any change to a
-deep unit to a follow-up review, and that commit changed one.
+A round is one review report, so a reviewer that reported twice counts twice. Rounds 5 and 6 of
+#20 each reviewed one new commit, and nothing was open before either: one recorded the owner's
+answer on merging, and one corrected an overstated reason in it. The workflow sends any change
+to a deep unit to a follow-up review, and both changed one.
 
 The first round of each unit found the most. Later rounds found problems in what the previous
 fix added, or older problems of the same kind. In the review system the findings after round 3
 were increasingly exotic Git settings, and the review's question was narrowed to configurations
 a developer could plausibly have. [Inferred: the narrowing is the author's judgment; the
-reviewer applied it.] One round of #19 ran partly at `high` effort, because a reviewer was
-resumed after a usage-limit stop.
+reviewer applied it.] Round 5 of #19, which closed it, ran wholly at `high` effort: the reviewer
+that gave the round 4 report at `xhigh` was resumed to check the next commit, and every request
+after the resume ran at `high`, although its agent file says `xhigh`. [Measured, local:
+per-request effort in the transcript] The cause is not established. It means that a resumed
+reviewer may not keep the effort its file sets.
 
 ### H4 and H5: effort for review
 
@@ -234,10 +238,15 @@ standard depth, and both replay reports are headed "deep".
   which points at findings 5, 2, 3 and 7; and a second run of the same configuration might
   differ. By matching rule 7 the misses are attributed to the replay conditions or run
   variance, and not to effort.
-- **What the replays raised.** Both arms rated as Major some defects the original rated Minor:
-  the per-hop divisor, the F4 page counts, the abort threshold, and the claim of three marked
-  interpretations. The original's own Minor on the divisor led to its fix. The replays did not
-  find a defect the original missed, and an earlier version of this note said they had.
+- **What the replays raised.** Almost everything the replays rated Major, the original had as a
+  Minor. Both arms rated the per-hop divisor, the F4 page counts and the claim of three marked
+  interpretations Major. The abort threshold was Major for the `high` arm and Minor for `xhigh`.
+  The `xhigh` arm rated the point about the `Yield` loops Major; `high` listed a related point as
+  Minor. The original had all of these as Minors, and its Minor on the divisor led to its fix.
+  Both arms also listed a contradiction in the C2 text ("F3 starts from the state F2 leaves"
+  against "F2 does not warm F3") that the original does not mention. It is a wording defect, rated
+  Nit by `xhigh` and Minor by `high`. The replays found no material defect the original missed,
+  and an earlier version of this note said they found one.
 - The replay of `004bf9e` was started twice and cut off both times by the usage limit. Both
   attempts are void and were not scored. A third pair is prepared and has not run.
 
@@ -257,11 +266,12 @@ this note gave were each run's final context, not what it consumed.
 - **Neither arm missed a Blocker the other found**, but there was one Blocker. The `xhigh` arm
   rated an issue Blocker that the `high` arm found and rated Major. [Inferred] That is one data
   point.
-- By the estimate, the `high` arm cost 0.67 and 0.33 of the `xhigh` arm on the two changes, and
-  0.46 on the replay. The idle time inflates the second `xhigh` figure.
+- By the estimate, the `high` arm cost 0.66 and 0.33 of the `xhigh` arm on the two changes, and
+  0.46 on the replay. The idle time inflates the second `xhigh` figure; without the extra cache
+  writes that figure would be about 0.55. [Inferred]
 
 **What this supports** [Inferred]. On these cases `high` found about as many of the material
-issues as `xhigh` for between a third and two thirds of the cost. That is two paired reviews and
+issues as `xhigh` for about half to two thirds of the cost. That is two paired reviews and
 one replay, scored by the author. It is not enough to change a setting: H5 asks for seeded
 defects in `unsafe`, MMIO and verifier code, and none has been run, and the replay cannot decide
 H5 at all. **Decision: effort stays as it is.**
@@ -274,8 +284,10 @@ H5 at all. **Decision: effort stays as it is.**
   hypothesis that it cuts intake by a third has no result.
 - **H6, H7:** not measured.
 - **Seeded-defect tests** for H5: not run.
-- **The replays of `004bf9e` and `05c40b2`:** not scored.
-- **Rulesets:** drafted and not applied. They need a test on a throwaway branch.
+- **The replays of `004bf9e` and `05c40b2`:** not scored. A third pair for `004bf9e` is prepared
+  locally and has not run.
+- **Rulesets:** drafted in a working file outside the repository, and not applied. They need a
+  test on a throwaway branch.
 - **The replay audit script** is not in the repository. Its review did not converge and it was
   split out of #18. It has since been reworked in a scratch copy and still needs its own review.
 
