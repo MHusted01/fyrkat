@@ -32,8 +32,8 @@ and each is reviewed at its own depth.
 
 `.github/scripts/review-packet.sh` computes a floor for the depth from paths. A change is deep
 when it touches a security-sensitive path, compiled or linked source, evidence tooling, anything
-in a spike other than its prose, a dependency list or submodule, the spike plan, or a file that
-recorded evidence names. The script cannot see uncertainty or how a claim will be used. The
+in a spike other than its prose, a dependency list or submodule, the spike plan or its
+Amendments, or a file that recorded evidence names. The script cannot see uncertainty or how a claim will be used. The
 author raises the depth with `--deep` when those call for it. Nothing lowers a depth the script
 sets: it has no flag for that, and it prints standard or deep for every change, a corrected
 typo and the session handoff included.
@@ -107,14 +107,35 @@ round does not, stop reviewing and find out why. There is no fixed number of rou
 
 The outcome is recorded with the finding in the pull request.
 
-**The owner is asked only for** a decision that is the owner's under the
-[approval gates](../../AGENTS.md#approval-gates), or a material risk to a security property that
-is still open after step 5.
+This procedure settles routine technical disagreements. **The owner is still asked for** a
+decision that is the owner's under the [approval gates](../../AGENTS.md#approval-gates), the
+acceptance of an outcome or a gate, the interpretation of a criterion of an approved plan, and
+a material risk to a security property that is still open after step 5.
 
-## 4. Sessions
+## 4. Records
 
-- One task per session. When a task's pull request merges, run `/handoff`, start a fresh session,
-  and run `/fyrkat-resume`.
+Each fact has one home. Other documents link to it and do not restate it, so that a reviewer
+checks a claim once and a correction is made in one place.
+
+| Fact | Home |
+|---|---|
+| A result and the claims it supports | Its file under `spikes/<spike>/results/` |
+| A change to the spike plan, an owner decision about the spike, an authorization for a session | [The plan's Amendments](../research/sel4-spike-amendments.md), append-only |
+| A deviation from the plan | `results/deviations.md` of the spike |
+| An architecture decision | Its [ADR](../adr/README.md) |
+| Status of a milestone | [The roadmap](../roadmap.md), one line with a link to the result |
+| What the next session needs and no other file holds | [The handoff](SESSION_HANDOFF.md) |
+
+The handoff is tracked, so its history is in Git. It does not record the branch, the head
+commit, the state of pull requests or the list of uncommitted files: `/fyrkat-resume` reads those
+from Git. It is written before a task's last commit, describes the state once that pull request
+merges, and travels in that pull request. It never has a pull request of its own.
+
+## 5. Sessions
+
+- One task per session. Run `/handoff` before the task's last commit, so that the handoff
+  travels in the task's pull request. After that pull request merges, start a fresh session and
+  run `/fyrkat-resume`.
 - Model, effort and compaction settings are hypotheses under test. Their current values are in
   [CLAUDE.md](../../CLAUDE.md) and the agent files, and the tests are in the
   [baseline note](../research/workflow-baseline-2026-11.md#5-hypotheses). A value changes when

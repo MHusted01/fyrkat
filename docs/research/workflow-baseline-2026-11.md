@@ -131,6 +131,9 @@ Consequences [Inferred]:
 6. **One task per session.**
 7. **Settings are hypotheses** (section 5). Today's values stay until measured.
 8. **A separate agent identity and rulesets** before any delegated merge.
+9. **CI verifies the recorded spike evidence** and runs the verifier's self-test. The job becomes
+   a required check once it has passed on a clean checkout.
+10. **The macOS workflow's weekly trigger is removed** until a run of it passes.
 
 The rules in force are in [docs/development/workflow.md](../development/workflow.md).
 
