@@ -28,7 +28,8 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
   [Amendments](../research/sel4-spike-amendments.md#2026-11-17-the-owner-declines-a-separate-agent-account).
   It authorizes no push, pull request or merge.
 - **Push, PR and merge of the K3 branch (owner, in conversation, 2026-11-17):** "1. yes" to whether the
-  review, with its Majors fixed and followed up, counts as clean. Conditions as in the
+  review, with its Majors fixed and followed up, counts as clean. For that one pull request only; it is
+  used up when it merges. Conditions as in the
   [Amendments](../research/sel4-spike-amendments.md#2026-11-17-k3-decision-later-the-owners-answers-on-the-push-and-the-successor-run).
 - **Successor run (owner left it to the agent, 2026-11-17; the agent decided yes, as a new task after K3
   merges):** same entry. Not started.
@@ -94,7 +95,7 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 Verified on the K3 commits rebased onto `main` at `b617525`, 2026-11-17: `cargo xtask check` (12
 steps), `verify-evidence.py` (174 of 174), its `--self-test` (191 of 191). K3 had a deep review and rounds of
-follow-up until no Blocker or Major was open (K3 section 10d). `main` requires the
+follow-up (K3 section 10d). `main` requires the
 checks `check and boot (ubuntu x86-64)`, `boot (ubuntu arm64)`, `security-sensitive paths` and
 `spike evidence`, with `enforce_admins` on (`gh api`).
 **Not verified:** that K3 can be rebuilt after the cleanup (no rebuild was attempted); anything on
