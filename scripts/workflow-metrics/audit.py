@@ -30,6 +30,7 @@ one that tries. A clean audit is evidence of a blind run and not proof of one.
 from __future__ import annotations
 
 import argparse
+import json
 import posixpath
 import re
 import sys
@@ -56,6 +57,8 @@ GIT_NETWORK = re.compile(
     r"\bgit\b[^\n;|&]*?\b(fetch|pull|clone|push|ls-remote|remote\s+(add|set-url|update)|submodule)\b"
 )
 URL = re.compile(r"https?://")
+# An SSH-style remote such as git@github.com:owner/repo carries no URL scheme and no path.
+GITHUB_HOST = re.compile(r"github\.com", re.IGNORECASE)
 # `~` is the home directory when it stands alone, starts a path or names a user. `~10 s` is not.
 HOME_FORM = re.compile(
     r"(?<![A-Za-z0-9_])(~(?=/|[\s\"';|&)]|$|[A-Za-z_])[A-Za-z0-9_-]*|\$HOME\b|\$\{HOME\})(/[^\s\"'`;|&)<>]*)?"
@@ -91,7 +94,7 @@ class Auditor:
                 return None
         if self.inside(path, self.own_transcripts) and "/tool-results/" in path + "/":
             return None
-        if path.startswith(SYSTEM_PREFIXES) and not path.startswith(DATA_VOLUME):
+        if (path + "/").startswith(SYSTEM_PREFIXES) and not path.startswith(DATA_VOLUME):
             return None
         if self.inside(path, self.home):
             rest = path[len(self.home) :].lstrip("/") + "/"
@@ -99,9 +102,6 @@ class Auditor:
         return "names an absolute path outside the run"
 
     def path_problem(self, text: str) -> str | None:
-        for pattern in self.extra:
-            if pattern.search(text):
-                return f"matches --forbid /{pattern.pattern}/"
         for match in HOME_FORM.finditer(text):
             rest = posixpath.normpath("/" + (match.group(2) or "")).lstrip("/") + "/"
             if not rest.startswith(HOME_EXEMPT):
@@ -120,6 +120,8 @@ class Auditor:
         return None
 
     def text_problem(self, text: str) -> str | None:
+        # A backslash at the end of a line continues the command on the next one.
+        text = re.sub(r"\\\n", " ", text)
         problem = self.path_problem(text)
         if problem:
             return problem
@@ -130,11 +132,20 @@ class Auditor:
             return "mentions a git subcommand that uses the network or changes a remote"
         if URL.search(text):
             return "contains a URL"
+        if GITHUB_HOST.search(text):
+            return "names github.com"
         return None
 
-    def problem(self, tool: str, arguments: dict) -> str | None:
+    def problem(self, tool: str, arguments: object) -> str | None:
         if tool not in ALLOWED_TOOLS:
             return "tool is not on the allowlist"
+        if not isinstance(arguments, dict):
+            return "the call's arguments are not a mapping"
+        # --forbid applies to every argument of every tool, absolute paths included.
+        everything = json.dumps(arguments, ensure_ascii=False, default=str)
+        for pattern in self.extra:
+            if pattern.search(everything):
+                return f"matches --forbid /{pattern.pattern}/"
         for key in PATH_ARGUMENTS:
             value = str(arguments.get(key) or "")
             if not value:
@@ -171,10 +182,12 @@ def audit(directory: Path, auditor: Auditor) -> tuple[int, list[tuple[int, str, 
         for record in tr.records(path):
             for block in tr.tool_uses(record):
                 checked += 1
-                tool, arguments = block.get("name", ""), block.get("input") or {}
+                tool, arguments = block.get("name", ""), block.get("input")
+                if arguments is None:
+                    arguments = {}
                 reason = auditor.problem(tool, arguments)
                 if reason:
-                    hits.append((index, tool, reason, excerpt(arguments)))
+                    hits.append((index, tool, reason, excerpt(arguments if isinstance(arguments, dict) else {})))
     return checked, hits
 
 
@@ -193,6 +206,10 @@ def main() -> None:
         sys.exit(f"bad pattern: {error}")
 
     checked, hits = audit(directory, auditor)
+    if checked == 0:
+        # Nothing was read: a wrong directory or a changed transcript format. That is not a clean run.
+        print("checked 0 tool calls: the audit read nothing, so it says nothing about the run", file=sys.stderr)
+        sys.exit(2)
     print(f"checked {checked} tool call(s); {len(hits)} flagged for inspection")
     for index, tool, reason, text in hits:
         print(f"  T{index}  {tool}  {reason}: {text}")

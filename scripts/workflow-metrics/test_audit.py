@@ -154,9 +154,70 @@ class AuditCases(unittest.TestCase):
         for command in ("aria2c example.org/x", "socat - TCP:example.org:80"):
             self.assertTrue(self.bash(command), command)
 
-    def test_extra_patterns_are_applied(self) -> None:
+    def test_extra_patterns_are_applied_to_every_tool_and_argument(self) -> None:
         auditor = audit.Auditor(Path(ROOT), [r"answer-key"])
         self.assertIsNotNone(auditor.problem("Bash", {"command": "cat answer-key.md"}))
+        # An absolute path inside the root is otherwise allowed, so only --forbid can flag it.
+        self.assertIsNotNone(auditor.problem("Read", {"file_path": f"{ROOT}/repo/answer-key.md"}))
+        self.assertIsNotNone(auditor.problem("Grep", {"pattern": "x", "path": f"{ROOT}/answer-key"}))
+        self.assertIsNotNone(auditor.problem("Write", {"file_path": f"{ROOT}/scratch/n.md", "content": "answer-key"}))
+        self.assertIsNone(auditor.problem("Read", {"file_path": f"{ROOT}/repo/notes.md"}))
+
+    def test_wrapped_literal_remotes_are_flagged(self) -> None:
+        for command in (
+            "git -C repo \\\n  fetch git@github.com:owner/repo main",
+            "git clone git@github.com:owner/repo",
+            "echo git@GitHub.com:owner/repo",
+        ):
+            self.assertTrue(self.bash(command), command)
+
+    def test_a_command_continued_on_the_next_line_is_read_whole(self) -> None:
+        # Nothing here names a host: only joining the lines shows that `git ... fetch` is one command.
+        self.assertTrue(self.bash("git -C repo \\\n  fetch origin main"))
+        self.assertTrue(self.bash("git \\\n pull"))
+        self.assertFalse(self.bash("git -C repo \\\n  log --oneline"))
+
+    def test_a_url_in_code_is_flagged_by_the_url_rule(self) -> None:
+        # No `//host` path appears here, so the absolute-path rule never fires: only the URL rule does.
+        command = "python3 -c \"urlopen(f'https://{h}/repos/o/r/pulls/6/comments')\""
+        self.assertTrue(self.bash(command))
+        self.assertEqual(self.auditor.problem("Bash", {"command": command}), "contains a URL")
+
+    def test_every_git_network_subcommand_and_network_program_is_flagged(self) -> None:
+        for sub in ("fetch origin", "pull", "clone x", "push origin x", "ls-remote origin", "submodule update", "remote add a b"):
+            self.assertTrue(self.bash(f"git {sub}"), sub)
+        for program in ("ssh host", "scp a b", "nc host 80", "rsync a b", "wget x", "telnet host"):
+            self.assertTrue(self.bash(program), program)
+        for command in ("git status", "git log --oneline", "git diff HEAD~1 HEAD", "git show HEAD"):
+            self.assertFalse(self.bash(command), command)
+
+    def test_the_toolchain_caches_are_exempt_only_directly_under_home(self) -> None:
+        self.assertFalse(self.bash("ls ~/.cargo/bin"))
+        self.assertTrue(self.bash("ls ~/dev/.cargo/bin"))
+        self.assertTrue(self.bash("ls ~/dev/.rustup"))
+        self.assertTrue(self.bash(f"ls {HOME}/dev/.cargo/bin"))
+
+    def test_a_dev_path_is_system_and_a_malformed_call_is_flagged(self) -> None:
+        self.assertFalse(self.bash("grep -r x /dev/null"))
+        self.assertFalse(self.bash("grep '/dev/' docs"))
+        self.assertEqual(self.auditor.problem("Bash", "gh pr view 6"), "the call's arguments are not a mapping")
+
+    def test_the_run_own_saved_output_is_allowed_and_another_projects_is_not(self) -> None:
+        own = f"{self.own}/abc/tool-results/x.txt"
+        other = str(tr.transcript_dir("/private/tmp/claude-0/someone-else")) + "/abc/tool-results/x.txt"
+        self.assertFalse(self.flagged("Read", file_path=own))
+        self.assertTrue(self.flagged("Read", file_path=other))
+
+    def test_subagent_transcripts_are_audited(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            (directory / "session.jsonl").write_text(tool_call("Bash", command="git diff") + "\n", encoding="utf-8")
+            subagents = directory / "session" / "subagents"
+            subagents.mkdir(parents=True)
+            (subagents / "agent.jsonl").write_text(tool_call("Bash", command="gh pr view 6") + "\n", encoding="utf-8")
+            checked, hits = audit.audit(directory, self.auditor)
+        self.assertEqual(checked, 2)
+        self.assertEqual([hit[2] for hit in hits], ["mentions the program gh"])
 
     def test_a_transcript_is_audited_end_to_end_and_its_output_is_redacted(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -202,6 +263,33 @@ class CommandLineCases(unittest.TestCase):
         self.assertEqual(result.returncode, 1)
         self.assertIn("1 flagged", result.stdout)
         self.assertIn("gh pr view 6", result.stdout)
+
+    def test_a_run_with_nothing_to_read_is_not_a_clean_run(self) -> None:
+        empty = self.run_audit()
+        self.assertEqual(empty.returncode, 2)
+        self.assertIn("read nothing", empty.stderr)
+        with tempfile.TemporaryDirectory() as tmp:
+            directory = Path(tmp)
+            (directory / "session.jsonl").write_text(json.dumps({"type": "user"}) + "\n", encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, "-B", str(Path(audit.__file__)), "--root", ROOT, "--transcripts", str(directory)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(result.returncode, 2)
+
+    def test_without_a_project_directory_the_transcripts_are_those_of_the_root(self) -> None:
+        root = "/private/tmp/claude-0/no-such-run-for-this-test"
+        result = subprocess.run(
+            [sys.executable, "-B", str(Path(audit.__file__)), "--root", root],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("private-tmp-claude-0-no-such-run-for-this-test", result.stderr + result.stdout)
+        self.assertNotIn(HOME, result.stdout + result.stderr)
 
     def test_a_missing_transcript_directory_is_an_error_without_the_home_path(self) -> None:
         result = subprocess.run(
