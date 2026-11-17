@@ -194,7 +194,8 @@ a source is named. Sentences marked [Inferred] are the author's reading of those
 | Review system, #19 | 5 | 12 distinct (two independent reviews), then 4, 2, 2, 0 |
 | Records and CI, #20 | 6 | 6 distinct (two independent reviews), then 3, 1, 0, 0, 0 |
 
-A round is one review report, so a reviewer that reported twice counts twice. Rounds 5 and 6 of
+A round is one review report, so a reviewer that reported twice counts twice, except that the
+two paired reports of round 1 count as one round. Rounds 5 and 6 of
 #20 each reviewed one new commit, and nothing was open before either: one recorded the owner's
 answer on merging, and one corrected an overstated reason in it. The workflow sends any change
 to a deep unit to a follow-up review, and both changed one.
@@ -238,8 +239,7 @@ standard depth, and both replay reports are headed "deep".
   which points at findings 5, 2, 3 and 7; and a second run of the same configuration might
   differ. By matching rule 7 the misses are attributed to the replay conditions or run
   variance, and not to effort.
-- **What the replays raised.** Almost everything the replays rated Major, the original had as a
-  Minor. Both arms rated the per-hop divisor, the F4 page counts and the claim of three marked
+- **What the replays raised.** Four of each arm's six Majors were Minors in the original. Both arms rated the per-hop divisor, the F4 page counts and the claim of three marked
   interpretations Major. The abort threshold was Major for the `high` arm and Minor for `xhigh`.
   The `xhigh` arm rated the point about the `Yield` loops Major; `high` listed a related point as
   Minor. The original had all of these as Minors, and its Minor on the divisor led to its fix.
