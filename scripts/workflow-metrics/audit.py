@@ -30,7 +30,6 @@ one that tries. A clean audit is evidence of a blind run and not proof of one.
 from __future__ import annotations
 
 import argparse
-import json
 import posixpath
 import re
 import sys
@@ -43,7 +42,9 @@ ALLOWED_TOOLS = ("Bash", "Read", "Grep", "Glob", "Write", "Edit", "TodoWrite", "
 PATH_ARGUMENTS = ("file_path", "path", "notebook_path")
 TEXT_ARGUMENTS = ("command", "content", "new_string")
 # Absolute locations a build or a check legitimately reads.
-SYSTEM_PREFIXES = ("/usr/", "/bin/", "/sbin/", "/opt/homebrew/", "/Library/", "/System/", "/dev/", "/nix/")
+# /System is not listed whole: /System/Volumes/Data reaches every file on the machine, the answer key
+# included. Only its Library is read by tools.
+SYSTEM_PREFIXES = ("/usr/", "/bin/", "/sbin/", "/opt/homebrew/", "/Library/", "/System/Library/", "/dev/", "/nix/")
 # Parts of the home directory a build legitimately reads.
 HOME_EXEMPT = (".cargo/", ".rustup/")
 ALLOWED_PARENT = "../scratch"
@@ -70,8 +71,19 @@ ABSOLUTE = re.compile(r"(?<![A-Za-z0-9_.~$}*-])/[A-Za-z0-9_.@+*?-][^\s\"'`;|&)<>
 BARE_ROOT = re.compile(r"(?:^|(?<=[\s\"'(=]))(?<![0-9] )/(?=[\s\"';|&)]|$)")
 # `cd` or `pushd` with no argument goes to the home directory.
 BARE_CD = re.compile(r"(?:^|[;&|(\n])\s*(?:cd|pushd)(?:\s+--)?\s*(?:$|[;&|)\n])")
-# A second route to every path on the machine, under an exempt prefix.
-DATA_VOLUME = "/System/Volumes/"
+
+
+
+def strings(value: object):
+    """Yield every string held in a call's arguments, however deep, and none of the keys."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from strings(item)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            yield from strings(item)
 
 
 class Auditor:
@@ -94,7 +106,7 @@ class Auditor:
                 return None
         if self.inside(path, self.own_transcripts) and "/tool-results/" in path + "/":
             return None
-        if (path + "/").startswith(SYSTEM_PREFIXES) and not path.startswith(DATA_VOLUME):
+        if (path + "/").startswith(SYSTEM_PREFIXES):
             return None
         if self.inside(path, self.home):
             rest = path[len(self.home) :].lstrip("/") + "/"
@@ -121,7 +133,7 @@ class Auditor:
 
     def text_problem(self, text: str) -> str | None:
         # A backslash at the end of a line continues the command on the next one.
-        text = re.sub(r"\\\n", " ", text)
+        text = re.sub(r"\\\n", "", text)
         problem = self.path_problem(text)
         if problem:
             return problem
@@ -141,11 +153,13 @@ class Auditor:
             return "tool is not on the allowlist"
         if not isinstance(arguments, dict):
             return "the call's arguments are not a mapping"
-        # --forbid applies to every argument of every tool, absolute paths included.
-        everything = json.dumps(arguments, ensure_ascii=False, default=str)
-        for pattern in self.extra:
-            if pattern.search(everything):
-                return f"matches --forbid /{pattern.pattern}/"
+        # --forbid applies to every string the call holds, absolute paths included. Each pattern
+        # sees each string on its own, so an anchor means the start or end of that string, and a
+        # key name such as "path" is never matched.
+        for value in strings(arguments):
+            for pattern in self.extra:
+                if pattern.search(value):
+                    return f"matches --forbid /{pattern.pattern}/"
         for key in PATH_ARGUMENTS:
             value = str(arguments.get(key) or "")
             if not value:
