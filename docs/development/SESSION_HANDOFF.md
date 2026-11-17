@@ -31,7 +31,7 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 ## Waiting for the owner
 
-1. **An identity for agents, and one question.** A separate GitHub account with write access, and
+1. **An identity for agents.** A separate GitHub account with write access, and
    the owner's token out of the agent's environment. Agents use the owner's admin token today, so
    every server-side rule is a convention. See the
    [baseline, section 2](../research/workflow-baseline-2026-11.md#2-github-what-is-confirmed-and-what-is-inferred).
