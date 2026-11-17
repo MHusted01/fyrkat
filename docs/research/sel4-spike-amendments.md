@@ -677,7 +677,7 @@ Source: the agent, under the authorizations above. **Not experiment outcomes: no
 
 ### 2026-11-11 (K3): the owner's authorization and the agent's results (the agent's measurement, for the owner)
 
-Source: the owner's message of 2026-11-11 opening the session ("FYRKAT OS, K3 and the Next Architectural Milestone"). **No criterion, outcome definition, property or decision rule is changed. No ADR status is changed. No verification claim is changed.**
+Source: the owner's message of 2026-11-11 opening the session ("FYRKAT OS, K3 and the Next Architectural Milestone"). **No criterion, outcome definition, property or decision rule is changed. No ADR status is changed. No verification claim is changed.** The interpretations K3 adopts to apply the plan's rule are listed in K3 section 6 and are not plan text; their acceptance is a separate decision, not part of this entry.
 
 | Item | Entry |
 |---|---|
