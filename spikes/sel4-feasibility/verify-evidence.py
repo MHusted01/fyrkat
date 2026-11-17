@@ -235,7 +235,7 @@ def load_a2a() -> ModuleType:
 
 
 # Every directory of results/ whose files the manifest must list.
-EVIDENCE_DIRS = ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a", "A2a-variants", "RouteI", "A5-step0", "ReleaseKernel", "A5-step1", "A5-step2")
+EVIDENCE_DIRS = ("A1", "A1-rerun", "A3", "E1", "E2", "E3", "A2a", "A2a-variants", "RouteI", "A5-step0", "ReleaseKernel", "A5-step1", "A5-step2", "K3")
 
 
 def load_sibling(stem: str) -> ModuleType:
@@ -271,6 +271,10 @@ def load_a5_step1() -> ModuleType:
 
 def load_a5_step2() -> ModuleType:
     return load_sibling("verify_a5_step2")
+
+
+def load_k3() -> ModuleType:
+    return load_sibling("verify_k3")
 
 
 def e3_helpers() -> SimpleNamespace:
@@ -516,6 +520,11 @@ def run_checks(res: Path, lock_path: Path) -> list[tuple[str, bool]]:
     if (res / "A5-step2").is_dir():
         load_a5_step2().verify_a5_step2(res, check, e3_helpers())
 
+    # ---- K3: the SMMU server in its own protection domain (verdicts re-judged from the raw observation lines)
+    check("K3 evidence directory is present", (res / "K3").is_dir())
+    if (res / "K3").is_dir():
+        load_k3().verify_k3(res, check, e3_helpers())
+
     # ---- integrity and privacy
     listed: set[str] = set()
     bad = []
@@ -624,6 +633,9 @@ def self_test(res: Path, lock_path: Path) -> int:
     def remove_a5_step2(root: Path) -> None:
         shutil.rmtree(root / "A5-step2")
 
+    def remove_k3(root: Path) -> None:
+        shutil.rmtree(root / "K3")
+
     def drop_line(prefix: str) -> Callable[[str], str]:
         return lambda t: "\n".join(ln for ln in t.split("\n") if not ln.startswith(prefix))
 
@@ -676,6 +688,8 @@ def self_test(res: Path, lock_path: Path) -> int:
         *load_a5_step1().self_test_cases(edit),
         ("the A5 step 2 evidence is removed", remove_a5_step2, "A5 step 2 evidence directory is present"),
         *load_a5_step2().self_test_cases(edit),
+        ("the K3 evidence is removed", remove_k3, "K3 evidence directory is present"),
+        *load_k3().self_test_cases(edit),
     ]
     failures: list[str] = []
     with tempfile.TemporaryDirectory() as tmp:
