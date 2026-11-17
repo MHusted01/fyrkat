@@ -239,14 +239,15 @@ standard depth, and both replay reports are headed "deep".
   which points at findings 5, 2, 3 and 7; and a second run of the same configuration might
   differ. By matching rule 7 the misses are attributed to the replay conditions or run
   variance, and not to effort.
-- **What the replays raised.** Four of each arm's six Majors were Minors in the original. Both arms rated the per-hop divisor, the F4 page counts and the claim of three marked
-  interpretations Major. The abort threshold was Major for the `high` arm and Minor for `xhigh`.
-  The `xhigh` arm rated the point about the `Yield` loops Major; `high` listed a related point as
-  Minor. The original had all of these as Minors, and its Minor on the divisor led to its fix.
-  Both arms also listed a contradiction in the C2 text ("F3 starts from the state F2 leaves"
-  against "F2 does not warm F3") that the original does not mention. It is a wording defect, rated
-  Nit by `xhigh` and Minor by `high`. The replays found no material defect the original missed,
-  and an earlier version of this note said they found one.
+- **What the replays raised.** Four of each arm's six Majors were Minors in the original. Both
+  arms rated the per-hop divisor, the F4 page counts and the claim of three marked interpretations
+  Major. The abort threshold was Major for the `high` arm and Minor for `xhigh`. The `xhigh` arm
+  rated the point about the `Yield` loops Major; `high` listed a related point as Minor. The
+  original had all of these as Minors, and its Minor on the divisor led to its fix. Both arms also
+  listed a contradiction in the C2 text ("F3 starts from the state F2 leaves" against "F2 does not
+  warm F3") that the original does not mention. It is a wording defect, rated Nit by `xhigh` and
+  Minor by `high`. The replays found no material defect the original missed, and an earlier
+  version of this note said they found one.
 - The replay of `004bf9e` was started twice and cut off both times by the usage limit. Both
   attempts are void and were not scored. A third pair is prepared and has not run.
 
