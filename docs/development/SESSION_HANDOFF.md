@@ -27,9 +27,12 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
   appears as neither author nor co-author (the agent's reading of the owner's wording). See the
   [Amendments](../research/sel4-spike-amendments.md#2026-11-17-the-owner-declines-a-separate-agent-account).
   It authorizes no push, pull request or merge.
-- **Not authorized:** any other push, pull request or merge, including K3's (the delegation's condition
-  "the review is clean" is read as not met: the first review found two Majors) and the policy draft;
-  Stage B; A4;
+- **Push, PR and merge of the K3 branch (owner, in conversation, 2026-11-17):** "1. yes" to whether the
+  review, with its Majors fixed and followed up, counts as clean. Conditions as in the
+  [Amendments](../research/sel4-spike-amendments.md#2026-11-17-k3-decision-later-the-owners-answers-on-the-push-and-the-successor-run).
+- **Successor run (owner left it to the agent, 2026-11-17; the agent decided yes, as a new task after K3
+  merges):** same entry. Not started.
+- **Not authorized:** any other push, pull request or merge, including the policy draft; Stage B; A4;
   the comparator; any change to the seL4 kernel, ABI, dependencies or ADR statuses; new tools or
   installations; touching PR 9 (Dependabot `protobuf`: not to be merged, its alerts not to be
   dismissed); any change to CI beyond the two the 2026-11-15 entry names; bypassing CI or a GitHub
@@ -39,12 +42,8 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 ## Waiting for the owner
 
-1. **K3 branch.** Whether the delegation's push, PR and merge permission applies, given that the
-   first deep review found two Majors (both fixed and passed follow-up; the first follow-up found
-   two more, fixed in a second round). The agent asks rather than reads it as clean. Whether to
-   start the successor run that could turn Investigate into Pass (the Amendments entry says what
-   it must show). Object to the decision, if the owner disagrees with it, or with reading (b) of
-   K3 section 1 (the control's REACHED is not a Fail).
+1. **K3's decision.** Object to it if you disagree: A5-arm Investigate, or reading (b) of K3 section 1
+   (the control's REACHED is not a Fail), which if rejected makes the outcome Fail.
 2. **Rulesets** (drafts only, see Context): apply `protect-main` and `block-local-only` after a
    test on a throwaway branch with the owner watching, then delete the classic rule.
 3. **The merge-delegation draft** in the `fyrkat-policy` worktree: take, change or drop. Its clause
@@ -57,7 +56,7 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 ## Blockers and open findings
 
-- **Open from K3's deep review:** no Blocker or Major. Eight Minors and a few Nits stay open because
+- **Open from K3's deep review:** no Blocker or Major. Nine Minors and a few Nits stay open because
   each edits a pinned file: listed in [K3](../../spikes/sel4-feasibility/results/K3.md) section 10d, and
   to be listed in the pull request. One more Nit: the DMA note's label does not cover one sentence.
 - **Privacy exposure remains:** `refs/pull/7/head` still resolves to `c99300d`; commit `e163dff`,
@@ -95,7 +94,7 @@ fact has one home ([workflow, Records](workflow.md#4-records)); this file links 
 
 Verified on the K3 commits rebased onto `main` at `b617525`, 2026-11-17: `cargo xtask check` (12
 steps), `verify-evidence.py` (174 of 174), its `--self-test` (191 of 191). K3 had a deep review,
-two rounds of follow-up and then no open Blocker or Major (K3 section 10d). `main` requires the
+three rounds of follow-up and then no open Blocker or Major (K3 section 10d). `main` requires the
 checks `check and boot (ubuntu x86-64)`, `boot (ubuntu arm64)`, `security-sensitive paths` and
 `spike evidence`, with `enforce_admins` on (`gh api`).
 **Not verified:** that K3 can be rebuilt after the cleanup (no rebuild was attempted); anything on
@@ -105,10 +104,12 @@ results) and H5 (seeded-defect tests not run).
 
 ## Next actions
 
-1. **Authorized (general rules):** a `reviewer-delta` follow-up of the decision commit if one is
-   not yet recorded, and nothing else on K3 until the owner answers Waiting item 1.
-2. **Needs the owner:** Waiting items 1 to 4, and any new execution (the successor run, Stage B,
-   A4).
+1. **Authorized (owner, 2026-11-17):** push the K3 branch, open the pull request, and merge it under the
+   conditions in the Amendments; disclose the merge in the pull request and list the open Minors there.
+   If anything changes on the branch first, a `reviewer-delta` follow-up is needed (deep unit).
+2. **Authorized (owner left it to the agent, 2026-11-17):** after K3 merges, in a fresh session, the
+   successor run on a new branch from `main`: see "What would change it" in the K3-decision Amendments
+   entry. **Needs the owner:** Waiting items 2 to 4, and Stage B, A4 and the comparator.
 3. **Authorized (workflow grant):** finish the validation: replay `004bf9e` (re-export base
    `44d1d70` and head `004bf9e`), design the seeded-defect test for H5, measure H1 and H2 with
    one-task sessions at `--autocompact 200000`; record in the baseline note, section 6. Run one
@@ -123,7 +124,7 @@ results) and H5 (seeded-defect tests not run).
   after rebuilding the kernel variants), then `sanitize-run.py K3`, refreshing K3 sections 8 and 9,
   and `verify-evidence.py`. Dry-test a changed checker against a log recorded with QEMU's trace on.
   Shared files (`a5_mmio.rs`, `pl011.rs`, `slots.rs`, `edu.rs`, `child_vspace.rs`,
-  `object_allocator.rs`, `boot-a5.py`, `build-relk.sh`) are read by K3 and were not edited; files
+  `object_allocator.rs`, `boot-a5.py`, `a2a-compare.py`, `build-relk.sh`) are read by K3 and were not edited; files
   pinned by merged evidence are not changed: write a new script.
 - **Running K3 by hand** (under bash, not zsh): `./build-k3.sh K2|K2R [design|naive|MUTANT]`, then
   `boot-a5.py --smp 4 --machine-extra iommu=smmuv3,highmem=off --device edu,dma_mask=0xffffffffff
